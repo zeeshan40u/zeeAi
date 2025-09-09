@@ -1,262 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
 <title>ZeeAi 1.3</title>
-
-<!-- favicon -->
-<link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
-
-<!-- manifest (relative path for GitHub Pages) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="manifest" href="manifest.json">
-
-<!-- initial theme-color (JS will update on toggle) -->
+<link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
 <meta name="theme-color" content="#00ff55">
 
 <style>
-  :root{
-    --bg-color: #0d0d0d;
-    --text-color: #e0e0e0;
-    --accent-color: #00ff55;
-    --container-bg: #111;       /* dark container */
-    --container-border: rgba(0,255,85,0.3);
-    --container-shadow: 0 0 30px rgba(0,255,85,0.09);
-  }
+/* === BASE DARK MODE COLORS (copied from 1.2) === */
+:root {
+  --bg-color:#0d0d0d;
+  --text-color:#e0e0e0;
+  --heading-color:#00ff55;
+  --input-bg:#222;
+  --input-border:#00ccee;
+  --button-bg:#00ccee;
+  --button-bg-hover:#00aabb;
+  --button-text:#0d0d0d;
+}
 
-  /* light mode variables (applied when body has .light) */
-  body.light{
-    --bg-color: #ffffff;
-    --text-color: #111111;
-    --accent-color: #0066ff;
-    --container-bg: #ffffff;    /* FULL white container in light mode */
-    --container-border: rgba(0,102,255,0.15);
-    --container-shadow: 0 6px 18px rgba(0,102,255,0.08);
-  }
+/* LIGHT MODE VARIABLES */
+body.light {
+  --bg-color:#ffffff;
+  --text-color:#111111;
+  --heading-color:#0066ff;
+  --input-bg:#f9f9f9;
+  --input-border:#0066ff;
+  --button-bg:#0066ff;
+  --button-bg-hover:#0055cc;
+  --button-text:#ffffff;
+}
 
-  html,body{
-    height:100%;
-    min-height:100vh;
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: "Consolas","Monaco","Lucida Console",monospace;
-    background-color:var(--bg-color);
-    color:var(--text-color);
-  }
+html,body {
+  height:100%;
+  width:100%;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  font-family:'Consolas','Monaco','Lucida Console',monospace;
+  background-color:var(--bg-color);
+  color:var(--text-color);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  padding-top:3vh;
+  box-sizing:border-box;
+  position:relative;
+}
 
-  /* page layout - center column with good responsive behaviour */
-  .page {
-    min-height: calc(100vh - 6vh);
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    padding:5vh 16px;
-  }
+/* grid background in dark mode */
+body::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  background-image:
+  linear-gradient(0deg,transparent 24%,rgba(30,255,12,0.05)25%,rgba(30,255,12,0.05)26%,transparent 27%,transparent 74%,rgba(30,255,12,0.05)75%,rgba(30,255,12,0.05)76%,transparent 77%,transparent),
+  linear-gradient(90deg,transparent 24%,rgba(30,255,12,0.05)25%,rgba(30,255,12,0.05)26%,transparent 27%,transparent 74%,rgba(30,255,12,0.05)75%,rgba(30,255,12,0.05)76%,transparent 77%,transparent);
+  background-size:50px 50px;
+  opacity:0.2;
+  z-index:-1;
+}
+body.light::before { background-image:none; } /* no grid in light mode */
 
-  .content {
-    width:100%;
-    max-width:520px;            /* wider on desktop, narrow on mobile */
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:18px;
-  }
+.heading {
+  width:90%;
+  max-width:600px;
+  max-height:12vh;
+  text-align:center;
+  font-size:clamp(1.5rem,6vw,3.5rem);
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--heading-color);
+  text-shadow:0 0 5px var(--heading-color),0 0 10px var(--heading-color);
+  margin-bottom:2vh;
+  animation:subtlePulse 2s infinite alternate ease-in-out;
+}
+@keyframes subtlePulse {
+  from { text-shadow:0 0 5px var(--heading-color),0 0 10px var(--heading-color); transform:scale(1); }
+  to { text-shadow:0 0 8px var(--heading-color),0 0 15px var(--heading-color); transform:scale(1.01); }
+}
 
-  .heading {
-    font-size:clamp(1.6rem,6vw,3.2rem);
-    font-weight:800;
-    color:var(--accent-color);
-    margin:0;
-    text-align:center;
-    letter-spacing:1px;
-  }
+.container {
+  margin-top:1vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:90%;
+  max-width:600px;
+  padding:15px;
+  background-color:rgba(18,18,18,0.9);
+  border-radius:10px;
+  box-shadow:0 0 25px rgba(0,255,85,0.2);
+  border:1px solid rgba(0,255,85,0.3);
+  box-sizing:border-box;
+}
+body.light .container {
+  background-color:#ffffff;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  border:1px solid rgba(0,0,0,0.1);
+}
 
-  .container {
-    width:100%;
-    background:var(--container-bg);
-    border-radius:12px;
-    padding:18px;
-    box-shadow: var(--container-shadow);
-    border:1px solid var(--container-border);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-  }
+input {
+  padding:14px;
+  font-size:1.1rem;
+  border-radius:8px;
+  border:2px solid var(--input-border);
+  background-color:var(--input-bg);
+  color:var(--text-color);
+  width:100%;
+  box-sizing:border-box;
+  margin-bottom:15px;
+}
+input::placeholder { color:#888; }
+input:focus {
+  outline:none;
+  border-color:var(--input-border);
+  box-shadow:0 0 12px var(--input-border);
+}
 
-  input#txt{
-    width:100%;
-    box-sizing:border-box;
-    padding:12px 14px;
-    font-size:1rem;
-    border-radius:8px;
-    border:2px solid var(--accent-color);
-    background-color: transparent;
-    color:var(--text-color);
-    outline:none;
-  }
+.enter {
+  padding:12px 24px;
+  font-size:1.1rem;
+  font-weight:bold;
+  border-radius:8px;
+  border:none;
+  background-color:var(--button-bg);
+  color:var(--button-text);
+  cursor:pointer;
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  width:100%;
+  max-width:300px;
+}
+.enter:hover {
+  background-color:var(--button-bg-hover);
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px var(--button-bg-hover);
+}
+.enter:active {
+  transform:translateY(0);
+  box-shadow:0 2px 10px var(--button-bg-hover);
+}
 
-  /* in light mode make input background white */
-  body.light input#txt{
-    background-color:#fff;
-    color:var(--text-color);
-  }
+/* theme toggle top-right */
+#themeToggle {
+  position:fixed;
+  top:12px;
+  right:12px;
+  width:44px;
+  height:44px;
+  border-radius:8px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  z-index:1000;
+}
+body.light #themeToggle {
+  background:rgba(0,0,0,0.03);
+  border:1px solid rgba(0,0,0,0.06);
+}
+#themeToggle svg{ width:22px;height:22px; fill:var(--heading-color); }
 
-  .enter{
-    margin-top:10px;
-    width:100%;
-    max-width:320px;
-    padding:12px 18px;
-    border-radius:8px;
-    border:0;
-    background:var(--accent-color);
-    color:#0d0d0d;
-    font-weight:700;
-    font-size:1rem;
-    cursor:pointer;
-  }
-  .enter:active{ transform:translateY(1px); }
-
-  /* theme toggle - fixed in the viewport top-right */
-  #themeToggle{
-    position:fixed;
-    top:12px;
-    right:12px;
-    z-index:1200;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:44px;
-    height:44px;
-    border-radius:8px;
-    border:1px solid rgba(255,255,255,0.06);
-    background: rgba(255,255,255,0.02);
-    color:var(--accent-color);
-    cursor:pointer;
-    backdrop-filter: blur(4px);
-  }
-  body.light #themeToggle{
-    background: rgba(0,0,0,0.03);
-    border:1px solid rgba(0,0,0,0.06);
-  }
-  #themeToggle svg{ width:22px; height:22px; display:block; transition:transform .2s ease; }
-  #themeToggle:hover svg{ transform:scale(1.08); }
-
-  /* tooltip - small label shown on hover or on click */
-  .tooltip {
-    position:fixed;
-    top:60px;
-    right:14px;
-    z-index:1300;
-    padding:6px 8px;
-    border-radius:6px;
-    background:var(--container-bg);
-    color:var(--text-color);
-    font-size:0.86rem;
-    border:1px solid var(--container-border);
-    display:none;
-    white-space:nowrap;
-  }
-
-  /* small screens fine-tuning */
-  @media (max-width:420px){
-    .content{ max-width:360px; }
-    #themeToggle{ width:40px; height:40px; top:8px; right:8px; }
-    .tooltip{ top:54px; right:8px; }
-  }
+.tooltip {
+  position:fixed;
+  top:60px;
+  right:14px;
+  padding:6px 8px;
+  border-radius:6px;
+  background-color:var(--input-bg);
+  color:var(--text-color);
+  font-size:0.85rem;
+  border:1px solid rgba(0,0,0,0.1);
+  display:none;
+  white-space:nowrap;
+  z-index:1100;
+}
+@media(max-width:768px){
+  .heading{ font-size:clamp(1.2rem,8vw,3rem); max-height:10vh; }
+  input{ font-size:1rem; padding:10px; }
+  .enter{ font-size:1rem; padding:10px; }
+}
 </style>
 </head>
 <body>
-  <!-- theme toggle (fixed) -->
-  <button id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
-    <!-- sun (visible in dark mode) -->
-    <svg id="sunIcon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 4.5a1 1 0 0 1 1 1V7a1 1 0 0 1-2 0V5.5a1 1 0 0 1 1-1zM12 16.5a1 1 0 0 1 1 1V19a1 1 0 0 1-2 0v-1.5a1 1 0 0 1 1-1zm7.5-4.5a1 1 0 0 1 1 1h1.5a1 1 0 0 1 0 2H20.5a1 1 0 0 1-1-1 1 1 0 0 1 1-1zM3.5 12a1 1 0 0 1 1-1H6a1 1 0 0 1 0 2H4.5a1 1 0 0 1-1-1zM16.95 7.05a1 1 0 0 1 1.414 0l1.06 1.06a1 1 0 0 1-1.414 1.414l-1.06-1.06a1 1 0 0 1 0-1.414zM7.05 16.95a1 1 0 0 1 0-1.414l1.06-1.06a1 1 0 1 1 1.414 1.414l-1.06 1.06a1 1 0 0 1-1.414 0zm0-9.9a1 1 0 0 1 1.414 0l1.06 1.06A1 1 0 0 1 8.11 9.636L7.05 8.576a1 1 0 0 1 0-1.414zM16.95 16.95a1 1 0 0 1-1.414 0l-1.06-1.06a1 1 0 1 1 1.414-1.414l1.06 1.06a1 1 0 0 1 0 1.414z"/>
-      <circle cx="12" cy="12" r="4"/>
-    </svg>
+<!-- theme toggle -->
+<button id="themeToggle" aria-label="Toggle theme">
+  <svg id="sunIcon" viewBox="0 0 24 24">
+    <path d="M12 4.5a1 1 0 0 1 1 1V7a1 1 0 0 1-2 0V5.5a1 1 0 0 1 1-1zM12 16.5a1 1 0 0 1 1 1V19a1 1 0 0 1-2 0v-1.5a1 1 0 0 1 1-1zm7.5-4.5a1 1 0 0 1 1 1h1.5a1 1 0 0 1 0 2H20.5a1 1 0 0 1-1-1 1 1 0 0 1 1-1zM3.5 12a1 1 0 0 1 1-1H6a1 1 0 0 1 0 2H4.5a1 1 0 0 1-1-1zM16.95 7.05a1 1 0 0 1 1.414 0l1.06 1.06a1 1 0 0 1-1.414 1.414l-1.06-1.06a1 1 0 0 1 0-1.414zM7.05 16.95a1 1 0 0 1 0-1.414l1.06-1.06a1 1 0 1 1 1.414 1.414l-1.06 1.06a1 1 0 0 1-1.414 0zm0-9.9a1 1 0 0 1 1.414 0l1.06 1.06A1 1 0 0 1 8.11 9.636L7.05 8.576a1 1 0 0 1 0-1.414zM16.95 16.95a1 1 0 0 1-1.414 0l-1.06-1.06a1 1 0 1 1 1.414-1.414l1.06 1.06a1 1 0 0 1 0 1.414z"/>
+    <circle cx="12" cy="12" r="4"/>
+  </svg>
+  <svg id="moonIcon" viewBox="0 0 24 24" style="display:none;">
+    <path d="M21 12.79A9 9 0 0 1 11.21 3c-.64 0-1.28.07-1.89.2a9 9 0 1 0 10.68 10.68c.13-.61.2-1.25.2-1.89z"/>
+  </svg>
+</button>
+<div class="tooltip" id="tooltipText">Toggle to Light</div>
 
-    <!-- moon (visible in light mode; hidden by JS otherwise) -->
-    <svg id="moonIcon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="display:none;">
-      <path d="M21 12.79A9 9 0 0 1 11.21 3c-.64 0-1.28.07-1.89.2a9 9 0 1 0 10.68 10.68c.13-.61.2-1.25.2-1.89z"/>
-    </svg>
-  </button>
+<h1 class="heading">ZeeAi 1.3</h1>
 
-  <div class="tooltip" id="tooltipText" aria-hidden="true">Toggle to Light</div>
-
-  <div class="page">
-    <div class="content">
-      <h1 class="heading">ZeeAi 1.3</h1>
-
-      <div class="container" role="main" aria-labelledby="appTitle">
-        <input id="txt" placeholder="Enter text" aria-label="Enter text" />
-        <button class="enter" id="speakBtn">Speak</button>
-      </div>
-    </div>
-  </div>
+<div class="container">
+  <input id="txt" placeholder="Enter text" onkeypress="if(event.key==='Enter')speak()" />
+  <button class="enter" onclick="speak()">Speak</button>
+</div>
 
 <script>
-  // service worker registration (relative path – works on GH Pages)
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js').catch(()=>{/*ignore*/});
-  }
+// theme toggle persistence
+const themeToggle=document.getElementById('themeToggle');
+const tooltip=document.getElementById('tooltipText');
+const sunIcon=document.getElementById('sunIcon');
+const moonIcon=document.getElementById('moonIcon');
 
-  // DOM refs
-  const themeToggle = document.getElementById('themeToggle');
-  const tooltip = document.getElementById('tooltipText');
-  const sunIcon = document.getElementById('sunIcon');
-  const moonIcon = document.getElementById('moonIcon');
+if(localStorage.getItem('zee_theme')==='light') document.body.classList.add('light');
+updateUI();
 
-  // theme persistence: load saved preference
-  const saved = localStorage.getItem('zee_theme');
-  if (saved === 'light') document.body.classList.add('light');
+function updateUI(){
+  const isLight=document.body.classList.contains('light');
+  sunIcon.style.display=isLight?'none':'block';
+  moonIcon.style.display=isLight?'block':'none';
+  tooltip.textContent=isLight?'Toggle to Dark':'Toggle to Light';
+  document.querySelector('meta[name="theme-color"]').setAttribute('content',isLight?'#0066ff':'#00ff55');
+}
+themeToggle.addEventListener('click',()=>{
+  document.body.classList.toggle('light');
+  localStorage.setItem('zee_theme',document.body.classList.contains('light')?'light':'dark');
+  updateUI();
+  showTooltipBrief();
+});
+themeToggle.addEventListener('mouseenter',()=>{tooltip.style.display='block';});
+themeToggle.addEventListener('mouseleave',()=>{tooltip.style.display='none';});
+function showTooltipBrief(){
+  tooltip.style.display='block';
+  setTimeout(()=>{tooltip.style.display='none';},1500);
+}
 
-  // set initial icon + tooltip text on load
-  function updateToggleUI(){
-    const isLight = document.body.classList.contains('light');
-    sunIcon.style.display = isLight ? 'none' : 'block';
-    moonIcon.style.display = isLight ? 'block' : 'none';
-    tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
-    // update theme-color meta (helps Android)
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if(meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
-  }
-  updateToggleUI();
-
-  // helper to show tooltip briefly (on click for mobile)
-  function showTooltipBrief(){
-    tooltip.style.display = 'block';
-    setTimeout(()=>{ tooltip.style.display = 'none'; }, 1400);
-  }
-
-  // toggle handler
-  themeToggle.addEventListener('click', ()=>{
-    document.body.classList.toggle('light');
-    const isLight = document.body.classList.contains('light');
-    localStorage.setItem('zee_theme', isLight ? 'light' : 'dark');
-    updateToggleUI();
-    // show tooltip on mobile immediately after switching
-    showTooltipBrief();
-  });
-
-  // show tooltip on hover (desktop)
-  themeToggle.addEventListener('mouseenter', ()=>{ tooltip.style.display = 'block'; });
-  themeToggle.addEventListener('mouseleave', ()=>{ tooltip.style.display = 'none'; });
-
-  // speak functionality
-  document.getElementById('speakBtn').addEventListener('click', ()=>{
-    const t = document.getElementById('txt').value.trim();
-    if(!t){ alert('Please enter some text!'); return; }
-    const u = new SpeechSynthesisUtterance(t);
-    window.speechSynthesis.speak(u);
-  });
-
-  // enter key triggers speak
-  document.getElementById('txt').addEventListener('keypress', (e)=>{
-    if(e.key === 'Enter') {
-      document.getElementById('speakBtn').click();
-    }
-  });
+// speak
+function speak(){
+  let text=document.getElementById("txt").value;
+  if(text.trim()===""){alert("Please enter some text!");return;}
+  let msg=new SpeechSynthesisUtterance(text);
+  window.speechSynthesis.speak(msg);
+}
 </script>
 </body>
 </html>
-
