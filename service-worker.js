@@ -1,9 +1,10 @@
 // 👇 bump this every time you deploy a change so browsers pull a fresh cache
-const CACHE_NAME = "zeeai-cache-v2";
+const CACHE_NAME = "zeeai-cache-v3";
 
-// put here all files you want cached for offline use
+// Put here all files you want cached for offline use
 const urlsToCache = [
-  "/zeeAi/",           // your start page on GitHub Pages
+  "/zeeAi/",
+  "/zeeAi/index.html",
   "/zeeAi/manifest.json",
   "/zeeAi/zee192.png",
   "/zeeAi/zee512.png"
@@ -31,9 +32,17 @@ self.addEventListener("activate", event => {
   );
 });
 
-// Fetch event — respond from cache, then network
+// Fetch event — respond from cache first, fallback to network, then offline fallback
 self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
-  );
+  if (event.request.mode === "navigate") {
+    // For navigation requests, try network first, fallback to index.html
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match("/zeeAi/index.html"))
+    );
+  } else {
+    // For other requests, try cache first
+    event.respondWith(
+      caches.match(event.request).then(response => response || fetch(event.request))
+    );
+  }
 });
