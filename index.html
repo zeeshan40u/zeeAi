@@ -1,193 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ZeeAi 1.3</title>
+
 <link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00ff55">
+
 <style>
-:root {
-  --bg-dark: #0d0d0d;
-  --text-dark: #e0e0e0;
-  --accent-dark: #00ccee;
-  --heading-dark: #00ff55;
+  /* -------------------------
+     Colors + variables
+     ------------------------- */
+  :root{
+    --bg-dark: #0d0d0d;
+    --text-dark: #e0e0e0;
+    --heading-dark: #00ff55;
+    --accent-dark: #00ccee;
+    --container-dark: rgba(18,18,18,0.9);
+    --container-border-dark: rgba(0,255,85,0.3);
+    --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);
 
-  --bg-light: #ffffff;
-  --text-light: #111;
-  --accent-light: #007bff;
-  --heading-light: #007bff;
-}
+    --bg-light: #ffffff;
+    --text-light: #111111;
+    --heading-light: #0066ff;
+    --accent-light: #0066ff;
+    --container-light: #ffffff;
+    --container-border-light: rgba(0,102,255,0.12);
+    --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
+  }
 
-html, body {
-  margin:0; padding:0;
-  min-height:100vh;
-  font-family:'Consolas','Monaco',monospace;
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  padding-top:3vh;
-  position:relative;
-  transition:background 0.3s ease,color 0.3s ease;
-  overflow-x:hidden; /* prevent horizontal scrollbar line */
-}
+  /* Light mode applied when body.light present */
+  body.light{
+    --bg: var(--bg-light);
+    --text: var(--text-light);
+    --heading: var(--heading-light);
+    --accent: var(--accent-light);
+    --container-bg: var(--container-light);
+    --container-border: var(--container-border-light);
+    --container-shadow: var(--container-shadow-light);
+  }
 
-body.light {
-  background-color:var(--bg-light);
-  color:var(--text-light);
-}
+  /* Default (dark) variables */
+  body:not(.light){
+    --bg: var(--bg-dark);
+    --text: var(--text-dark);
+    --heading: var(--heading-dark);
+    --accent: var(--accent-dark);
+    --container-bg: var(--container-dark);
+    --container-border: var(--container-border-dark);
+    --container-shadow: var(--container-shadow-dark);
+  }
 
-.heading {
-  font-size:clamp(1.5rem,6vw,3.5rem);
-  font-weight:700;
-  text-align:center;
-  color:var(--heading-dark);
-  text-shadow:0 0 6px var(--heading-dark),0 0 12px var(--heading-dark);
-  margin-bottom:2vh;
-  transition:all 0.3s ease;
-}
-body.light .heading {
-  color:var(--heading-light);
-  text-shadow:0 0 2px var(--heading-light);
-}
+  /* -------------------------
+     Base layout
+     ------------------------- */
+  html,body{
+    height:100%;
+    min-height:100vh;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Consolas","Monaco","Lucida Console",monospace;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden; /* remove stray horizontal line */
+  }
 
-#returnedText {
-  width:90%;
-  max-width:600px;
-  text-align:center;
-  margin-bottom:2vh;
-  font-size:1rem;
-  color:var(--accent-dark);
-  opacity:0;
-  transition:opacity 0.5s ease-in-out;
-}
-#returnedText.visible{opacity:1;}
-body.light #returnedText { color:var(--accent-light); }
+  .page {
+    min-height: calc(100vh - 6vh);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:5vh 16px;
+  }
 
-.container {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:90%;
-  max-width:600px;
-  padding:15px;
-  background-color:rgba(18,18,18,0.9);
-  border-radius:10px;
-  box-shadow:0 0 25px rgba(0,255,85,0.2);
-  border:1px solid rgba(0,255,85,0.3);
-  transition:all 0.3s ease;
-}
-body.light .container {
-  background-color:#f9f9f9;
-  box-shadow:0 0 8px rgba(0,0,0,0.08);
-  border:1px solid #ddd;
-}
+  .content {
+    width:100%;
+    max-width:600px; /* same scale as your old layout */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
 
-input {
-  padding:14px;
-  font-size:1.1rem;
-  border-radius:8px;
-  border:2px solid var(--accent-dark);
-  background-color:#222;
-  color:#e0e0e0;
-  width:100%;
-  box-sizing:border-box;
-  margin-bottom:15px;
-}
-input::placeholder { color:#888; }
-input:focus {
-  outline:none;
-  border-color:var(--accent-dark);
-  box-shadow:0 0 12px rgba(0,204,238,0.6);
-  background-color:#2a2a2a;
-}
-body.light input {
-  background-color:#fff;
-  color:#111;
-  border-color:var(--accent-light);
-  box-shadow:none;
-}
-body.light input:focus {
-  box-shadow:0 0 8px rgba(0,0,0,0.2);
-}
+  /* -------------------------
+     Heading (neon in dark)
+     ------------------------- */
+  .heading {
+    width:90%;
+    max-width:600px;
+    max-height:12vh;
+    text-align:center;
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    font-weight:700;
+    letter-spacing:2px;
+    color: var(--heading);
+    text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading);
+    margin:0;
+    animation: subtlePulse 2s infinite alternate ease-in-out;
+  }
+  @keyframes subtlePulse {
+    from { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); transform: scale(1); }
+    to   { text-shadow: 0 0 8px var(--heading), 0 0 15px var(--heading); transform: scale(1.01); }
+  }
 
-.enter {
-  padding:12px 24px;
-  font-size:1.1rem;
-  font-weight:bold;
-  border-radius:8px;
-  border:none;
-  background-color:var(--accent-dark);
-  color:#0d0d0d;
-  cursor:pointer;
-  transition:all 0.3s ease;
-  width:100%;
-  max-width:300px;
-}
-.enter:hover {
-  background-color:#00aabb;
-  transform:translateY(-2px);
-  box-shadow:0 6px 20px rgba(0,204,238,0.4);
-}
-body.light .enter {
-  background-color:var(--accent-light);
-  color:#fff;
-}
-body.light .enter:hover {
-  background-color:#0056b3;
-  box-shadow:0 4px 15px rgba(0,0,0,0.1);
-}
+  /* -------------------------
+     Grid background in dark; removed in light
+     ------------------------- */
+  body::before{
+    content:'';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(0deg, transparent 24%, rgba(30,255,12,0.05) 25%, rgba(30,255,12,0.05) 26%, transparent 27%, transparent 74%, rgba(30,255,12,0.05) 75%, rgba(30,255,12,0.05) 76%, transparent 77%, transparent),
+      linear-gradient(90deg, transparent 24%, rgba(30,255,12,0.05) 25%, rgba(30,255,12,0.05) 26%, transparent 27%, transparent 74%, rgba(30,255,12,0.05) 75%, rgba(30,255,12,0.05) 76%, transparent 77%, transparent);
+    background-size: 50px 50px;
+    opacity: 0.2;
+  }
+  body.light::before{ background-image: none; }
 
-.textbyme {
-  position:fixed;
-  bottom:5px;
-  width:100%;
-  text-align:center;
-  font-size:10px;
-  color:inherit;
-}
+  /* -------------------------
+     Container / inputs / button
+     ------------------------- */
+  .container {
+    width:90%;
+    max-width:600px;
+    padding:15px;
+    background: var(--container-bg);
+    border-radius:10px;
+    border:1px solid var(--container-border);
+    box-shadow: var(--container-shadow);
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition: background 0.6s ease, box-shadow 0.9s ease, border-color 0.6s ease;
+  }
+
+  input#txt {
+    width:100%;
+    padding:14px;
+    font-size:1.1rem;
+    border-radius:8px;
+    border:2px solid var(--accent);
+    background-color: rgba(0,0,0,0.12);
+    color:var(--text);
+    box-sizing:border-box;
+  }
+  body.light input#txt {
+    background:#fff;
+    color:var(--text);
+    border-color:var(--accent);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+
+  input#txt::placeholder{ color:#888; }
+  input#txt:focus{ outline:none; box-shadow:0 0 12px rgba(0,204,238,0.18); }
+
+  .enter{
+    margin-top:12px;
+    width:100%;
+    max-width:300px;
+    padding:12px 18px;
+    border-radius:8px;
+    border:none;
+    background: var(--accent);
+    color: #0d0d0d;
+    font-weight:700;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease;
+  }
+  .enter:hover{ transform: translateY(-2px); }
+  body.light .enter{ color:#fff; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+
+  /* -------------------------
+     Toggle button top-right
+     ------------------------- */
+  #themeToggle{
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index:1200;
+    width:44px; height:44px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    color:var(--heading);
+    backdrop-filter: blur(4px);
+  }
+  body.light #themeToggle{
+    border:1px solid rgba(0,0,0,0.06);
+    background: rgba(0,0,0,0.03);
+  }
+  #themeToggle svg{ width:22px; height:22px; fill: currentColor; transition: transform .18s ease; }
+  #themeToggle:hover svg{ transform: scale(1.08); }
+
+  /* tooltip */
+  .tooltip {
+    position: fixed;
+    top: 62px;
+    right: 14px;
+    z-index:1250;
+    padding:6px 8px;
+    border-radius:6px;
+    background: var(--container-bg);
+    color: var(--text);
+    border: 1px solid var(--container-border);
+    display:none;
+    font-size:0.86rem;
+    white-space:nowrap;
+  }
+
+  /* footer like 1.2 */
+  .textbyme {
+    position: fixed;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text);
+  }
+
+  @media (max-width:420px){
+    .content{ max-width:360px; }
+    #themeToggle{ width:40px; height:40px; top:8px; right:8px; }
+    .tooltip{ top:54px; right:8px; }
+  }
 </style>
 </head>
 <body>
-<h1 class="heading">ZeeAi 1.3</h1>
-<div id="returnedText"></div>
-<div class="container">
-  <input id="txt" placeholder="Enter text" onkeypress="checkEnter(event)" />
-  <button class="enter" onclick="speak()">Speak</button>
-</div>
-<p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
+  <!-- theme toggle -->
+  <button id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+    <!-- sun visible in dark mode -->
+    <svg id="sunIcon" viewBox="0 0 24 24"><path d="M12 4.5a1 1 0 0 1 1 1V7a1 1 0 0 1-2 0V5.5a1 1 0 0 1 1-1zM12 16.5a1 1 0 0 1 1 1V19a1 1 0 0 1-2 0v-1.5a1 1 0 0 1 1-1zm7.5-4.5a1 1 0 0 1 1 1h1.5a1 1 0 0 1 0 2H20.5a1 1 0 0 1-1-1 1 1 0 0 1 1-1zM3.5 12a1 1 0 0 1 1-1H6a1 1 0 0 1 0 2H4.5a1 1 0 0 1-1-1zM16.95 7.05a1 1 0 0 1 1.414 0l1.06 1.06a1 1 0 0 1-1.414 1.414l-1.06-1.06a1 1 0 0 1 0-1.414zM7.05 16.95a1 1 0 0 1 0-1.414l1.06-1.06a1 1 0 1 1 1.414 1.414l-1.06 1.06a1 1 0 0 1-1.414 0zm0-9.9a1 1 0 0 1 1.414 0l1.06 1.06A1 1 0 0 1 8.11 9.636L7.05 8.576a1 1 0 0 1 0-1.414zM16.95 16.95a1 1 0 0 1-1.414 0l-1.06-1.06a1 1 0 1 1 1.414-1.414l1.06 1.06a1 1 0 0 1 0 1.414z"/></svg>
+    <!-- moon visible in light mode -->
+    <svg id="moonIcon" viewBox="0 0 24 24" style="display:none;"><path d="M21 12.79A9 9 0 0 1 11.21 3c-.64 0-1.28.07-1.89.2a9 9 0 1 0 10.68 10.68c.13-.61.2-1.25.2-1.89z"/></svg>
+  </button>
+  <div class="tooltip" id="tooltipText">Toggle to Light</div>
+
+  <div class="page">
+    <div class="content">
+      <h1 class="heading">ZeeAi 1.3</h1>
+
+      <div class="container" role="main" aria-labelledby="appTitle">
+        <input id="txt" placeholder="Enter text" aria-label="Enter text" />
+        <button class="enter" id="speakBtn">Speak</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
 <script>
-function speak() {
-  let text = document.getElementById("txt").value.trim();
-  const returnedTextDiv = document.getElementById("returnedText");
-  if(text === "") { alert("Please enter some text!"); return; }
-
-  // Decide how to pronounce
-  let processed = text;
-  const words = text.split(/\s+/);
-  if(words.length > 4) {
-    // more than 4 words: pronounce numbers digit-by-digit
-    processed = text.replace(/\d+/g, match => {
-      return match.split("").map(d => d==="0" ? "zero" : d).join(" ");
-    });
-  } else {
-    // normal: just speak as is, but fix numbers like 1000 specifically
-    processed = text.replace(/\b1000\b/g,"one thousand");
-  }
-
-  returnedTextDiv.textContent = `Speaking: "${processed}"`;
-  returnedTextDiv.classList.add('visible');
-  let msg = new SpeechSynthesisUtterance(processed);
-  msg.onend = function(){ returnedTextDiv.classList.remove('visible'); }
-  window.speechSynthesis.speak(msg);
+/* ------------------------
+   Service worker register
+   ------------------------ */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{/* ignore */});
 }
 
-function checkEnter(e){ if(e.key==='Enter'){ speak(); } }
+/* ------------------------
+   Theme toggle + persistence
+   ------------------------ */
+const themeToggle = document.getElementById('themeToggle');
+const tooltip = document.getElementById('tooltipText');
+const sunIcon = document.getElementById('sunIcon');
+const moonIcon = document.getElementById('moonIcon');
+const speakBtn = document.getElementById('speakBtn');
+const txtInput = document.getElementById('txt');
+
+// Load saved theme
+if (localStorage.getItem('zee_theme') === 'light') {
+  document.body.classList.add('light');
+}
+updateThemeUI();
+
+function updateThemeUI(){
+  const isLight = document.body.classList.contains('light');
+  sunIcon.style.display = isLight ? 'none' : 'block';
+  moonIcon.style.display = isLight ? 'block' : 'none';
+  tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
+  // update mobile theme-color meta
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
+  // update speak button style (colors are via CSS variables)
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  localStorage.setItem('zee_theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  updateThemeUI();
+  showTooltipBrief();
+});
+themeToggle.addEventListener('mouseenter', ()=> tooltip.style.display = 'block');
+themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
+
+function showTooltipBrief(){
+  tooltip.style.display = 'block';
+  setTimeout(()=> tooltip.style.display = 'none', 1400);
+}
+
+/* ------------------------
+   TTS + number-processing + Speak/Stop
+   ------------------------ */
+let isSpeaking = false;
+let currentUtterance = null;
+
+const digitWords = ['zero','one','two','three','four','five','six','seven','eight','nine'];
+
+function spellDigitsString(numStr){
+  // numStr assumed digits-only
+  return numStr.split('').map(ch => {
+    if (/\d/.test(ch)) return digitWords[parseInt(ch,10)];
+    return ch;
+  }).join(' ');
+}
+
+function processTextForSpeech(input){
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+
+  const words = trimmed.split(/\s+/);
+  // If the whole input is exactly "1000" -> "one thousand"
+  if (/^1000$/.test(trimmed)) return 'one thousand';
+  // If the whole input is exactly "10000" -> digits spelled
+  if (/^10000$/.test(trimmed)) return spellDigitsString('10000');
+
+  // If more than 4 words -> replace every numeric run with digit-by-digit
+  if (words.length > 4) {
+    return trimmed.replace(/\d+/g, match => spellDigitsString(match));
+  }
+
+  // Otherwise do inline special-case replacements:
+  // - replace 1000 anywhere with "one thousand"
+  // - replace 10000 anywhere with digit spelling
+  let out = trimmed.replace(/\b1000\b/g, 'one thousand');
+  out = out.replace(/\b10000\b/g, (m)=> spellDigitsString(m));
+  // Keep other numbers as-is
+  return out;
+}
+
+function speakHandler(){
+  const inputText = txtInput.value || '';
+  if (isSpeaking) {
+    // stop
+    window.speechSynthesis.cancel();
+    resetSpeakingState();
+    return;
+  }
+  const processed = processTextForSpeech(inputText);
+  if (!processed.trim()){
+    alert('Please enter some text!');
+    return;
+  }
+
+  // create utterance
+  currentUtterance = new SpeechSynthesisUtterance(processed);
+
+  // events
+  currentUtterance.onstart = () => {
+    isSpeaking = true;
+    speakBtn.textContent = 'Stop';
+    document.getElementById('returnedText')?.classList?.add('visible');
+  };
+  currentUtterance.onend = () => {
+    resetSpeakingState();
+  };
+  currentUtterance.onerror = () => {
+    resetSpeakingState();
+  };
+
+  // show speaking line
+  const returned = document.getElementById('returnedText');
+  if (returned) {
+    returned.textContent = `Speaking: "${processed}"`;
+    returned.classList.add('visible');
+  }
+
+  // speak
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+// Reset UI when stopping
+function resetSpeakingState(){
+  isSpeaking = false;
+  speakBtn.textContent = 'Speak';
+  const returned = document.getElementById('returnedText');
+  if (returned) returned.classList.remove('visible');
+  currentUtterance = null;
+}
+
+speakBtn.addEventListener('click', speakHandler);
+// Enter key triggers speak / stop
+txtInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    speakHandler();
+  }
+});
 </script>
 </body>
 </html>
+
