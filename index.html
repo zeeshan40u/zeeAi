@@ -3,89 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <title>ZeeAi 1.3</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00ff55">
-
 <style>
-/* === BASE DARK MODE COLORS (copied from 1.2) === */
 :root {
-  --bg-color:#0d0d0d;
-  --text-color:#e0e0e0;
-  --heading-color:#00ff55;
-  --input-bg:#222;
-  --input-border:#00ccee;
-  --button-bg:#00ccee;
-  --button-bg-hover:#00aabb;
-  --button-text:#0d0d0d;
+  --bg-dark: #0d0d0d;
+  --text-dark: #e0e0e0;
+  --accent-dark: #00ccee;
+  --heading-dark: #00ff55;
+
+  --bg-light: #ffffff;
+  --text-light: #111;
+  --accent-light: #007bff;
+  --heading-light: #007bff;
 }
 
-/* LIGHT MODE VARIABLES */
-body.light {
-  --bg-color:#ffffff;
-  --text-color:#111111;
-  --heading-color:#0066ff;
-  --input-bg:#f9f9f9;
-  --input-border:#0066ff;
-  --button-bg:#0066ff;
-  --button-bg-hover:#0055cc;
-  --button-text:#ffffff;
-}
-
-html,body {
-  height:100%;
-  width:100%;
-  margin:0;
-  padding:0;
-  overflow:hidden;
-  font-family:'Consolas','Monaco','Lucida Console',monospace;
-  background-color:var(--bg-color);
-  color:var(--text-color);
+body {
+  margin:0; padding:0;
+  height:100vh;
+  font-family:'Consolas','Monaco',monospace;
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
   display:flex;
   flex-direction:column;
-  justify-content:flex-start;
   align-items:center;
+  justify-content:flex-start;
   padding-top:3vh;
-  box-sizing:border-box;
   position:relative;
+  transition:background 0.3s ease,color 0.3s ease;
 }
 
-/* grid background in dark mode */
-body::before {
-  content:'';
-  position:absolute;
-  top:0;left:0;
-  width:100%;height:100%;
-  background-image:
-  linear-gradient(0deg,transparent 24%,rgba(30,255,12,0.05)25%,rgba(30,255,12,0.05)26%,transparent 27%,transparent 74%,rgba(30,255,12,0.05)75%,rgba(30,255,12,0.05)76%,transparent 77%,transparent),
-  linear-gradient(90deg,transparent 24%,rgba(30,255,12,0.05)25%,rgba(30,255,12,0.05)26%,transparent 27%,transparent 74%,rgba(30,255,12,0.05)75%,rgba(30,255,12,0.05)76%,transparent 77%,transparent);
-  background-size:50px 50px;
-  opacity:0.2;
-  z-index:-1;
+body.light {
+  background-color:var(--bg-light);
+  color:var(--text-light);
 }
-body.light::before { background-image:none; } /* no grid in light mode */
 
 .heading {
-  width:90%;
-  max-width:600px;
-  max-height:12vh;
-  text-align:center;
   font-size:clamp(1.5rem,6vw,3.5rem);
   font-weight:700;
-  letter-spacing:2px;
-  color:var(--heading-color);
-  text-shadow:0 0 5px var(--heading-color),0 0 10px var(--heading-color);
+  text-align:center;
+  color:var(--heading-dark);
+  text-shadow:0 0 6px var(--heading-dark),0 0 12px var(--heading-dark);
   margin-bottom:2vh;
-  animation:subtlePulse 2s infinite alternate ease-in-out;
+  transition:all 0.3s ease;
 }
-@keyframes subtlePulse {
-  from { text-shadow:0 0 5px var(--heading-color),0 0 10px var(--heading-color); transform:scale(1); }
-  to { text-shadow:0 0 8px var(--heading-color),0 0 15px var(--heading-color); transform:scale(1.01); }
+body.light .heading {
+  color:var(--heading-light);
+  text-shadow:0 0 2px var(--heading-light);
+}
+
+#returnedText {
+  width:90%;
+  max-width:600px;
+  text-align:center;
+  margin-bottom:2vh;
+  font-size:1rem;
+  color:var(--accent-dark);
+  opacity:0;
+  transition:opacity 0.5s ease-in-out;
+}
+#returnedText.visible{opacity:1;}
+body.light #returnedText {
+  color:var(--accent-light);
 }
 
 .container {
-  margin-top:1vh;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -96,30 +80,37 @@ body.light::before { background-image:none; } /* no grid in light mode */
   border-radius:10px;
   box-shadow:0 0 25px rgba(0,255,85,0.2);
   border:1px solid rgba(0,255,85,0.3);
-  box-sizing:border-box;
+  transition:all 0.3s ease;
 }
 body.light .container {
-  background-color:#ffffff;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  border:1px solid rgba(0,0,0,0.1);
+  background-color:#f9f9f9;
+  box-shadow:0 0 8px rgba(0,0,0,0.08);
+  border:1px solid #ddd;
 }
 
 input {
   padding:14px;
   font-size:1.1rem;
   border-radius:8px;
-  border:2px solid var(--input-border);
-  background-color:var(--input-bg);
-  color:var(--text-color);
+  border:2px solid var(--accent-dark);
+  background-color:#222;
+  color:var(--text-dark);
   width:100%;
   box-sizing:border-box;
   margin-bottom:15px;
+  transition:all 0.3s ease;
 }
-input::placeholder { color:#888; }
 input:focus {
   outline:none;
-  border-color:var(--input-border);
-  box-shadow:0 0 12px var(--input-border);
+  border-color:var(--accent-dark);
+  box-shadow:0 0 12px rgba(0,204,238,0.6);
+  background-color:#2a2a2a;
+}
+body.light input {
+  border:2px solid var(--accent-light);
+  background-color:#fff;
+  color:var(--text-light);
+  box-shadow:none;
 }
 
 .enter {
@@ -128,127 +119,102 @@ input:focus {
   font-weight:bold;
   border-radius:8px;
   border:none;
-  background-color:var(--button-bg);
-  color:var(--button-text);
+  background-color:var(--accent-dark);
+  color:#0d0d0d;
   cursor:pointer;
   transition:all 0.3s ease;
-  position:relative;
-  overflow:hidden;
-  text-transform:uppercase;
-  letter-spacing:1px;
   width:100%;
   max-width:300px;
 }
 .enter:hover {
-  background-color:var(--button-bg-hover);
+  background-color:#00aabb;
   transform:translateY(-2px);
-  box-shadow:0 6px 20px var(--button-bg-hover);
+  box-shadow:0 6px 20px rgba(0,204,238,0.4);
 }
-.enter:active {
-  transform:translateY(0);
-  box-shadow:0 2px 10px var(--button-bg-hover);
+body.light .enter {
+  background-color:var(--accent-light);
+  color:#fff;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+body.light .enter:hover {
+  background-color:#0056b3;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* theme toggle top-right */
-#themeToggle {
-  position:fixed;
-  top:12px;
-  right:12px;
-  width:44px;
-  height:44px;
-  border-radius:8px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+.toggle-theme {
+  position:absolute;
+  top:15px;
+  right:15px;
+  background:none;
+  border:none;
   cursor:pointer;
-  background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,255,255,0.06);
-  z-index:1000;
+  font-size:1.5rem;
+  padding:6px;
 }
-body.light #themeToggle {
-  background:rgba(0,0,0,0.03);
-  border:1px solid rgba(0,0,0,0.06);
-}
-#themeToggle svg{ width:22px;height:22px; fill:var(--heading-color); }
-
-.tooltip {
-  position:fixed;
-  top:60px;
-  right:14px;
-  padding:6px 8px;
-  border-radius:6px;
-  background-color:var(--input-bg);
-  color:var(--text-color);
-  font-size:0.85rem;
-  border:1px solid rgba(0,0,0,0.1);
-  display:none;
+.toggle-theme:hover::after {
+  content: attr(data-tooltip);
+  position:absolute;
+  top:110%;
+  right:0;
+  background:#333;
+  color:#fff;
+  padding:4px 6px;
+  border-radius:4px;
+  font-size:0.8rem;
   white-space:nowrap;
-  z-index:1100;
 }
-@media(max-width:768px){
-  .heading{ font-size:clamp(1.2rem,8vw,3rem); max-height:10vh; }
-  input{ font-size:1rem; padding:10px; }
-  .enter{ font-size:1rem; padding:10px; }
-}
+body.light .toggle-theme:hover::after { background:#555; }
 </style>
 </head>
 <body>
-<!-- theme toggle -->
-<button id="themeToggle" aria-label="Toggle theme">
-  <svg id="sunIcon" viewBox="0 0 24 24">
-    <path d="M12 4.5a1 1 0 0 1 1 1V7a1 1 0 0 1-2 0V5.5a1 1 0 0 1 1-1zM12 16.5a1 1 0 0 1 1 1V19a1 1 0 0 1-2 0v-1.5a1 1 0 0 1 1-1zm7.5-4.5a1 1 0 0 1 1 1h1.5a1 1 0 0 1 0 2H20.5a1 1 0 0 1-1-1 1 1 0 0 1 1-1zM3.5 12a1 1 0 0 1 1-1H6a1 1 0 0 1 0 2H4.5a1 1 0 0 1-1-1zM16.95 7.05a1 1 0 0 1 1.414 0l1.06 1.06a1 1 0 0 1-1.414 1.414l-1.06-1.06a1 1 0 0 1 0-1.414zM7.05 16.95a1 1 0 0 1 0-1.414l1.06-1.06a1 1 0 1 1 1.414 1.414l-1.06 1.06a1 1 0 0 1-1.414 0zm0-9.9a1 1 0 0 1 1.414 0l1.06 1.06A1 1 0 0 1 8.11 9.636L7.05 8.576a1 1 0 0 1 0-1.414zM16.95 16.95a1 1 0 0 1-1.414 0l-1.06-1.06a1 1 0 1 1 1.414-1.414l1.06 1.06a1 1 0 0 1 0 1.414z"/>
-    <circle cx="12" cy="12" r="4"/>
-  </svg>
-  <svg id="moonIcon" viewBox="0 0 24 24" style="display:none;">
-    <path d="M21 12.79A9 9 0 0 1 11.21 3c-.64 0-1.28.07-1.89.2a9 9 0 1 0 10.68 10.68c.13-.61.2-1.25.2-1.89z"/>
-  </svg>
+<button class="toggle-theme" id="themeToggle" data-tooltip="Toggle Dark/Light">
+  🌙
 </button>
-<div class="tooltip" id="tooltipText">Toggle to Light</div>
 
 <h1 class="heading">ZeeAi 1.3</h1>
-
+<div id="returnedText"></div>
 <div class="container">
-  <input id="txt" placeholder="Enter text" onkeypress="if(event.key==='Enter')speak()" />
+  <input id="txt" placeholder="Enter text" onkeypress="checkEnter(event)" />
   <button class="enter" onclick="speak()">Speak</button>
 </div>
+<p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
 <script>
-// theme toggle persistence
-const themeToggle=document.getElementById('themeToggle');
-const tooltip=document.getElementById('tooltipText');
-const sunIcon=document.getElementById('sunIcon');
-const moonIcon=document.getElementById('moonIcon');
-
-if(localStorage.getItem('zee_theme')==='light') document.body.classList.add('light');
-updateUI();
-
-function updateUI(){
-  const isLight=document.body.classList.contains('light');
-  sunIcon.style.display=isLight?'none':'block';
-  moonIcon.style.display=isLight?'block':'none';
-  tooltip.textContent=isLight?'Toggle to Dark':'Toggle to Light';
-  document.querySelector('meta[name="theme-color"]').setAttribute('content',isLight?'#0066ff':'#00ff55');
-}
-themeToggle.addEventListener('click',()=>{
+const toggleBtn = document.getElementById('themeToggle');
+toggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('light');
-  localStorage.setItem('zee_theme',document.body.classList.contains('light')?'light':'dark');
-  updateUI();
-  showTooltipBrief();
+  if(document.body.classList.contains('light')){
+    toggleBtn.textContent = '☀️';
+    toggleBtn.setAttribute('data-tooltip','Toggle Dark');
+  } else {
+    toggleBtn.textContent = '🌙';
+    toggleBtn.setAttribute('data-tooltip','Toggle Light');
+  }
 });
-themeToggle.addEventListener('mouseenter',()=>{tooltip.style.display='block';});
-themeToggle.addEventListener('mouseleave',()=>{tooltip.style.display='none';});
-function showTooltipBrief(){
-  tooltip.style.display='block';
-  setTimeout(()=>{tooltip.style.display='none';},1500);
-}
 
-// speak
-function speak(){
-  let text=document.getElementById("txt").value;
-  if(text.trim()===""){alert("Please enter some text!");return;}
-  let msg=new SpeechSynthesisUtterance(text);
+function speak() {
+  let text = document.getElementById("txt").value.trim();
+  const returnedTextDiv = document.getElementById("returnedText");
+  if(text === "") { alert("Please enter some text!"); return; }
+
+  // convert numbers:
+  if(/^\d+$/.test(text)){  // only digits
+    if(text === "1000") text = "one thousand";
+    else {
+      // speak each digit separately
+      text = text.split("").join(" ");
+    }
+  }
+
+  returnedTextDiv.textContent = `Speaking: "${text}"`;
+  returnedTextDiv.classList.add('visible');
+  let msg = new SpeechSynthesisUtterance(text);
+  msg.onend = function() { returnedTextDiv.classList.remove('visible'); }
   window.speechSynthesis.speak(msg);
 }
+
+function checkEnter(e){ if(e.key==='Enter'){ speak(); } }
 </script>
 </body>
 </html>
+
