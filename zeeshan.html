@@ -1,8 +1,3 @@
-from flask import Flask, render_template_string, send_from_directory
-
-app = Flask(__name__)
-
-html_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -184,15 +179,3 @@ function checkEnter(e){ if(e.key==='Enter'){ speak(); } }
 </script>
 </body>
 </html>
-"""
-
-@app.route("/")
-def index():
-    return render_template_string(html_code)
-
-@app.route("/manifest.json")
-def manifest():
-    return send_from_directory(".", "manifest.json")
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
