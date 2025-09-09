@@ -1,215 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ZeeAi 1.3</title>
+
 <link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00ff55">
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
+
 <style>
-:root {
-  --bg: #0d0d0d;
-  --text: #e0e0e0;
-  --heading: #00ff55;
-  --accent: #00ccee;
-  --input-bg: #222;
-}
-body.light {
-  --bg: #ffffff;
-  --text: #222222;
-  --heading: #00ff55;
-  --accent: #0077cc;
-  --input-bg: #f3f3f3;
-}
+  :root{
+    --bg-dark: #0d0d0d;
+    --text-dark: #e0e0e0;
+    --heading-dark: #00ff55;
+    --accent-dark: #00ccee;
+    --container-dark: rgba(18,18,18,0.9);
+    --container-border-dark: rgba(0,255,85,0.3);
+    --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);
 
-html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
-  background-color: var(--bg);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 3vh;
-  box-sizing: border-box;
-  position: relative;
-}
+    --bg-light: #ffffff;
+    --text-light: #111111;
+    --heading-light: #0066ff;
+    --accent-light: #0066ff;
+    --container-light: #ffffff;
+    --container-border-light: rgba(0,102,255,0.12);
+    --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
+  }
 
-body::before {
-  content: '';
-  position: absolute;
-  top:0; left:0;
-  width:100%; height:100%;
-  background-image:
-  linear-gradient(0deg, transparent 24%, rgba(30,255,12,0.05) 25%, rgba(30,255,12,0.05) 26%, transparent 27%, transparent 74%, rgba(30,255,12,0.05) 75%, rgba(30,255,12,0.05) 76%, transparent 77%, transparent),
-  linear-gradient(90deg, transparent 24%, rgba(30,255,12,0.05) 25%, rgba(30,255,12,0.05) 26%, transparent 27%, transparent 74%, rgba(30,255,12,0.05) 75%, rgba(30,255,12,0.05) 76%, transparent 77%, transparent);
-  background-size: 50px 50px;
-  opacity: 0.2;
-  z-index: -1;
-}
+  body.light{
+    --bg: var(--bg-light);
+    --text: var(--text-light);
+    --heading: var(--heading-light);
+    --accent: var(--accent-light);
+    --container-bg: var(--container-light);
+    --container-border: var(--container-border-light);
+    --container-shadow: var(--container-shadow-light);
+  }
+  body:not(.light){
+    --bg: var(--bg-dark);
+    --text: var(--text-dark);
+    --heading: var(--heading-dark);
+    --accent: var(--accent-dark);
+    --container-bg: var(--container-dark);
+    --container-border: var(--container-border-dark);
+    --container-shadow: var(--container-shadow-dark);
+  }
 
-.heading {
-  width: 90%;
-  max-width: 600px;
-  max-height: 12vh;
-  text-align: center;
-  font-size: clamp(1.5rem, 6vw, 3.5rem);
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--heading);
-  text-shadow: 0 0 6px var(--heading), 0 0 14px var(--heading);
-  margin: 0 0 2vh 0;
-  animation: subtlePulse 2s infinite alternate ease-in-out;
-}
-body.light .heading {
-  text-shadow: 0 0 2px var(--heading), 0 0 5px var(--heading);
-}
-@keyframes subtlePulse {
-  from { text-shadow: 0 0 6px var(--heading), 0 0 14px var(--heading); transform: scale(1);}
-  to   { text-shadow: 0 0 9px var(--heading), 0 0 18px var(--heading); transform: scale(1.01);}
-}
+  html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Consolas","Monaco","Lucida Console",monospace;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
 
-#returnedText {
-  width: 90%;
-  max-width: 600px;
-  text-align: center;
-  margin-bottom: 2vh;
-  font-size: 1rem;
-  color: var(--accent);
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  overflow: hidden;
-}
-#returnedText.visible { opacity: 1; }
+  .page {
+    min-height: calc(100vh - 6vh);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:5vh 16px;
+  }
 
-.container {
-  margin-top: 1vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
-  max-width: 600px;
-  padding: 15px;
-  background-color: rgba(18,18,18,0.9);
-  border-radius: 10px;
-  box-shadow: 0 0 25px rgba(0,255,85,0.2);
-  border: 1px solid rgba(0,255,85,0.3);
-  box-sizing: border-box;
-}
-body.light .container {
-  background-color: rgba(255,255,255,0.9);
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  border:1px solid rgba(0,0,0,0.05);
-}
+  .content {
+    width:100%;
+    max-width:600px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
 
-input {
-  padding: 14px;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  border: 2px solid var(--accent);
-  background-color: var(--input-bg);
-  color: var(--text);
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 15px;
-}
-input::placeholder { color: #888; }
-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(0,204,238,0.6);
-}
+  .heading {
+    width:90%;
+    text-align:center;
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    font-weight:700;
+    letter-spacing:2px;
+    color: var(--heading);
+    text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading);
+    margin:0;
+    animation: subtlePulse 2s infinite alternate ease-in-out;
+  }
+  @keyframes subtlePulse {
+    from { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); transform: scale(1); }
+    to   { text-shadow: 0 0 8px var(--heading), 0 0 15px var(--heading); transform: scale(1.01); }
+  }
 
-button.enter {
-  padding: 12px 24px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border-radius: 8px;
-  border: none;
-  background-color: var(--accent);
-  color: var(--bg);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  width: 100%;
-  max-width: 300px;
-}
-button.enter:hover {
-  background-color: #00aabb;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,204,238,0.4);
-}
-button.enter:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 10px rgba(0,204,238,0.3);
-}
+  body::before{
+    content:'';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(0deg, transparent 24%, rgba(30,255,12,0.05) 25%, rgba(30,255,12,0.05) 26%, transparent 27%, transparent 74%, rgba(30,255,12,0.05) 75%, rgba(30,255,12,0.05) 76%, transparent 77%, transparent),
+      linear-gradient(90deg, transparent 24%, rgba(30,255,12,0.05) 25%, rgba(30,255,12,0.05) 26%, transparent 27%, transparent 74%, rgba(30,255,12,0.05) 75%, rgba(30,255,12,0.05) 76%, transparent 77%, transparent);
+    background-size: 50px 50px;
+    opacity: 0.2;
+  }
+  body.light::before{ background-image: none; }
 
-.toggle-theme {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-.toggle-theme svg {
-  width: 24px;
-  height: 24px;
-  fill: var(--heading);
-  transition: fill 0.3s ease;
-}
+  .container {
+    width:90%;
+    max-width:600px;
+    padding:15px;
+    background: var(--container-bg);
+    border-radius:10px;
+    border:1px solid var(--container-border);
+    box-shadow: var(--container-shadow);
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition: background 0.6s ease, box-shadow 0.9s ease, border-color 0.6s ease;
+  }
 
-.textbyme {
-  margin-top: 15px;
-  width: 100%;
-  text-align: center;
-  font-size: 10px;
-  color: var(--text);
-}
+  input#txt {
+    width:100%;
+    padding:14px;
+    font-size:1.1rem;
+    border-radius:8px;
+    border:2px solid var(--accent);
+    background-color: rgba(0,0,0,0.12);
+    color:var(--text);
+    box-sizing:border-box;
+  }
+  body.light input#txt {
+    background:#fff;
+    color:var(--text);
+    border-color:var(--accent);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  input#txt::placeholder{ color:#888; }
+  input#txt:focus{ outline:none; box-shadow:0 0 12px rgba(0,204,238,0.18); }
 
-@media(max-width:768px){
-  .heading { font-size: clamp(1.2rem, 8vw, 3rem); max-height: 10vh; }
-  input { font-size: 1rem; padding: 10px; }
-  .enter { font-size: 1rem; padding: 10px; }
-}
+  .enter{
+    margin-top:12px;
+    width:100%;
+    max-width:300px;
+    padding:12px 18px;
+    border-radius:8px;
+    border:none;
+    background: var(--accent);
+    color: #0d0d0d;
+    font-weight:700;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease;
+  }
+  .enter:hover{ transform: translateY(-2px); }
+  body.light .enter{ color:#fff; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+
+  #themeToggle{
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index:1200;
+    width:44px; height:44px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    color:var(--heading);
+    backdrop-filter: blur(4px);
+  }
+  body.light #themeToggle{
+    border:1px solid rgba(0,0,0,0.06);
+    background: rgba(0,0,0,0.03);
+  }
+  #themeToggle svg{ width:22px; height:22px; fill: currentColor; transition: transform .18s ease; }
+  #themeToggle:hover svg{ transform: scale(1.08); }
+
+  .tooltip {
+    position: fixed;
+    top: 62px;
+    right: 14px;
+    z-index:1250;
+    padding:6px 8px;
+    border-radius:6px;
+    background: var(--container-bg);
+    color: var(--text);
+    border: 1px solid var(--container-border);
+    display:none;
+    font-size:0.86rem;
+    white-space:nowrap;
+  }
+
+  .textbyme {
+    position: fixed;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text);
+  }
+
+  @media (max-width:420px){
+    .content{ max-width:360px; }
+    #themeToggle{ width:40px; height:40px; top:8px; right:8px; }
+    .tooltip{ top:54px; right:8px; }
+  }
 </style>
 </head>
 <body>
-<button class="toggle-theme" onclick="toggleTheme()" title="Toggle light/dark">
-  <svg id="themeIcon" viewBox="0 0 24 24">
-    <!-- default moon icon -->
-    <path d="M21 12.79A9 9 0 0 1 12.21 3c0 5 4 9 9 9c-.05.27-.13.54-.21.79z"/>
-  </svg>
-</button>
+  <button id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+    <svg id="sunIcon" viewBox="0 0 24 24"><path d="M12 4.5a1 1 0 0 1 1 1V7a1 1 0 0 1-2 0V5.5a1 1 0 0 1 1-1zM12 16.5a1 1 0 0 1 1 1V19a1 1 0 0 1-2 0v-1.5a1 1 0 0 1 1-1zm7.5-4.5a1 1 0 0 1 1 1h1.5a1 1 0 0 1 0 2H20.5a1 1 0 0 1-1-1 1 1 0 0 1 1-1zM3.5 12a1 1 0 0 1 1-1H6a1 1 0 0 1 0 2H4.5a1 1 0 0 1-1-1zM16.95 7.05a1 1 0 0 1 1.414 0l1.06 1.06a1 1 0 0 1-1.414 1.414l-1.06-1.06a1 1 0 0 1 0-1.414zM7.05 16.95a1 1 0 0 1 0-1.414l1.06-1.06a1 1 0 1 1 1.414 1.414l-1.06 1.06a1 1 0 0 1-1.414 0zm0-9.9a1 1 0 0 1 1.414 0l1.06 1.06A1 1 0 0 1 8.11 9.636L7.05 8.576a1 1 0 0 1 0-1.414zM16.95 16.95a1 1 0 0 1-1.414 0l-1.06-1.06a1 1 0 1 1 1.414-1.414l1.06 1.06a1 1 0 0 1 0 1.414z"/></svg>
+    <svg id="moonIcon" viewBox="0 0 24 24" style="display:none;"><path d="M21 12.79A9 9 0 0 1 11.21 3c-.64 0-1.28.07-1.89.2a9 9 0 1 0 10.68 10.68c.13-.61.2-1.25.2-1.89z"/></svg>
+  </button>
+  <div class="tooltip" id="tooltipText">Toggle to Light</div>
 
-<h1 class="heading">ZeeAi 1.3</h1>
-<div id="returnedText"></div>
-<div class="container">
-  <input id="txt" placeholder="Enter text" />
-  <button id="speakBtn" class="enter">Speak</button>
-</div>
-<p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
+  <div class="page">
+    <div class="content">
+      <h1 class="heading">ZeeAi 1.3</h1>
+
+      <div class="container">
+        <input id="txt" placeholder="Enter text" aria-label="Enter text" />
+        <button class="enter" id="speakBtn">Speak</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
 <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+}
+
+const themeToggle = document.getElementById('themeToggle');
+const tooltip = document.getElementById('tooltipText');
+const sunIcon = document.getElementById('sunIcon');
+const moonIcon = document.getElementById('moonIcon');
+const speakBtn = document.getElementById('speakBtn');
+const txtInput = document.getElementById('txt');
+
+if (localStorage.getItem('zee_theme') === 'light') {
+  document.body.classList.add('light');
+}
+updateThemeUI();
+
+function updateThemeUI(){
+  const isLight = document.body.classList.contains('light');
+  sunIcon.style.display = isLight ? 'none' : 'block';
+  moonIcon.style.display = isLight ? 'block' : 'none';
+  tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  localStorage.setItem('zee_theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  updateThemeUI();
+  tooltip.style.display='block';
+  setTimeout(()=>tooltip.style.display='none',1400);
+});
+themeToggle.addEventListener('mouseenter', ()=> tooltip.style.display = 'block');
+themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
+
 let isSpeaking = false;
 let currentUtterance = null;
 
 function speakHandler(){
-  const inputText = document.getElementById('txt').value || '';
+  const inputText = txtInput.value || '';
   if (isSpeaking) {
     window.speechSynthesis.cancel();
     resetSpeakingState();
@@ -220,53 +281,30 @@ function speakHandler(){
     return;
   }
 
-  const returnedTextDiv = document.getElementById("returnedText");
-  returnedTextDiv.textContent = `Speaking: "${inputText}"`;
-  returnedTextDiv.classList.add('visible');
-
   currentUtterance = new SpeechSynthesisUtterance(inputText);
-
   currentUtterance.onstart = () => {
     isSpeaking = true;
-    document.getElementById('speakBtn').textContent = 'Stop';
+    speakBtn.textContent = 'Stop';
   };
-  currentUtterance.onend = () => {
-    returnedTextDiv.classList.remove('visible');
-    resetSpeakingState();
-  };
-  currentUtterance.onerror = () => {
-    returnedTextDiv.classList.remove('visible');
-    resetSpeakingState();
-  };
+  currentUtterance.onend = () => { resetSpeakingState(); };
+  currentUtterance.onerror = () => { resetSpeakingState(); };
 
   window.speechSynthesis.speak(currentUtterance);
 }
 
 function resetSpeakingState(){
   isSpeaking = false;
-  document.getElementById('speakBtn').textContent = 'Speak';
+  speakBtn.textContent = 'Speak';
   currentUtterance = null;
 }
 
-document.getElementById('speakBtn').addEventListener('click', speakHandler);
-document.getElementById('txt').addEventListener('keypress', (e) => {
+speakBtn.addEventListener('click', speakHandler);
+txtInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
     speakHandler();
   }
 });
-
-function toggleTheme(){
-  document.body.classList.toggle('light');
-  const icon = document.getElementById('themeIcon');
-  if(document.body.classList.contains('light')){
-    // Sun icon for light mode
-    icon.innerHTML = '<path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8L6.76 4.84zM1 13h3v-2H1v2zm10-9h-2v3h2V4zm7.03.95l-1.79-1.8-1.41 1.41 1.8 1.79 1.4-1.4zM20 11v2h3v-2h-3zm-9 9h2v-3h-2v3zm4.24-2.84l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM4.22 17.66l1.79-1.8-1.41-1.41-1.8 1.79 1.42 1.42zM12 8a4 4 0 100 8 4 4 0 000-8z"/>';
-  } else {
-    // Moon icon for dark mode
-    icon.innerHTML = '<path d="M21 12.79A9 9 0 0 1 12.21 3c0 5 4 9 9 9c-.05.27-.13.54-.21.79z"/>';
-  }
-}
 </script>
 </body>
 </html>
