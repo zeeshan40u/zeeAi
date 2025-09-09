@@ -45,6 +45,7 @@ html, body {
   box-sizing: border-box;
   position: relative;
 }
+
 body::before {
   content: '';
   position: absolute;
@@ -57,6 +58,7 @@ body::before {
   opacity: 0.2;
   z-index: -1;
 }
+
 .heading {
   width: 90%;
   max-width: 600px;
@@ -71,12 +73,13 @@ body::before {
   animation: subtlePulse 2s infinite alternate ease-in-out;
 }
 body.light .heading {
-  text-shadow: 0 0 2px var(--heading), 0 0 5px var(--heading); /* softer */
+  text-shadow: 0 0 2px var(--heading), 0 0 5px var(--heading);
 }
 @keyframes subtlePulse {
   from { text-shadow: 0 0 6px var(--heading), 0 0 14px var(--heading); transform: scale(1);}
   to   { text-shadow: 0 0 9px var(--heading), 0 0 18px var(--heading); transform: scale(1.01);}
 }
+
 #returnedText {
   width: 90%;
   max-width: 600px;
@@ -89,6 +92,7 @@ body.light .heading {
   overflow: hidden;
 }
 #returnedText.visible { opacity: 1; }
+
 .container {
   margin-top: 1vh;
   display: flex;
@@ -108,6 +112,7 @@ body.light .container {
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
   border:1px solid rgba(0,0,0,0.05);
 }
+
 input {
   padding: 14px;
   font-size: 1.1rem;
@@ -125,6 +130,7 @@ input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 12px rgba(0,204,238,0.6);
 }
+
 button.enter {
   padding: 12px 24px;
   font-size: 1.1rem;
@@ -151,6 +157,7 @@ button.enter:active {
   transform: translateY(0);
   box-shadow: 0 2px 10px rgba(0,204,238,0.3);
 }
+
 .toggle-theme {
   position: absolute;
   top: 10px;
@@ -165,6 +172,7 @@ button.enter:active {
   fill: var(--heading);
   transition: fill 0.3s ease;
 }
+
 .textbyme {
   margin-top: 15px;
   width: 100%;
@@ -172,6 +180,7 @@ button.enter:active {
   font-size: 10px;
   color: var(--text);
 }
+
 @media(max-width:768px){
   .heading { font-size: clamp(1.2rem, 8vw, 3rem); max-height: 10vh; }
   input { font-size: 1rem; padding: 10px; }
@@ -182,9 +191,11 @@ button.enter:active {
 <body>
 <button class="toggle-theme" onclick="toggleTheme()" title="Toggle light/dark">
   <svg id="themeIcon" viewBox="0 0 24 24">
-    <path d="M12 3a9 9 0 0 0 0 18 9 9 0 0 0 0-18z"/>
+    <!-- default moon icon -->
+    <path d="M21 12.79A9 9 0 0 1 12.21 3c0 5 4 9 9 9c-.05.27-.13.54-.21.79z"/>
   </svg>
 </button>
+
 <h1 class="heading">ZeeAi 1.3</h1>
 <div id="returnedText"></div>
 <div class="container">
@@ -247,7 +258,16 @@ document.getElementById('txt').addEventListener('keypress', (e) => {
 
 function toggleTheme(){
   document.body.classList.toggle('light');
+  const icon = document.getElementById('themeIcon');
+  if(document.body.classList.contains('light')){
+    // Sun icon for light mode
+    icon.innerHTML = '<path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8L6.76 4.84zM1 13h3v-2H1v2zm10-9h-2v3h2V4zm7.03.95l-1.79-1.8-1.41 1.41 1.8 1.79 1.4-1.4zM20 11v2h3v-2h-3zm-9 9h2v-3h-2v3zm4.24-2.84l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM4.22 17.66l1.79-1.8-1.41-1.41-1.8 1.79 1.42 1.42zM12 8a4 4 0 100 8 4 4 0 000-8z"/>';
+  } else {
+    // Moon icon for dark mode
+    icon.innerHTML = '<path d="M21 12.79A9 9 0 0 1 12.21 3c0 5 4 9 9 9c-.05.27-.13.54-.21.79z"/>';
+  }
 }
 </script>
 </body>
 </html>
+
