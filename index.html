@@ -20,9 +20,9 @@
   --heading-light: #007bff;
 }
 
-body {
+html, body {
   margin:0; padding:0;
-  height:100vh;
+  min-height:100vh;
   font-family:'Consolas','Monaco',monospace;
   background-color: var(--bg-dark);
   color: var(--text-dark);
@@ -33,6 +33,7 @@ body {
   padding-top:3vh;
   position:relative;
   transition:background 0.3s ease,color 0.3s ease;
+  overflow-x:hidden; /* prevent horizontal scrollbar line */
 }
 
 body.light {
@@ -65,9 +66,7 @@ body.light .heading {
   transition:opacity 0.5s ease-in-out;
 }
 #returnedText.visible{opacity:1;}
-body.light #returnedText {
-  color:var(--accent-light);
-}
+body.light #returnedText { color:var(--accent-light); }
 
 .container {
   display:flex;
@@ -94,12 +93,12 @@ input {
   border-radius:8px;
   border:2px solid var(--accent-dark);
   background-color:#222;
-  color:var(--text-dark);
+  color:#e0e0e0;
   width:100%;
   box-sizing:border-box;
   margin-bottom:15px;
-  transition:all 0.3s ease;
 }
+input::placeholder { color:#888; }
 input:focus {
   outline:none;
   border-color:var(--accent-dark);
@@ -107,10 +106,13 @@ input:focus {
   background-color:#2a2a2a;
 }
 body.light input {
-  border:2px solid var(--accent-light);
   background-color:#fff;
-  color:var(--text-light);
+  color:#111;
+  border-color:var(--accent-light);
   box-shadow:none;
+}
+body.light input:focus {
+  box-shadow:0 0 8px rgba(0,0,0,0.2);
 }
 
 .enter {
@@ -134,43 +136,23 @@ body.light input {
 body.light .enter {
   background-color:var(--accent-light);
   color:#fff;
-  box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
 body.light .enter:hover {
   background-color:#0056b3;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
 }
 
-.toggle-theme {
-  position:absolute;
-  top:15px;
-  right:15px;
-  background:none;
-  border:none;
-  cursor:pointer;
-  font-size:1.5rem;
-  padding:6px;
+.textbyme {
+  position:fixed;
+  bottom:5px;
+  width:100%;
+  text-align:center;
+  font-size:10px;
+  color:inherit;
 }
-.toggle-theme:hover::after {
-  content: attr(data-tooltip);
-  position:absolute;
-  top:110%;
-  right:0;
-  background:#333;
-  color:#fff;
-  padding:4px 6px;
-  border-radius:4px;
-  font-size:0.8rem;
-  white-space:nowrap;
-}
-body.light .toggle-theme:hover::after { background:#555; }
 </style>
 </head>
 <body>
-<button class="toggle-theme" id="themeToggle" data-tooltip="Toggle Dark/Light">
-  🌙
-</button>
-
 <h1 class="heading">ZeeAi 1.3</h1>
 <div id="returnedText"></div>
 <div class="container">
@@ -180,36 +162,28 @@ body.light .toggle-theme:hover::after { background:#555; }
 <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
 <script>
-const toggleBtn = document.getElementById('themeToggle');
-toggleBtn.addEventListener('click', () => {
-  document.body.classList.toggle('light');
-  if(document.body.classList.contains('light')){
-    toggleBtn.textContent = '☀️';
-    toggleBtn.setAttribute('data-tooltip','Toggle Dark');
-  } else {
-    toggleBtn.textContent = '🌙';
-    toggleBtn.setAttribute('data-tooltip','Toggle Light');
-  }
-});
-
 function speak() {
   let text = document.getElementById("txt").value.trim();
   const returnedTextDiv = document.getElementById("returnedText");
   if(text === "") { alert("Please enter some text!"); return; }
 
-  // convert numbers:
-  if(/^\d+$/.test(text)){  // only digits
-    if(text === "1000") text = "one thousand";
-    else {
-      // speak each digit separately
-      text = text.split("").join(" ");
-    }
+  // Decide how to pronounce
+  let processed = text;
+  const words = text.split(/\s+/);
+  if(words.length > 4) {
+    // more than 4 words: pronounce numbers digit-by-digit
+    processed = text.replace(/\d+/g, match => {
+      return match.split("").map(d => d==="0" ? "zero" : d).join(" ");
+    });
+  } else {
+    // normal: just speak as is, but fix numbers like 1000 specifically
+    processed = text.replace(/\b1000\b/g,"one thousand");
   }
 
-  returnedTextDiv.textContent = `Speaking: "${text}"`;
+  returnedTextDiv.textContent = `Speaking: "${processed}"`;
   returnedTextDiv.classList.add('visible');
-  let msg = new SpeechSynthesisUtterance(text);
-  msg.onend = function() { returnedTextDiv.classList.remove('visible'); }
+  let msg = new SpeechSynthesisUtterance(processed);
+  msg.onend = function(){ returnedTextDiv.classList.remove('visible'); }
   window.speechSynthesis.speak(msg);
 }
 
@@ -217,4 +191,3 @@ function checkEnter(e){ if(e.key==='Enter'){ speak(); } }
 </script>
 </body>
 </html>
-
