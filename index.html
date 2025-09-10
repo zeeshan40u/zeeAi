@@ -4,11 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ZeeAi 1.2</title>
-
 <link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00ff55">
-
 <style>
   :root{
     --bg-dark: #0d0d0d;
@@ -87,18 +85,9 @@
     margin:0;
     animation: subtlePulse 2s infinite alternate ease-in-out;
   }
-  /* dark mode heading has glow */
-  body:not(.light) .heading {
-    text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading);
-  }
-  /* light mode heading: no shadow */
-  body.light .heading {
-    text-shadow: none;
-  }
-  @keyframes subtlePulse {
-    from { transform: scale(1); }
-    to   { transform: scale(1.01); }
-  }
+  body:not(.light) .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); }
+  body.light .heading { text-shadow: none; }
+  @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
 
   body::before{
     content:'';
@@ -208,13 +197,7 @@
     color: var(--text);
   }
 
-  @media (max-width:420px){
-    .content{ max-width:360px; }
-    #themeToggle{ width:40px; height:40px; top:8px; right:8px; }
-    .tooltip{ top:54px; right:8px; }
-  }
-
-  /* Animated Install Button matching theme */
+  /* Install button */
   #installBtn {
     position: fixed;
     bottom: 20px;
@@ -226,42 +209,65 @@
     border-radius: 28px;
     color: var(--bg);
     cursor: pointer;
-    background: linear-gradient(
-      45deg,
-      var(--accent) 0%,
-      var(--heading) 50%,
-      var(--accent) 100%
-    );
+    background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
     background-size: 300% 300%;
     animation: bgMove 5s ease infinite, pulse 2s infinite, hue 8s linear infinite;
     box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 40px rgba(0,0,0,0.06);
     z-index: 9999;
-    display:none; /* hidden until beforeinstallprompt fires */
+    display:none;
   }
-  @keyframes bgMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+  @keyframes pulse { 0%{transform:translateY(0) scale(1);} 50%{transform:translateY(-6px) scale(1.06);} 100%{transform:translateY(0) scale(1);} }
+  @keyframes hue { from{filter:hue-rotate(0deg);} to{filter:hue-rotate(360deg);} }
+  #installBtn:active { transform: scale(1.04) rotate(2deg); }
+
+  /* === Speed Control === */
+  #speedControl {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
   }
-  @keyframes pulse {
-    0% { transform: translateY(0) scale(1); box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
-    50% { transform: translateY(-6px) scale(1.06); box-shadow: 0 18px 40px rgba(0,0,0,0.12); }
-    100% { transform: translateY(0) scale(1); box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+  #speedBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: #0d0d0d;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
   }
-  @keyframes hue {
-    from { filter: hue-rotate(0deg); }
-    to   { filter: hue-rotate(360deg); }
+  #speedMenu {
+    display:none;
+    position: absolute;
+    bottom: 54px;
+    right: 0;
+    background: var(--container-bg);
+    border: 1px solid var(--container-border);
+    border-radius: 8px;
+    box-shadow: var(--container-shadow);
+    padding: 6px;
+    flex-direction: column;
+    gap: 6px;
   }
-  #installBtn:active {
-    transform: scale(1.04) rotate(2deg);
+  #speedMenu button {
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #0d0d0d;
   }
 </style>
 </head>
 <body>
   <button id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
-    <!-- sun -->
     <svg id="sunIcon" viewBox="0 0 24 24" style="color:orange"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.8 1.79L6.76 4.84zm10.48 0l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 2a1 1 0 0 1 1 1v2h-2V3a1 1 0 0 1 1-1zm0 18a1 1 0 0 1 1 1v2h-2v-2a1 1 0 0 1 1-1zm10-8h-2a1 1 0 0 1 0-2h2v2zM4 12H2v-2h2a1 1 0 0 1 0 2zm15.24 7.16l1.79 1.79-1.79 1.79-1.79-1.79 1.79-1.79zM6.76 19.16l-1.79 1.79-1.79-1.79 1.79-1.79 1.79 1.79zM12 6a6 6 0 1 1 0 12A6 6 0 0 1 12 6z"/></svg>
-    <!-- moon -->
     <svg id="moonIcon" viewBox="0 0 24 24" style="display:none;color:orange"><path d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79z"/></svg>
   </button>
   <div class="tooltip" id="tooltipText">Toggle to Light</div>
@@ -269,7 +275,6 @@
   <div class="page">
     <div class="content">
       <h1 class="heading">ZeeAi 1.2</h1>
-
       <div class="container">
         <input id="txt" placeholder="Enter text" aria-label="Enter text" />
         <button class="enter" id="speakBtn">Speak</button>
@@ -279,8 +284,18 @@
 
   <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
-  <!-- PWA Install Button -->
   <button id="installBtn" aria-label="Install ZeeAi PWA">🌈🚀 Install App 🚀🌈</button>
+
+  <!-- Speed Control -->
+  <div id="speedControl">
+    <button id="speedBtn" aria-label="Change Speed">⏱️</button>
+    <div id="speedMenu">
+      <button data-rate="0.5">0.5x</button>
+      <button data-rate="1">1x</button>
+      <button data-rate="1.5">1.5x</button>
+      <button data-rate="2">2x</button>
+    </div>
+  </div>
 
 <script>
 if ('serviceWorker' in navigator) {
@@ -294,16 +309,13 @@ const moonIcon = document.getElementById('moonIcon');
 const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
 
-// default dark
 document.body.classList.remove('light');
 updateThemeUI();
 
 function updateThemeUI(){
   const isLight = document.body.classList.contains('light');
-  if (sunIcon && moonIcon) {
-    sunIcon.style.display = isLight ? 'none' : 'block';
-    moonIcon.style.display = isLight ? 'block' : 'none';
-  }
+  sunIcon.style.display = isLight ? 'none' : 'block';
+  moonIcon.style.display = isLight ? 'block' : 'none';
   tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
@@ -319,6 +331,7 @@ themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
 
 let isSpeaking = false;
 let currentUtterance = null;
+let currentRate = 1;
 
 function speakHandler(){
   const inputText = txtInput.value || '';
@@ -333,6 +346,7 @@ function speakHandler(){
   }
 
   currentUtterance = new SpeechSynthesisUtterance(inputText);
+  currentUtterance.rate = currentRate;
   currentUtterance.onstart = () => {
     isSpeaking = true;
     speakBtn.textContent = 'Stop';
@@ -342,13 +356,11 @@ function speakHandler(){
 
   window.speechSynthesis.speak(currentUtterance);
 }
-
 function resetSpeakingState(){
   isSpeaking = false;
   speakBtn.textContent = 'Speak';
   currentUtterance = null;
 }
-
 speakBtn.addEventListener('click', speakHandler);
 txtInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
@@ -360,18 +372,11 @@ txtInput.addEventListener('keypress', (e) => {
 /* === PWA Install Button Logic === */
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
-
-// Listen for the beforeinstallprompt event and show the button when available
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
   e.preventDefault();
   deferredPrompt = e;
   installBtn.style.display = 'block';
 });
-
-// Optional: if you want to show the button after a short delay even without the event,
-// you could detect standalone mode and show a fallback. For now we rely on the event.
-
 installBtn.addEventListener('click', async () => {
   if (!deferredPrompt) {
     alert('Install prompt not available yet.');
@@ -380,9 +385,24 @@ installBtn.addEventListener('click', async () => {
   deferredPrompt.prompt();
   const choice = await deferredPrompt.userChoice;
   console.log('PWA install choice:', choice);
-  // hide the button after user responds
   installBtn.style.display = 'none';
   deferredPrompt = null;
+});
+
+/* === Speed Control === */
+const speedBtn = document.getElementById('speedBtn');
+const speedMenu = document.getElementById('speedMenu');
+
+speedBtn.addEventListener('click', () => {
+  speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
+});
+
+speedMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentRate = parseFloat(btn.dataset.rate);
+    alert('Speed set to ' + currentRate + 'x');
+    speedMenu.style.display = 'none';
+  });
 });
 </script>
 </body>
