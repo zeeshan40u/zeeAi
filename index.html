@@ -35,6 +35,15 @@
     --container-gold: rgba(20,20,20,0.95);
     --container-border-gold: rgba(255,215,0,0.3);
     --container-shadow-gold: 0 0 25px rgba(255,215,0,0.15);
+
+    /* === Light Mode (Blue & White) === */
+    --bg-light: #ffffff;
+    --text-light: #111111;
+    --heading-light: #0066ff;
+    --accent-light: #3399ff;
+    --container-light: #ffffff;
+    --container-border-light: rgba(0,102,255,0.2);
+    --container-shadow-light: 0 6px 18px rgba(0,0,0,0.08);
   }
 
   /* Default Green & Black */
@@ -68,6 +77,17 @@
     --container-bg: var(--container-gold);
     --container-border: var(--container-border-gold);
     --container-shadow: var(--container-shadow-gold);
+  }
+
+  /* Light Mode (Blue & White) */
+  body.light{
+    --bg: var(--bg-light);
+    --text: var(--text-light);
+    --heading: var(--heading-light);
+    --accent: var(--accent-light);
+    --container-bg: var(--container-light);
+    --container-border: var(--container-border-light);
+    --container-shadow: var(--container-shadow-light);
   }
 
   html,body{
@@ -211,6 +231,49 @@
     font-size: 10px;
     color: var(--text);
   }
+
+  /* Speed Control */
+  #speedControl {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  #speedBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: #0d0d0d;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  #speedMenu {
+    display:none;
+    position: absolute;
+    bottom: 54px;
+    right: 0;
+    background: var(--container-bg);
+    border: 1px solid var(--container-border);
+    border-radius: 8px;
+    box-shadow: var(--container-shadow);
+    padding: 6px;
+    flex-direction: column;
+    gap: 6px;
+  }
+  #speedMenu button {
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #0d0d0d;
+  }
 </style>
 </head>
 <body>
@@ -219,6 +282,7 @@
     <button data-theme="dark">Green & Black</button>
     <button data-theme="teal">Teal & Gray</button>
     <button data-theme="gold">Black & Gold</button>
+    <button data-theme="light">Light (Blue & White)</button>
   </div>
 
   <div class="page">
@@ -233,12 +297,24 @@
 
   <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
+  <!-- Speed Control -->
+  <div id="speedControl">
+    <button id="speedBtn" aria-label="Change Speed">⏱️</button>
+    <div id="speedMenu">
+      <button data-rate="0.5">0.5x</button>
+      <button data-rate="1">1x</button>
+      <button data-rate="1.5">1.5x</button>
+      <button data-rate="2">2x</button>
+    </div>
+  </div>
+
 <script>
 const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
 
 let isSpeaking = false;
 let currentUtterance = null;
+let currentRate = 1;
 
 function speakHandler(){
   const inputText = txtInput.value || '';
@@ -253,6 +329,7 @@ function speakHandler(){
   }
 
   currentUtterance = new SpeechSynthesisUtterance(inputText);
+  currentUtterance.rate = currentRate;
   currentUtterance.onstart = () => {
     isSpeaking = true;
     speakBtn.textContent = 'Stop';
@@ -273,6 +350,22 @@ txtInput.addEventListener('keypress', (e) => {
     e.preventDefault();
     speakHandler();
   }
+});
+
+/* === Speed Control === */
+const speedBtn = document.getElementById('speedBtn');
+const speedMenu = document.getElementById('speedMenu');
+
+speedBtn.addEventListener('click', () => {
+  speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
+});
+
+speedMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentRate = parseFloat(btn.dataset.rate);
+    alert('Speed set to ' + currentRate + 'x');
+    speedMenu.style.display = 'none';
+  });
 });
 
 /* === Theme Menu === */
