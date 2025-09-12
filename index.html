@@ -9,6 +9,7 @@
 <meta name="theme-color" content="#00ff55">
 <style>
   :root{
+    /* === Green & Black === */
     --bg-dark: #0d0d0d;
     --text-dark: #e0e0e0;
     --heading-dark: #00ff55;
@@ -17,16 +18,26 @@
     --container-border-dark: rgba(0,255,85,0.3);
     --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);
 
-    --bg-light: #ffffff;
-    --text-light: #111111;
-    --heading-light: #0066ff;
-    --accent-light: #0066ff;
-    --container-light: #ffffff;
-    --container-border-light: rgba(0,102,255,0.12);
-    --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
+    /* === Teal & Gray === */
+    --bg-teal: #1a1f1f;
+    --text-teal: #e6f2f2;
+    --heading-teal: #20c997;
+    --accent-teal: #17a2b8;
+    --container-teal: rgba(30,40,40,0.95);
+    --container-border-teal: rgba(32,201,151,0.3);
+    --container-shadow-teal: 0 0 25px rgba(32,201,151,0.15);
+
+    /* === Black & Gold === */
+    --bg-gold: #0a0a0a;
+    --text-gold: #f8f1d0;
+    --heading-gold: #ffd700;
+    --accent-gold: #ffae00;
+    --container-gold: rgba(20,20,20,0.95);
+    --container-border-gold: rgba(255,215,0,0.3);
+    --container-shadow-gold: 0 0 25px rgba(255,215,0,0.15);
   }
 
-  /* Default Dark */
+  /* Default Green & Black */
   body{
     --bg: var(--bg-dark);
     --text: var(--text-dark);
@@ -37,34 +48,26 @@
     --container-shadow: var(--container-shadow-dark);
   }
 
-  body.light{
-    --bg: var(--bg-light);
-    --text: var(--text-light);
-    --heading: var(--heading-light);
-    --accent: var(--accent-light);
-    --container-bg: var(--container-light);
-    --container-border: var(--container-border-light);
-    --container-shadow: var(--container-shadow-light);
+  /* Teal & Gray */
+  body.teal{
+    --bg: var(--bg-teal);
+    --text: var(--text-teal);
+    --heading: var(--heading-teal);
+    --accent: var(--accent-teal);
+    --container-bg: var(--container-teal);
+    --container-border: var(--container-border-teal);
+    --container-shadow: var(--container-shadow-teal);
   }
 
-  body.redyellow {
-    --bg: #1a0000;
-    --text: #ffe066;
-    --heading: #ff0000;
-    --accent: #ff9900;
-    --container-bg: #260000;
-    --container-border: rgba(255, 0, 0, 0.4);
-    --container-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
-  }
-
-  body.redwhite {
-    --bg: #ffffff;
-    --text: #222222;
-    --heading: #ff0000;
-    --accent: #ff3333;
-    --container-bg: #fff5f5;
-    --container-border: rgba(255, 0, 0, 0.2);
-    --container-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  /* Black & Gold */
+  body.gold{
+    --bg: var(--bg-gold);
+    --text: var(--text-gold);
+    --heading: var(--heading-gold);
+    --accent: var(--accent-gold);
+    --container-bg: var(--container-gold);
+    --container-border: var(--container-border-gold);
+    --container-shadow: var(--container-shadow-gold);
   }
 
   html,body{
@@ -107,8 +110,8 @@
     color: var(--heading);
     margin:0;
     animation: subtlePulse 2s infinite alternate ease-in-out;
+    text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading);
   }
-  body:not(.light) .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); }
   @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
 
   .container {
@@ -135,12 +138,6 @@
     background-color: rgba(0,0,0,0.12);
     color:var(--text);
     box-sizing:border-box;
-  }
-  body.light input#txt {
-    background:#fff;
-    color:var(--text);
-    border-color:var(--accent);
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   }
   input#txt::placeholder{ color:#888; }
   input#txt:focus{ outline:none; box-shadow:0 0 12px rgba(0,204,238,0.18); }
@@ -214,81 +211,14 @@
     font-size: 10px;
     color: var(--text);
   }
-
-  /* Install button */
-  #installBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    border: none;
-    border-radius: 28px;
-    color: var(--bg);
-    cursor: pointer;
-    background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
-    background-size: 300% 300%;
-    animation: bgMove 5s ease infinite, pulse 2s infinite, hue 8s linear infinite;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 40px rgba(0,0,0,0.06);
-    z-index: 9999;
-    display:none;
-  }
-  @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-  @keyframes pulse { 0%{transform:translateY(0) scale(1);} 50%{transform:translateY(-6px) scale(1.06);} 100%{transform:translateY(0) scale(1);} }
-  @keyframes hue { from{filter:hue-rotate(0deg);} to{filter:hue-rotate(360deg);} }
-
-  /* Speed Control */
-  #speedControl {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    z-index: 1000;
-  }
-  #speedBtn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background: var(--accent);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color: #0d0d0d;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  }
-  #speedMenu {
-    display:none;
-    position: absolute;
-    bottom: 54px;
-    right: 0;
-    background: var(--container-bg);
-    border: 1px solid var(--container-border);
-    border-radius: 8px;
-    box-shadow: var(--container-shadow);
-    padding: 6px;
-    flex-direction: column;
-    gap: 6px;
-  }
-  #speedMenu button {
-    background: var(--accent);
-    border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #0d0d0d;
-  }
 </style>
 </head>
 <body>
   <button id="themeToggle" aria-label="Choose Theme">🎨</button>
   <div id="themeMenu">
     <button data-theme="dark">Green & Black</button>
-    <button data-theme="light">Blue & White</button>
-    <button data-theme="redyellow">Red & Yellow</button>
-    <button data-theme="redwhite">Red & White</button>
+    <button data-theme="teal">Teal & Gray</button>
+    <button data-theme="gold">Black & Gold</button>
   </div>
 
   <div class="page">
@@ -303,30 +233,12 @@
 
   <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
 
-  <button id="installBtn" aria-label="Install ZeeAi PWA">🌈🚀 Install App 🚀🌈</button>
-
-  <!-- Speed Control -->
-  <div id="speedControl">
-    <button id="speedBtn" aria-label="Change Speed">⏱️</button>
-    <div id="speedMenu">
-      <button data-rate="0.5">0.5x</button>
-      <button data-rate="1">1x</button>
-      <button data-rate="1.5">1.5x</button>
-      <button data-rate="2">2x</button>
-    </div>
-  </div>
-
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-}
-
 const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
 
 let isSpeaking = false;
 let currentUtterance = null;
-let currentRate = 1;
 
 function speakHandler(){
   const inputText = txtInput.value || '';
@@ -341,7 +253,6 @@ function speakHandler(){
   }
 
   currentUtterance = new SpeechSynthesisUtterance(inputText);
-  currentUtterance.rate = currentRate;
   currentUtterance.onstart = () => {
     isSpeaking = true;
     speakBtn.textContent = 'Stop';
@@ -364,51 +275,13 @@ txtInput.addEventListener('keypress', (e) => {
   }
 });
 
-/* === PWA Install Button === */
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = 'block';
-});
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) {
-    alert('Install prompt not available yet.');
-    return;
-  }
-  deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-  console.log('PWA install choice:', choice);
-  installBtn.style.display = 'none';
-  deferredPrompt = null;
-});
-
-/* === Speed Control === */
-const speedBtn = document.getElementById('speedBtn');
-const speedMenu = document.getElementById('speedMenu');
-
-speedBtn.addEventListener('click', () => {
-  speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
-});
-
-speedMenu.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentRate = parseFloat(btn.dataset.rate);
-    alert('Speed set to ' + currentRate + 'x');
-    speedMenu.style.display = 'none';
-  });
-});
-
 /* === Theme Menu === */
 const themeToggle = document.getElementById("themeToggle");
 const themeMenu = document.getElementById("themeMenu");
 
 function setTheme(themeName) {
   document.body.className = "";
-  if (themeName === "dark") {
-    // default green-black
-  } else {
+  if (themeName !== "dark") {
     document.body.classList.add(themeName);
   }
   localStorage.setItem("theme", themeName);
