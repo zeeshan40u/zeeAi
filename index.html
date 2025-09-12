@@ -3,23 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ZeeAi 1.2</title>
+<title>ZeeAi 1.3</title>
 <link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00ff55">
 <style>
   :root{
-    /* defaults (safeguard) */
-    --bg: #0d0d0d;
-    --text: #e0e0e0;
-    --heading: #00ff55;
-    --accent: #00ccee;
-    --container-bg: rgba(18,18,18,0.9);
-    --container-border: rgba(0,255,85,0.3);
-    --container-shadow: 0 0 25px rgba(0,255,85,0.12);
-    --grid-rgb: 30,255,12;
-
-    /* pre-declared theme tokens (not required but useful) */
     --bg-dark: #0d0d0d;
     --text-dark: #e0e0e0;
     --heading-dark: #00ff55;
@@ -37,9 +26,45 @@
     --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
   }
 
-  /* theme-mode toggles still supported via .light for some behavior */
+  /* Default Dark */
+  body{
+    --bg: var(--bg-dark);
+    --text: var(--text-dark);
+    --heading: var(--heading-dark);
+    --accent: var(--accent-dark);
+    --container-bg: var(--container-dark);
+    --container-border: var(--container-border-dark);
+    --container-shadow: var(--container-shadow-dark);
+  }
+
   body.light{
-    /* these are overridden by JS theme variables but keeping for compatibility */
+    --bg: var(--bg-light);
+    --text: var(--text-light);
+    --heading: var(--heading-light);
+    --accent: var(--accent-light);
+    --container-bg: var(--container-light);
+    --container-border: var(--container-border-light);
+    --container-shadow: var(--container-shadow-light);
+  }
+
+  body.redyellow {
+    --bg: #1a0000;
+    --text: #ffe066;
+    --heading: #ff0000;
+    --accent: #ff9900;
+    --container-bg: #260000;
+    --container-border: rgba(255, 0, 0, 0.4);
+    --container-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
+  }
+
+  body.redwhite {
+    --bg: #ffffff;
+    --text: #222222;
+    --heading: #ff0000;
+    --accent: #ff3333;
+    --container-bg: #fff5f5;
+    --container-border: rgba(255, 0, 0, 0.2);
+    --container-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   }
 
   html,body{
@@ -51,9 +76,9 @@
     background: var(--bg);
     color: var(--text);
     overflow-x:hidden;
-    overflow-y:hidden; /* remove scroller */
+    overflow-y:hidden;
     -webkit-font-smoothing:antialiased;
-    transition: background 900ms ease, color 700ms ease;
+    transition: background 0.6s ease, color 0.6s ease;
   }
 
   .page {
@@ -82,27 +107,9 @@
     color: var(--heading);
     margin:0;
     animation: subtlePulse 2s infinite alternate ease-in-out;
-    transition: color 1s ease, text-shadow 1s ease;
   }
   body:not(.light) .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); }
-  body.light .heading { text-shadow: none; }
   @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
-
-  /* Background pattern uses --grid-rgb so it can be changed dynamically */
-  body::before{
-    content:'';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background-image:
-      linear-gradient(0deg, transparent 24%, rgba(var(--grid-rgb),0.05) 25%, rgba(var(--grid-rgb),0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb),0.05) 75%, rgba(var(--grid-rgb),0.05) 76%, transparent 77%, transparent),
-      linear-gradient(90deg, transparent 24%, rgba(var(--grid-rgb),0.05) 25%, rgba(var(--grid-rgb),0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb),0.05) 75%, rgba(var(--grid-rgb),0.05) 76%, transparent 77%, transparent);
-    background-size: 50px 50px;
-    opacity: 0.2;
-    transition: opacity 800ms ease, background-image 900ms ease;
-    pointer-events:none;
-  }
-  body.light::before{ background-image: none; opacity:0; }
 
   .container {
     width:90%;
@@ -116,7 +123,7 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    transition: background 0.9s ease, box-shadow 0.9s ease, border-color 0.9s ease, transform 0.6s ease;
+    transition: background 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease;
   }
 
   input#txt {
@@ -128,7 +135,6 @@
     background-color: rgba(0,0,0,0.12);
     color:var(--text);
     box-sizing:border-box;
-    transition: background 900ms ease, border-color 900ms ease, color 700ms ease;
   }
   body.light input#txt {
     background:#fff;
@@ -152,50 +158,53 @@
     cursor:pointer;
     text-transform:uppercase;
     letter-spacing:1px;
-    transition: background 1600ms ease, color 900ms ease, transform 300ms ease, box-shadow 900ms ease;
+    transition: background 0.6s ease, color 0.6s ease;
   }
-  body.light .enter{ color:#fff; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
 
-  /* Theme button (brush) */
   #themeToggle{
     position: fixed;
     top: 12px;
     right: 12px;
     z-index:1200;
     width:44px; height:44px;
-    border-radius:8px;
-    border:1px solid rgba(255,255,255,0.04);
-    background: rgba(255,255,255,0.02);
+    border-radius:50%;
+    border:2px solid var(--accent);
+    background: var(--container-bg);
     display:inline-flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
+    font-size:20px;
     color:var(--heading);
-    backdrop-filter: blur(4px);
-    transition: background 600ms ease, color 900ms ease, transform 200ms ease;
+    box-shadow: var(--container-shadow);
   }
-  body.light #themeToggle{
-    border:1px solid rgba(0,0,0,0.06);
-    background: rgba(0,0,0,0.03);
-  }
-  #themeToggle svg{ width:22px; height:22px; fill: currentColor; }
-  #themeToggle:active{ transform: scale(0.98) rotate(-4deg); }
 
-  .tooltip {
+  /* Theme menu */
+  #themeMenu {
     position: fixed;
-    top: 62px;
-    right: 14px;
-    z-index:1250;
-    padding:6px 8px;
-    border-radius:6px;
+    top: 60px;
+    right: 12px;
     background: var(--container-bg);
-    color: var(--text);
     border: 1px solid var(--container-border);
-    display:none;
-    font-size:0.86rem;
-    white-space:nowrap;
-    transition: opacity 300ms ease;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: var(--container-shadow);
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 1250;
   }
+  #themeMenu button {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    background: var(--accent);
+    color: #0d0d0d;
+    transition: opacity 0.3s;
+  }
+  #themeMenu button:hover { opacity: 0.85; }
 
   .textbyme {
     position: fixed;
@@ -220,17 +229,16 @@
     cursor: pointer;
     background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
     background-size: 300% 300%;
-    animation: bgMove 5s ease infinite, pulse 2s infinite;
+    animation: bgMove 5s ease infinite, pulse 2s infinite, hue 8s linear infinite;
     box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 40px rgba(0,0,0,0.06);
     z-index: 9999;
     display:none;
-    transition: background 2000ms ease, color 1200ms ease, box-shadow 900ms ease;
   }
   @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
   @keyframes pulse { 0%{transform:translateY(0) scale(1);} 50%{transform:translateY(-6px) scale(1.06);} 100%{transform:translateY(0) scale(1);} }
-  #installBtn:active { transform: scale(1.04) rotate(2deg); }
+  @keyframes hue { from{filter:hue-rotate(0deg);} to{filter:hue-rotate(360deg);} }
 
-  /* === Speed Control === */
+  /* Speed Control */
   #speedControl {
     position: fixed;
     bottom: 80px;
@@ -249,7 +257,6 @@
     justify-content:center;
     color: #0d0d0d;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    transition: background 1200ms ease, color 900ms ease, transform 260ms ease;
   }
   #speedMenu {
     display:none;
@@ -263,7 +270,6 @@
     padding: 6px;
     flex-direction: column;
     gap: 6px;
-    transition: opacity 300ms ease, transform 300ms ease;
   }
   #speedMenu button {
     background: var(--accent);
@@ -273,94 +279,21 @@
     cursor: pointer;
     font-weight: bold;
     color: #0d0d0d;
-    transition: background 1200ms ease, color 900ms ease;
-  }
-
-  /* Theme menu (brush) */
-  .theme-menu {
-    position: fixed;
-    top: 62px;
-    right: 12px;
-    z-index: 1300;
-    background: var(--container-bg);
-    border: 1px solid var(--container-border);
-    border-radius: 10px;
-    padding: 8px;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-    box-shadow: var(--container-shadow);
-    min-width: 190px;
-    transition: transform 260ms ease, opacity 240ms ease;
-  }
-  .theme-menu.show { display:flex; transform: translateY(0); opacity:1; }
-  .theme-option {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:8px;
-    border-radius:8px;
-    cursor:pointer;
-    user-select:none;
-    border: 1px solid transparent;
-    transition: background 400ms ease, border-color 400ms ease, transform 160ms ease;
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
-  }
-  .theme-option:hover{ transform: translateY(-3px); border-color: rgba(255,255,255,0.03); }
-  .swatch {
-    width:32px;
-    height:32px;
-    border-radius:8px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.18), inset 0 -2px 6px rgba(0,0,0,0.08);
-    flex-shrink:0;
-    transition: background 900ms ease, border 900ms ease;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .theme-label { font-size:0.95rem; color:var(--text); }
-
-  /* small responsive touches */
-  @media (max-width:520px){
-    #installBtn{ right:12px; left:12px; width:auto; bottom:16px; padding:12px 18px; }
-    .theme-menu{ right:8px; min-width:160px; }
   }
 </style>
 </head>
 <body>
-  <button id="themeToggle" aria-label="Open theme picker" title="Choose Theme" aria-haspopup="true" aria-expanded="false">
-    <!-- Brush SVG -->
-    <svg id="brushIcon" viewBox="0 0 24 24" style="color:var(--heading)" aria-hidden="true">
-      <path d="M7.22 14.2l2.58 2.58a1 1 0 0 1 0 1.41l-2.83 2.83a1 1 0 0 1-1.41 0l-1.17-1.17a2 2 0 0 1 0-2.83l2.83-2.83a1 1 0 0 1 1.41 0zM20.71 7.04a3.5 3.5 0 0 0 0-4.95l-1.8-1.8a3.5 3.5 0 0 0-4.95 0L8.9 5.35l6.76 6.76 4.3-5.07z"/>
-    </svg>
-  </button>
-  <div class="tooltip" id="tooltipText">Choose Theme</div>
-
-  <!-- Theme menu: 5 choices -->
-  <div class="theme-menu" id="themeMenu" role="menu" aria-hidden="true" aria-label="Theme picker">
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="green-black" title="Green & Black">
-      <div class="swatch" style="background: linear-gradient(45deg,#00ff55,#00ccee)"></div>
-      <div class="theme-label">Green & Black</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="blue-white" title="Blue & White">
-      <div class="swatch" style="background: linear-gradient(45deg,#0066ff,#00a6ff)"></div>
-      <div class="theme-label">Blue & White</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="auto" title="Auto — random colors">
-      <div class="swatch" id="autoSwatch" style="background: linear-gradient(45deg,#ff6b6b,#ffd93d)"></div>
-      <div class="theme-label">Auto (dynamic)</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="red-yellow" title="Red & Yellow">
-      <div class="swatch" style="background: linear-gradient(45deg,#ff3b3b,#ffcc00)"></div>
-      <div class="theme-label">Red & Yellow</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="red-white" title="Red & White">
-      <div class="swatch" style="background: linear-gradient(45deg,#ff3b3b,#ffffff)"></div>
-      <div class="theme-label">Red & White</div>
-    </div>
+  <button id="themeToggle" aria-label="Choose Theme">🎨</button>
+  <div id="themeMenu">
+    <button data-theme="dark">Green & Black</button>
+    <button data-theme="light">Blue & White</button>
+    <button data-theme="redyellow">Red & Yellow</button>
+    <button data-theme="redwhite">Red & White</button>
   </div>
 
   <div class="page">
     <div class="content">
-      <h1 class="heading">ZeeAi 1.2</h1>
+      <h1 class="heading">ZeeAi 1.3</h1>
       <div class="container">
         <input id="txt" placeholder="Enter text" aria-label="Enter text" />
         <button class="enter" id="speakBtn">Speak</button>
@@ -384,235 +317,118 @@
   </div>
 
 <script>
-/* ======================
-  THEME HANDLING (5 types)
-   - green-black
-   - blue-white
-   - auto (dynamic)
-   - red-yellow
-   - red-white
-   Persisted in localStorage ('zeeai-theme')
-   Auto mode continuously randomizes accent/heading/grid colors.
-   Buttons/background smoothly transition (CSS transitions).
-   ====================== */
-
-const themeToggle = document.getElementById('themeToggle');
-const tooltip = document.getElementById('tooltipText');
-const themeMenu = document.getElementById('themeMenu');
-const themeOptions = themeMenu.querySelectorAll('.theme-option');
-const autoSwatch = document.getElementById('autoSwatch');
-const metaTheme = document.querySelector('meta[name="theme-color"]');
-
-let autoInterval = null;
-let currentTheme = localStorage.getItem('zeeai-theme') || 'green-black';
-
-const THEMES = {
-  "green-black": {
-    mode: 'dark',
-    vars: {
-      '--bg': '#0d0d0d',
-      '--text': '#e0e0e0',
-      '--heading': '#00ff55',
-      '--accent': '#00ccee',
-      '--container-bg': 'rgba(18,18,18,0.9)',
-      '--container-border': 'rgba(0,255,85,0.3)',
-      '--container-shadow': '0 0 25px rgba(0,255,85,0.12)',
-      '--grid-rgb': '30,255,12'
-    }
-  },
-  "blue-white": {
-    mode: 'light',
-    vars: {
-      '--bg': '#ffffff',
-      '--text': '#111111',
-      '--heading': '#0066ff',
-      '--accent': '#0066ff',
-      '--container-bg': '#ffffff',
-      '--container-border': 'rgba(0,102,255,0.12)',
-      '--container-shadow': '0 6px 18px rgba(0,0,0,0.06)',
-      '--grid-rgb': '0,102,255'
-    }
-  },
-  "red-yellow": {
-    mode: 'dark',
-    vars: {
-      '--bg': '#080808',
-      '--text': '#f1f1f1',
-      '--heading': '#ff3b3b',
-      '--accent': '#ffcc00',
-      '--container-bg': 'rgba(12,12,12,0.92)',
-      '--container-border': 'rgba(255,204,0,0.18)',
-      '--container-shadow': '0 0 25px rgba(255,204,0,0.08)',
-      '--grid-rgb': '255,204,0'
-    }
-  },
-  "red-white": {
-    mode: 'light',
-    vars: {
-      '--bg': '#ffffff',
-      '--text': '#111111',
-      '--heading': '#ff3b3b',
-      '--accent': '#ff3b3b',
-      '--container-bg': '#ffffff',
-      '--container-border': 'rgba(255,59,59,0.12)',
-      '--container-shadow': '0 6px 18px rgba(0,0,0,0.06)',
-      '--grid-rgb': '255,59,59'
-    }
-  },
-  "auto": {
-    mode: 'dark' /* auto will control variables dynamically */
-  }
-};
-
-function setCSSVars(vars){
-  const root = document.documentElement;
-  for (const k in vars){
-    root.style.setProperty(k, vars[k]);
-  }
-  // Update meta theme color with accent (fallback)
-  if (vars['--accent'] && metaTheme) {
-    // try to use accent color (strip rgb(...) if present)
-    metaTheme.setAttribute('content', colorToHex(vars['--accent']));
-  }
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{});
 }
 
-function colorToHex(input){
-  // Accept formats: #hex, rgb(...), or color names; try to produce hex string
-  if (!input) return '#000000';
-  input = input.trim();
-  if (input.startsWith('#')) return input;
-  if (input.startsWith('rgb')) {
-    const nums = input.replace(/[^\d,]/g,'').split(',').map(n=>parseInt(n||0));
-    const hex = nums.slice(0,3).map(n=>n.toString(16).padStart(2,'0')).join('');
-    return '#' + hex;
-  }
-  // fallback: return accent value as-is (meta accepts some values)
-  return input;
-}
+const speakBtn = document.getElementById('speakBtn');
+const txtInput = document.getElementById('txt');
 
-function applyTheme(name){
-  // stop auto if switching away
-  stopAutoCycle();
+let isSpeaking = false;
+let currentUtterance = null;
+let currentRate = 1;
 
-  const t = THEMES[name];
-  if (!t) return;
-  if (name === 'auto') {
-    // start dynamic cycle (auto sets variables repeatedly)
-    startAutoCycle();
-    document.body.classList.remove('light');
-    localStorage.setItem('zeeai-theme','auto');
-    currentTheme = 'auto';
-    updateThemeUI();
+function speakHandler(){
+  const inputText = txtInput.value || '';
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    resetSpeakingState();
     return;
   }
-  // apply static theme variables
-  setCSSVars(t.vars);
-  // manage body.light class for any light-mode specific CSS
-  if (t.mode === 'light') document.body.classList.add('light');
-  else document.body.classList.remove('light');
-
-  localStorage.setItem('zeeai-theme', name);
-  currentTheme = name;
-  updateThemeUI();
-}
-
-/* AUTO: gradually change accent/heading/grid colors */
-function randInt(min,max){ return Math.floor(min + Math.random()*(max-min+1)); }
-function startAutoCycle(){
-  // pick stable dark-ish background & random accents each interval
-  document.body.classList.remove('light');
-  const root = document.documentElement;
-
-  function doCycle(){
-    // pick two complementary colors via HSL
-    const hue = randInt(0,359);
-    const hue2 = (hue + randInt(40,170)) % 360;
-    const sat = randInt(60,95);
-    const light1 = randInt(45,65);
-    const light2 = Math.max(40, light1 - randInt(-6,12));
-
-    // convert HSL to RGB string for grid-rgb
-    const rgb1 = hslToRgb(hue/360, sat/100, light1/100);
-    const rgb2 = hslToRgb(hue2/360, sat/100, light2/100);
-
-    const accent = `rgb(${Math.round(rgb1[0])},${Math.round(rgb1[1])},${Math.round(rgb1[2])})`;
-    const heading = `rgb(${Math.round(rgb2[0])},${Math.round(rgb2[1])},${Math.round(rgb2[2])})`;
-    const gridRgb = `${Math.round((rgb1[0]+rgb2[0])/2)},${Math.round((rgb1[1]+rgb2[1])/2)},${Math.round((rgb1[2]+rgb2[2])/2)}`;
-
-    // container colors derived
-    const containerBg = 'rgba(8,8,8,0.9)';
-    const containerBorder = `rgba(${Math.round(rgb1[0])},${Math.round(rgb1[1])},${Math.round(rgb1[2])},0.18)`;
-    const containerShadow = `0 0 30px rgba(${Math.round(rgb2[0])},${Math.round(rgb2[1])},${Math.round(rgb2[2])},0.08)`;
-
-    setCSSVars({
-      '--accent': accent,
-      '--heading': heading,
-      '--grid-rgb': gridRgb,
-      '--container-bg': containerBg,
-      '--container-border': containerBorder,
-      '--container-shadow': containerShadow,
-      '--bg': '#0b0b0b',
-      '--text': '#eaeaea'
-    });
-
-    // also update small autoSwatch for the menu
-    if (autoSwatch) {
-      autoSwatch.style.background = `linear-gradient(45deg, ${accent}, ${heading})`;
-    }
+  if (!inputText.trim()){
+    alert('Please enter some text!');
+    return;
   }
 
-  // initial cycle immediately
-  doCycle();
-  // then set interval
-  autoInterval = setInterval(doCycle, 3200);
-  localStorage.setItem('zeeai-theme','auto');
-  currentTheme = 'auto';
-  updateThemeUI();
-}
+  currentUtterance = new SpeechSynthesisUtterance(inputText);
+  currentUtterance.rate = currentRate;
+  currentUtterance.onstart = () => {
+    isSpeaking = true;
+    speakBtn.textContent = 'Stop';
+  };
+  currentUtterance.onend = () => { resetSpeakingState(); };
+  currentUtterance.onerror = () => { resetSpeakingState(); };
 
-function stopAutoCycle(){
-  if (autoInterval) {
-    clearInterval(autoInterval);
-    autoInterval = null;
+  window.speechSynthesis.speak(currentUtterance);
+}
+function resetSpeakingState(){
+  isSpeaking = false;
+  speakBtn.textContent = 'Speak';
+  currentUtterance = null;
+}
+speakBtn.addEventListener('click', speakHandler);
+txtInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    speakHandler();
   }
-}
+});
 
-/* HSL -> RGB helper (returns [r,g,b]) */
-function hslToRgb(h, s, l){
-  let r, g, b;
-  if (s == 0) { r = g = b = l; } else {
-    const hue2rgb = function(p, q, t) {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1/6) return p + (q - p) * 6 * t;
-      if (t < 1/2) return q;
-      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-      return p;
-    };
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1/3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1/3);
+/* === PWA Install Button === */
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+});
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) {
+    alert('Install prompt not available yet.');
+    return;
   }
-  return [r * 255, g * 255, b * 255];
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  console.log('PWA install choice:', choice);
+  installBtn.style.display = 'none';
+  deferredPrompt = null;
+});
+
+/* === Speed Control === */
+const speedBtn = document.getElementById('speedBtn');
+const speedMenu = document.getElementById('speedMenu');
+
+speedBtn.addEventListener('click', () => {
+  speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
+});
+
+speedMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentRate = parseFloat(btn.dataset.rate);
+    alert('Speed set to ' + currentRate + 'x');
+    speedMenu.style.display = 'none';
+  });
+});
+
+/* === Theme Menu === */
+const themeToggle = document.getElementById("themeToggle");
+const themeMenu = document.getElementById("themeMenu");
+
+function setTheme(themeName) {
+  document.body.className = "";
+  if (themeName === "dark") {
+    // default green-black
+  } else {
+    document.body.classList.add(themeName);
+  }
+  localStorage.setItem("theme", themeName);
 }
 
-/* Update theme UI states (menu, meta color, toggle color) */
-function updateThemeUI(){
-  themeToggle.setAttribute('aria-expanded', themeMenu.classList.contains('show') ? 'true' : 'false');
-  // color the toggle icon by heading (CSS handles color: var(--heading))
-  // set tooltip text to currently selected theme
-  const pretty = currentTheme === 'auto' ? 'Auto' : currentTheme.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
-  tooltip.textContent = `Theme: ${pretty}`;
-}
+themeToggle.addEventListener("click", () => {
+  themeMenu.style.display = themeMenu.style.display === "flex" ? "none" : "flex";
+});
 
-/* Toggle theme menu */
-function toggleThemeMenu(show){
-  if (typeof show === 'undefined') show = !themeMenu.classList.contains('show');
-  if (show){
-    themeMenu.classList.add('show');
-    themeMenu.setAttribute('aria-hidden','false');
-    themeToggle.setAttribute('aria-expanded','true');
-    tooltip.style.display = 'block';
-    s
+themeMenu.querySelectorAll("button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const theme = btn.dataset.theme;
+    setTheme(theme);
+    themeMenu.style.display = "none";
+  });
+});
+
+// Load saved theme
+const savedTheme = localStorage.getItem("theme") || "dark";
+setTheme(savedTheme);
+</script>
+</body>
+</html>
