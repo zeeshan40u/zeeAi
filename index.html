@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,289 +8,73 @@
 <meta name="theme-color" content="#00ff55">
 <style>
   :root{
+    /* === Green & Black === */
     --bg-dark: #0d0d0d;
     --text-dark: #e0e0e0;
     --heading-dark: #00ff55;
     --accent-dark: #00ccee;
     --container-dark: rgba(18,18,18,0.9);
     --container-border-dark: rgba(0,255,85,0.3);
-    --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);
+    --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);/* === Blue & White === */
+--bg-light: #ffffff;
+--text-light: #111111;
+--heading-light: #0066ff;
+--accent-light: #0066ff;
+--container-light: #ffffff;
+--container-border-light: rgba(0,102,255,0.12);
+--container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
 
-    --bg-light: #ffffff;
-    --text-light: #111111;
-    --heading-light: #0066ff;
-    --accent-light: #0066ff;
-    --container-light: #ffffff;
-    --container-border-light: rgba(0,102,255,0.12);
-    --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
-  }
+/* === Teal & Gray === */
+--bg-teal: #f5f7f9;
+--text-teal: #111111;
+--heading-teal: #00897b;
+--accent-teal: #ff7043;
+--container-teal: #ffffff;
+--container-border-teal: rgba(0,137,123,0.25);
+--container-shadow-teal: 0 6px 18px rgba(0,137,123,0.12);
 
-  /* Default Dark */
-  body{
-    --bg: var(--bg-dark);
-    --text: var(--text-dark);
-    --heading: var(--heading-dark);
-    --accent: var(--accent-dark);
-    --container-bg: var(--container-dark);
-    --container-border: var(--container-border-dark);
-    --container-shadow: var(--container-shadow-dark);
-  }
+/* === Black & Gold === */
+--bg-gold: #000000;
+--text-gold: #eaeaea;
+--heading-gold: #ffd700;
+--accent-gold: #ffcc33;
+--container-gold: #111111;
+--container-border-gold: rgba(255,215,0,0.25);
+--container-shadow-gold: 0 6px 18px rgba(255,215,0,0.12);
 
-  body.light{
-    --bg: var(--bg-light);
-    --text: var(--text-light);
-    --heading: var(--heading-light);
-    --accent: var(--accent-light);
-    --container-bg: var(--container-light);
-    --container-border: var(--container-border-light);
-    --container-shadow: var(--container-shadow-light);
-  }
+}
 
-  body.redyellow {
-    --bg: #1a0000;
-    --text: #ffe066;
-    --heading: #ff0000;
-    --accent: #ff9900;
-    --container-bg: #260000;
-    --container-border: rgba(255, 0, 0, 0.4);
-    --container-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
-  }
+/* Default Green & Black / body.theme-dark { --bg: var(--bg-dark); --text: var(--text-dark); --heading: var(--heading-dark); --accent: var(--accent-dark); --container-bg: var(--container-dark); --container-border: var(--container-border-dark); --container-shadow: var(--container-shadow-dark); } / Blue & White / body.theme-light { --bg: var(--bg-light); --text: var(--text-light); --heading: var(--heading-light); --accent: var(--accent-light); --container-bg: var(--container-light); --container-border: var(--container-border-light); --container-shadow: var(--container-shadow-light); } / Teal & Gray / body.theme-teal { --bg: var(--bg-teal); --text: var(--text-teal); --heading: var(--heading-teal); --accent: var(--accent-teal); --container-bg: var(--container-teal); --container-border: var(--container-border-teal); --container-shadow: var(--container-shadow-teal); } / Black & Gold */ body.theme-gold { --bg: var(--bg-gold); --text: var(--text-gold); --heading: var(--heading-gold); --accent: var(--accent-gold); --container-bg: var(--container-gold); --container-border: var(--container-border-gold); --container-shadow: var(--container-shadow-gold); }
 
-  body.redwhite {
-    --bg: #ffffff;
-    --text: #222222;
-    --heading: #ff0000;
-    --accent: #ff3333;
-    --container-bg: #fff5f5;
-    --container-border: rgba(255, 0, 0, 0.2);
-    --container-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  }
+html,body{ height:100%; margin:0; padding:0; box-sizing:border-box; font-family: "Consolas","Monaco","Lucida Console",monospace; background: var(--bg); color: var(--text); overflow-x:hidden; overflow-y:hidden; -webkit-font-smoothing:antialiased; transition: background 0.6s ease, color 0.6s ease; }
 
-  html,body{
-    height:100%;
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: "Consolas","Monaco","Lucida Console",monospace;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x:hidden;
-    overflow-y:hidden;
-    -webkit-font-smoothing:antialiased;
-    transition: background 0.6s ease, color 0.6s ease;
-  }
+.page { min-height: calc(100vh - 6vh); display:flex; align-items:flex-start; justify-content:center; padding:5vh 16px; } .content { width:100%; max-width:600px; display:flex; flex-direction:column; align-items:center; gap:18px; }
 
-  .page {
-    min-height: calc(100vh - 6vh);
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    padding:5vh 16px;
-  }
+.heading { width:90%; text-align:center; font-size: clamp(1.5rem, 6vw, 3.5rem); font-weight:700; letter-spacing:2px; color: var(--heading); margin:0; animation: subtlePulse 2s infinite alternate ease-in-out; } body.theme-dark .heading, body.theme-gold .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); } @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
 
-  .content {
-    width:100%;
-    max-width:600px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:18px;
-  }
+.container { width:90%; max-width:600px; padding:15px; background: var(--container-bg); border-radius:10px; border:1px solid var(--container-border); box-shadow: var(--container-shadow); box-sizing:border-box; display:flex; flex-direction:column; align-items:center; transition: background 0.6s ease, box-shadow 0.9s ease, border-color 0.6s ease; }
 
-  .heading {
-    width:90%;
-    text-align:center;
-    font-size: clamp(1.5rem, 6vw, 3.5rem);
-    font-weight:700;
-    letter-spacing:2px;
-    color: var(--heading);
-    margin:0;
-    animation: subtlePulse 2s infinite alternate ease-in-out;
-  }
-  body:not(.light) .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); }
-  @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
+input#txt { width:100%; padding:14px; font-size:1.1rem; border-radius:8px; border:2px solid var(--accent); background-color: rgba(0,0,0,0.12); color:var(--text); box-sizing:border-box; } body.theme-light input#txt, body.theme-teal input#txt { background:#fff; color:var(--text); border-color:var(--accent); box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
 
-  .container {
-    width:90%;
-    max-width:600px;
-    padding:15px;
-    background: var(--container-bg);
-    border-radius:10px;
-    border:1px solid var(--container-border);
-    box-shadow: var(--container-shadow);
-    box-sizing:border-box;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    transition: background 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease;
-  }
+.enter { margin-top:12px; width:100%; max-width:300px; padding:12px 18px; border-radius:8px; border:none; background: var(--accent); color: #0d0d0d; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px; }
 
-  input#txt {
-    width:100%;
-    padding:14px;
-    font-size:1.1rem;
-    border-radius:8px;
-    border:2px solid var(--accent);
-    background-color: rgba(0,0,0,0.12);
-    color:var(--text);
-    box-sizing:border-box;
-  }
-  body.light input#txt {
-    background:#fff;
-    color:var(--text);
-    border-color:var(--accent);
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-  }
-  input#txt::placeholder{ color:#888; }
-  input#txt:focus{ outline:none; box-shadow:0 0 12px rgba(0,204,238,0.18); }
+#themeToggle{ position: fixed; top: 12px; right: 12px; z-index:1200; width:44px; height:44px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--heading); backdrop-filter: blur(4px); } #themeToggle svg{ width:22px; height:22px; fill: currentColor; }
 
-  .enter{
-    margin-top:12px;
-    width:100%;
-    max-width:300px;
-    padding:12px 18px;
-    border-radius:8px;
-    border:none;
-    background: var(--accent);
-    color: #0d0d0d;
-    font-weight:700;
-    cursor:pointer;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    transition: background 0.6s ease, color 0.6s ease;
-  }
+/* Theme menu */ #themeMenu { position: absolute; top: 54px; right: 0; display:none; flex-direction:column; background: var(--container-bg); border:1px solid var(--container-border); border-radius:8px; box-shadow: var(--container-shadow); padding:6px; gap:6px; } #themeMenu button { background: var(--accent); border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:bold; color:#0d0d0d; }
 
-  #themeToggle{
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index:1200;
-    width:44px; height:44px;
-    border-radius:50%;
-    border:2px solid var(--accent);
-    background: var(--container-bg);
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    font-size:20px;
-    color:var(--heading);
-    box-shadow: var(--container-shadow);
-  }
+.textbyme { position: fixed; bottom: 5px; width: 100%; text-align: center; font-size: 10px; color: var(--text); } </style>
 
-  /* Theme menu */
-  #themeMenu {
-    position: fixed;
-    top: 60px;
-    right: 12px;
-    background: var(--container-bg);
-    border: 1px solid var(--container-border);
-    border-radius: 10px;
-    padding: 6px;
-    box-shadow: var(--container-shadow);
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 1250;
-  }
-  #themeMenu button {
-    border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    background: var(--accent);
-    color: #0d0d0d;
-    transition: opacity 0.3s;
-  }
-  #themeMenu button:hover { opacity: 0.85; }
-
-  .textbyme {
-    position: fixed;
-    bottom: 5px;
-    width: 100%;
-    text-align: center;
-    font-size: 10px;
-    color: var(--text);
-  }
-
-  /* Install button */
-  #installBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    border: none;
-    border-radius: 28px;
-    color: var(--bg);
-    cursor: pointer;
-    background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
-    background-size: 300% 300%;
-    animation: bgMove 5s ease infinite, pulse 2s infinite, hue 8s linear infinite;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 40px rgba(0,0,0,0.06);
-    z-index: 9999;
-    display:none;
-  }
-  @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-  @keyframes pulse { 0%{transform:translateY(0) scale(1);} 50%{transform:translateY(-6px) scale(1.06);} 100%{transform:translateY(0) scale(1);} }
-  @keyframes hue { from{filter:hue-rotate(0deg);} to{filter:hue-rotate(360deg);} }
-
-  /* Speed Control */
-  #speedControl {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    z-index: 1000;
-  }
-  #speedBtn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background: var(--accent);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color: #0d0d0d;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  }
-  #speedMenu {
-    display:none;
-    position: absolute;
-    bottom: 54px;
-    right: 0;
-    background: var(--container-bg);
-    border: 1px solid var(--container-border);
-    border-radius: 8px;
-    box-shadow: var(--container-shadow);
-    padding: 6px;
-    flex-direction: column;
-    gap: 6px;
-  }
-  #speedMenu button {
-    background: var(--accent);
-    border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #0d0d0d;
-  }
-</style>
 </head>
-<body>
-  <button id="themeToggle" aria-label="Choose Theme">🎨</button>
+<body class="theme-dark">
+  <button id="themeToggle" aria-label="Change Theme" title="Change Theme">
+    <svg viewBox="0 0 24 24"><path d="M7 2v2H3v2h4v2h2V6h4V4H9V2H7zm10 0v2h-4v2h4v2h2V6h4V4h-4V2h-2zm-8 8v2h2v-2H9zm4 0v2h2v-2h-2zm-8 4v2H3v2h4v2h2v-2h4v-2H9v-2H7zm10 0v2h-4v2h4v2h2v-2h4v-2h-4v-2h-2z"/></svg>
+  </button>
   <div id="themeMenu">
-    <button data-theme="dark">Green & Black</button>
-    <button data-theme="light">Blue & White</button>
-    <button data-theme="redyellow">Red & Yellow</button>
-    <button data-theme="redwhite">Red & White</button>
-  </div>
-
-  <div class="page">
+    <button data-theme="theme-dark">Green & Black</button>
+    <button data-theme="theme-light">Blue & White</button>
+    <button data-theme="theme-teal">Teal & Gray</button>
+    <button data-theme="theme-gold">Black & Gold</button>
+  </div>  <div class="page">
     <div class="content">
       <h1 class="heading">ZeeAi 1.3</h1>
       <div class="container">
@@ -299,34 +82,39 @@
         <button class="enter" id="speakBtn">Speak</button>
       </div>
     </div>
-  </div>
+  </div>  <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p><script>
+const themeToggle = document.getElementById('themeToggle');
+const themeMenu = document.getElementById('themeMenu');
 
-  <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
+// Toggle theme menu
+let menuVisible = false;
+themeToggle.addEventListener('click', () => {
+  menuVisible = !menuVisible;
+  themeMenu.style.display = menuVisible ? 'flex' : 'none';
+});
 
-  <button id="installBtn" aria-label="Install ZeeAi PWA">🌈🚀 Install App 🚀🌈</button>
+// Apply theme on click
+const buttons = themeMenu.querySelectorAll('button');
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.body.className = btn.dataset.theme;
+    themeMenu.style.display = 'none';
+    menuVisible = false;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      if (btn.dataset.theme === 'theme-dark') meta.setAttribute('content', '#00ff55');
+      else if (btn.dataset.theme === 'theme-light') meta.setAttribute('content', '#0066ff');
+      else if (btn.dataset.theme === 'theme-teal') meta.setAttribute('content', '#00897b');
+      else if (btn.dataset-theme === 'theme-gold') meta.setAttribute('content', '#ffd700');
+    }
+  });
+});
 
-  <!-- Speed Control -->
-  <div id="speedControl">
-    <button id="speedBtn" aria-label="Change Speed">⏱️</button>
-    <div id="speedMenu">
-      <button data-rate="0.5">0.5x</button>
-      <button data-rate="1">1x</button>
-      <button data-rate="1.5">1.5x</button>
-      <button data-rate="2">2x</button>
-    </div>
-  </div>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-}
-
+/* === Speech Synthesis === */
 const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
-
 let isSpeaking = false;
 let currentUtterance = null;
-let currentRate = 1;
 
 function speakHandler(){
   const inputText = txtInput.value || '';
@@ -341,94 +129,14 @@ function speakHandler(){
   }
 
   currentUtterance = new SpeechSynthesisUtterance(inputText);
-  currentUtterance.rate = currentRate;
-  currentUtterance.onstart = () => {
-    isSpeaking = true;
-    speakBtn.textContent = 'Stop';
-  };
+  currentUtterance.rate = 1;
+  currentUtterance.onstart = () => { isSpeaking = true; speakBtn.textContent = 'Stop'; };
   currentUtterance.onend = () => { resetSpeakingState(); };
   currentUtterance.onerror = () => { resetSpeakingState(); };
-
   window.speechSynthesis.speak(currentUtterance);
 }
-function resetSpeakingState(){
-  isSpeaking = false;
-  speakBtn.textContent = 'Speak';
-  currentUtterance = null;
-}
+function resetSpeakingState(){ isSpeaking = false; speakBtn.textContent = 'Speak'; currentUtterance = null; }
 speakBtn.addEventListener('click', speakHandler);
-txtInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    speakHandler();
-  }
-});
-
-/* === PWA Install Button === */
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = 'block';
-});
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) {
-    alert('Install prompt not available yet.');
-    return;
-  }
-  deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-  console.log('PWA install choice:', choice);
-  installBtn.style.display = 'none';
-  deferredPrompt = null;
-});
-
-/* === Speed Control === */
-const speedBtn = document.getElementById('speedBtn');
-const speedMenu = document.getElementById('speedMenu');
-
-speedBtn.addEventListener('click', () => {
-  speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
-});
-
-speedMenu.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentRate = parseFloat(btn.dataset.rate);
-    alert('Speed set to ' + currentRate + 'x');
-    speedMenu.style.display = 'none';
-  });
-});
-
-/* === Theme Menu === */
-const themeToggle = document.getElementById("themeToggle");
-const themeMenu = document.getElementById("themeMenu");
-
-function setTheme(themeName) {
-  document.body.className = "";
-  if (themeName === "dark") {
-    // default green-black
-  } else {
-    document.body.classList.add(themeName);
-  }
-  localStorage.setItem("theme", themeName);
-}
-
-themeToggle.addEventListener("click", () => {
-  themeMenu.style.display = themeMenu.style.display === "flex" ? "none" : "flex";
-});
-
-themeMenu.querySelectorAll("button").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const theme = btn.dataset.theme;
-    setTheme(theme);
-    themeMenu.style.display = "none";
-  });
-});
-
-// Load saved theme
-const savedTheme = localStorage.getItem("theme") || "dark";
-setTheme(savedTheme);
-</script>
-</body>
+txtInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); speakHandler(); } });
+</script></body>
 </html>
