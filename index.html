@@ -48,52 +48,53 @@
 
 html,body{ height:100%; margin:0; padding:0; box-sizing:border-box; font-family: "Consolas","Monaco","Lucida Console",monospace; background: var(--bg); color: var(--text); overflow-x:hidden; overflow-y:hidden; -webkit-font-smoothing:antialiased; transition: background 0.6s ease, color 0.6s ease; }
 
+/* Background animated grid */ .grid { position: fixed; inset: 0; background-image: linear-gradient(var(--container-border) 1px, transparent 1px), linear-gradient(90deg, var(--container-border) 1px, transparent 1px); background-size: 40px 40px; animation: gridMove 10s linear infinite; z-index: -1; } @keyframes gridMove { from {background-position:0 0,0 0;} to {background-position:40px 40px,40px 40px;} }
+
 .page { min-height: calc(100vh - 6vh); display:flex; align-items:flex-start; justify-content:center; padding:5vh 16px; } .content { width:100%; max-width:600px; display:flex; flex-direction:column; align-items:center; gap:18px; }
 
-.heading { width:90%; text-align:center; font-size: clamp(1.5rem, 6vw, 3.5rem); font-weight:700; letter-spacing:2px; color: var(--heading); margin:0; animation: subtlePulse 2s infinite alternate ease-in-out; } body.theme-dark .heading, body.theme-gold .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); } @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
+.heading { width:90%; text-align:center; font-size: clamp(1.5rem, 6vw, 3.5rem); font-weight:700; letter-spacing:2px; color: var(--heading); margin:0; animation: subtlePulse 2s infinite alternate ease-in-out; } body.theme-dark .heading, body.theme-gold .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); } @keyframes subtlePulse { from { transform: scale(1);} to { transform: scale(1.02);} }
 
-.container { width:90%; max-width:600px; padding:15px; background: var(--container-bg); border-radius:10px; border:1px solid var(--container-border); box-shadow: var(--container-shadow); box-sizing:border-box; display:flex; flex-direction:column; align-items:center; transition: background 0.6s ease, box-shadow 0.9s ease, border-color 0.6s ease; }
+.container { background: var(--container-bg); border: 1px solid var(--container-border); box-shadow: var(--container-shadow); padding: 22px; border-radius: 16px; width:100%; backdrop-filter: blur(12px); display:flex; flex-direction:column; gap:12px; transition: all 0.6s ease; } .label { font-size:0.9rem; font-weight:600; color: var(--accent); margin-bottom:6px; } .textarea { width:100%; min-height:140px; resize:vertical; padding:12px; border-radius:10px; border:1px solid var(--container-border); background:transparent; color:var(--text); font-size:1rem; outline:none; transition: all 0.3s ease; } .textarea:focus { border-color: var(--accent); box-shadow: 0 0 6px var(--accent); }
 
-input#txt { width:100%; padding:14px; font-size:1.1rem; border-radius:8px; border:2px solid var(--accent); background-color: rgba(0,0,0,0.12); color:var(--text); box-sizing:border-box; } body.theme-light input#txt, body.theme-teal input#txt { background:#fff; color:var(--text); border-color:var(--accent); box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+.buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; } .button { background:var(--accent); border:none; border-radius:10px; padding:12px 20px; font-weight:600; font-size:1rem; color:#fff; cursor:pointer; transition:all 0.3s ease; } .button:hover { opacity:0.9; transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.2); }
 
-.enter { margin-top:12px; width:100%; max-width:300px; padding:12px 18px; border-radius:8px; border:none; background: var(--accent); color: #0d0d0d; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px; }
+/* Theme menu */ .theme-wrapper { position:fixed; top:16px; right:16px; display:flex; flex-direction:column; gap:8px; z-index:50; } .theme-toggle { background:var(--container-bg); border:1px solid var(--container-border); border-radius:50%; width:44px; height:44px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--heading); box-shadow: var(--container-shadow); transition:all 0.3s ease; } .theme-toggle:hover { transform:scale(1.1); } .theme-menu { display:none; flex-direction:column; background:var(--container-bg); border:1px solid var(--container-border); border-radius:12px; padding:8px; box-shadow:var(--container-shadow); } .theme-menu button { background:transparent; border:none; padding:8px 12px; text-align:left; color:var(--text); cursor:pointer; border-radius:8px; transition: all 0.3s ease; } .theme-menu button:hover { background:var(--accent); color:#fff; }
 
-#themeToggle{ position: fixed; top: 12px; right: 12px; z-index:1200; width:44px; height:44px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--heading); backdrop-filter: blur(4px); } #themeToggle svg{ width:22px; height:22px; fill: currentColor; }
-
-/* Theme menu */ #themeMenu { position: absolute; top: 54px; right: 0; display:none; flex-direction:column; background: var(--container-bg); border:1px solid var(--container-border); border-radius:8px; box-shadow: var(--container-shadow); padding:6px; gap:6px; } #themeMenu button { background: var(--accent); border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:bold; color:#0d0d0d; }
-
-.textbyme { position: fixed; bottom: 5px; width: 100%; text-align: center; font-size: 10px; color: var(--text); } </style>
+/* Tooltip */ .tooltip { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:var(--container-bg); padding:8px 16px; border-radius:10px; font-size:0.85rem; border:1px solid var(--container-border); box-shadow:var(--container-shadow); opacity:0; pointer-events:none; transition:opacity 0.3s ease; } .tooltip.show { opacity:1; } </style>
 
 </head>
 <body class="theme-dark">
-  <button id="themeToggle" aria-label="Change Theme" title="Change Theme">
-    <svg viewBox="0 0 24 24"><path d="M7 2v2H3v2h4v2h2V6h4V4H9V2H7zm10 0v2h-4v2h4v2h2V6h4V4h-4V2h-2zm-8 8v2h2v-2H9zm4 0v2h2v-2h-2zm-8 4v2H3v2h4v2h2v-2h4v-2H9v-2H7zm10 0v2h-4v2h4v2h2v-2h4v-2h-4v-2h-2z"/></svg>
-  </button>
-  <div id="themeMenu">
-    <button data-theme="theme-dark">Green & Black</button>
-    <button data-theme="theme-light">Blue & White</button>
-    <button data-theme="theme-teal">Teal & Gray</button>
-    <button data-theme="theme-gold">Black & Gold</button>
+  <div class="grid"></div>
+  <div class="theme-wrapper">
+    <button id="themeToggle" class="theme-toggle">🎨</button>
+    <div id="themeMenu" class="theme-menu">
+      <button data-theme="theme-dark">Green & Black</button>
+      <button data-theme="theme-light">Blue & White</button>
+      <button data-theme="theme-teal">Teal & Gray</button>
+      <button data-theme="theme-gold">Black & Gold</button>
+    </div>
   </div>  <div class="page">
     <div class="content">
       <h1 class="heading">ZeeAi 1.3</h1>
       <div class="container">
-        <input id="txt" placeholder="Enter text" aria-label="Enter text" />
-        <button class="enter" id="speakBtn">Speak</button>
+        <label for="txt" class="label">Enter Text</label>
+        <textarea id="txt" class="textarea" placeholder="Type something..."></textarea>
+      </div>
+      <div class="buttons">
+        <button id="speakBtn" class="button">Speak</button>
       </div>
     </div>
-  </div>  <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p><script>
+  </div>  <div id="tooltip" class="tooltip">Theme Changed!</div><script>
 const themeToggle = document.getElementById('themeToggle');
 const themeMenu = document.getElementById('themeMenu');
+const tooltip = document.getElementById('tooltip');
 
-// Toggle theme menu
 let menuVisible = false;
 themeToggle.addEventListener('click', () => {
   menuVisible = !menuVisible;
   themeMenu.style.display = menuVisible ? 'flex' : 'none';
 });
 
-// Apply theme on click
 const buttons = themeMenu.querySelectorAll('button');
 buttons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -105,8 +106,10 @@ buttons.forEach(btn => {
       if (btn.dataset.theme === 'theme-dark') meta.setAttribute('content', '#00ff55');
       else if (btn.dataset.theme === 'theme-light') meta.setAttribute('content', '#0066ff');
       else if (btn.dataset.theme === 'theme-teal') meta.setAttribute('content', '#00897b');
-      else if (btn.dataset-theme === 'theme-gold') meta.setAttribute('content', '#ffd700');
+      else if (btn.dataset.theme === 'theme-gold') meta.setAttribute('content', '#ffd700');
     }
+    tooltip.classList.add('show');
+    setTimeout(() => tooltip.classList.remove('show'), 1200);
   });
 });
 
@@ -127,7 +130,6 @@ function speakHandler(){
     alert('Please enter some text!');
     return;
   }
-
   currentUtterance = new SpeechSynthesisUtterance(inputText);
   currentUtterance.rate = 1;
   currentUtterance.onstart = () => { isSpeaking = true; speakBtn.textContent = 'Stop'; };
