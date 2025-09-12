@@ -1,513 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ZeeAi 1.3</title>
-  <link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#00ff55">
-  <style>
-    :root{
-      /* Green & Black (default tokens) */
-      --bg-dark: #0d0d0d;
-      --text-dark: #e0e0e0;
-      --heading-dark: #00ff55;
-      --accent-dark: #00ccee;
-      --container-dark: rgba(18,18,18,0.9);
-      --container-border-dark: rgba(0,255,85,0.3);
-      --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ZeeAi 1.3</title>
+<link rel="icon" type="image/jpeg" href="https://image.jimcdn.com/app/cms/image/transf/none/path/s87e10734edef81fd/image/ic057f555847bdd10/version/1757224479/image.jpg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00ff55">
+<style>
+  :root{
+    --bg-dark: #0d0d0d;
+    --text-dark: #e0e0e0;
+    --heading-dark: #00ff55;
+    --accent-dark: #00ccee;
+    --container-dark: rgba(18,18,18,0.9);
+    --container-border-dark: rgba(0,255,85,0.3);
+    --container-shadow-dark: 0 0 25px rgba(0,255,85,0.12);
 
-      /* Blue & White */
-      --bg-light: #ffffff;
-      --text-light: #111111;
-      --heading-light: #0066ff;
-      --accent-light: #0066ff;
-      --container-light: #ffffff;
-      --container-border-light: rgba(0,102,255,0.12);
-      --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
+    --bg-light: #ffffff;
+    --text-light: #111111;
+    --heading-light: #0066ff;
+    --accent-light: #0066ff;
+    --container-light: #ffffff;
+    --container-border-light: rgba(0,102,255,0.12);
+    --container-shadow-light: 0 6px 18px rgba(0,0,0,0.06);
+  }
 
-      /* Teal & Gray */
-      --bg-teal: #f5f7f9;
-      --text-teal: #111111;
-      --heading-teal: #00897b;
-      --accent-teal: #ff7043;
-      --container-teal: #ffffff;
-      --container-border-teal: rgba(0,137,123,0.22);
-      --container-shadow-teal: 0 6px 18px rgba(0,137,123,0.10);
+  /* Default Dark */
+  body{
+    --bg: var(--bg-dark);
+    --text: var(--text-dark);
+    --heading: var(--heading-dark);
+    --accent: var(--accent-dark);
+    --container-bg: var(--container-dark);
+    --container-border: var(--container-border-dark);
+    --container-shadow: var(--container-shadow-dark);
+  }
 
-      /* Black & Gold */
-      --bg-gold: #000000;
-      --text-gold: #eaeaea;
-      --heading-gold: #ffd700;
-      --accent-gold: #ffcc33;
-      --container-gold: #111111;
-      --container-border-gold: rgba(255,215,0,0.22);
-      --container-shadow-gold: 0 6px 18px rgba(255,215,0,0.10);
+  body.light{
+    --bg: var(--bg-light);
+    --text: var(--text-light);
+    --heading: var(--heading-light);
+    --accent: var(--accent-light);
+    --container-bg: var(--container-light);
+    --container-border: var(--container-border-light);
+    --container-shadow: var(--container-shadow-light);
+  }
 
-      /* runtime variables (will be set via theme classes) */
-      --bg: var(--bg-dark);
-      --text: var(--text-dark);
-      --heading: var(--heading-dark);
-      --accent: var(--accent-dark);
-      --container-bg: var(--container-dark);
-      --container-border: var(--container-border-dark);
-      --container-shadow: var(--container-shadow-dark);
-      --grid-rgb: 30,255,12;
-    }
+  body.redyellow {
+    --bg: #1a0000;
+    --text: #ffe066;
+    --heading: #ff0000;
+    --accent: #ff9900;
+    --container-bg: #260000;
+    --container-border: rgba(255, 0, 0, 0.4);
+    --container-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
+  }
 
-    /* Theme classes that set runtime variables */
-    body.theme-dark {
-      --bg: var(--bg-dark);
-      --text: var(--text-dark);
-      --heading: var(--heading-dark);
-      --accent: var(--accent-dark);
-      --container-bg: var(--container-dark);
-      --container-border: var(--container-border-dark);
-      --container-shadow: var(--container-shadow-dark);
-      --grid-rgb: 30,255,12;
-    }
-    body.theme-light {
-      --bg: var(--bg-light);
-      --text: var(--text-light);
-      --heading: var(--heading-light);
-      --accent: var(--accent-light);
-      --container-bg: var(--container-light);
-      --container-border: var(--container-border-light);
-      --container-shadow: var(--container-shadow-light);
-      --grid-rgb: 0,102,255;
-    }
-    body.theme-teal {
-      --bg: var(--bg-teal);
-      --text: var(--text-teal);
-      --heading: var(--heading-teal);
-      --accent: var(--accent-teal);
-      --container-bg: var(--container-teal);
-      --container-border: var(--container-border-teal);
-      --container-shadow: var(--container-shadow-teal);
-      --grid-rgb: 0,137,123;
-    }
-    body.theme-gold {
-      --bg: var(--bg-gold);
-      --text: var(--text-gold);
-      --heading: var(--heading-gold);
-      --accent: var(--accent-gold);
-      --container-bg: var(--container-gold);
-      --container-border: var(--container-border-gold);
-      --container-shadow: var(--container-shadow-gold);
-      --grid-rgb: 255,215,0;
-    }
+  body.redwhite {
+    --bg: #ffffff;
+    --text: #222222;
+    --heading: #ff0000;
+    --accent: #ff3333;
+    --container-bg: #fff5f5;
+    --container-border: rgba(255, 0, 0, 0.2);
+    --container-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
 
-    html,body{
-      height:100%;
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: "Consolas","Monaco","Lucida Console",monospace;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x:hidden;
-      -webkit-font-smoothing:antialiased;
-      transition: background 0.6s ease, color 0.6s ease;
-    }
+  html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Consolas","Monaco","Lucida Console",monospace;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x:hidden;
+    overflow-y:hidden;
+    -webkit-font-smoothing:antialiased;
+    transition: background 0.6s ease, color 0.6s ease;
+  }
 
-    /* subtle background grid using current theme border color */
-    body::before{
-      content:'';
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background-image:
-        linear-gradient(0deg, transparent 24%, rgba(var(--grid-rgb),0.05) 25%, rgba(var(--grid-rgb),0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb),0.05) 75%, rgba(var(--grid-rgb),0.05) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, rgba(var(--grid-rgb),0.05) 25%, rgba(var(--grid-rgb),0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb),0.05) 75%, rgba(var(--grid-rgb),0.05) 76%, transparent 77%, transparent);
-      background-size: 50px 50px;
-      opacity: 0.18;
-      transition: background-image 0.8s ease, opacity 0.6s ease;
-    }
+  .page {
+    min-height: calc(100vh - 6vh);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:5vh 16px;
+  }
 
-    .page {
-      min-height: calc(100vh - 6vh);
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:5vh 16px;
-    }
+  .content {
+    width:100%;
+    max-width:600px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
 
-    .content {
-      width:100%;
-      max-width:720px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:20px;
-    }
+  .heading {
+    width:90%;
+    text-align:center;
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    font-weight:700;
+    letter-spacing:2px;
+    color: var(--heading);
+    margin:0;
+    animation: subtlePulse 2s infinite alternate ease-in-out;
+  }
+  body:not(.light) .heading { text-shadow: 0 0 5px var(--heading), 0 0 10px var(--heading); }
+  @keyframes subtlePulse { from { transform: scale(1); } to { transform: scale(1.01); } }
 
-    .heading {
-      width:100%;
-      text-align:center;
-      font-size: clamp(1.6rem, 6vw, 3rem);
-      font-weight:700;
-      letter-spacing:2px;
-      color: var(--heading);
-      margin:0;
-      animation: subtlePulse 2s infinite alternate ease-in-out;
-      transition: color 0.6s ease, text-shadow 0.6s ease;
-    }
-    @keyframes subtlePulse { from { transform: scale(1);} to { transform: scale(1.01);} }
-    body.theme-dark .heading, body.theme-gold .heading { text-shadow: 0 0 6px var(--heading), 0 0 14px rgba(0,0,0,0.06); }
+  .container {
+    width:90%;
+    max-width:600px;
+    padding:15px;
+    background: var(--container-bg);
+    border-radius:10px;
+    border:1px solid var(--container-border);
+    box-shadow: var(--container-shadow);
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition: background 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease;
+  }
 
-    .container {
-      width:95%;
-      padding:18px;
-      background: var(--container-bg);
-      border-radius:12px;
-      border:1px solid var(--container-border);
-      box-shadow: var(--container-shadow);
-      box-sizing:border-box;
-      display:flex;
-      flex-direction:column;
-      align-items:flex-start;
-      gap:12px;
-      transition: background 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease;
-    }
+  input#txt {
+    width:100%;
+    padding:14px;
+    font-size:1.1rem;
+    border-radius:8px;
+    border:2px solid var(--accent);
+    background-color: rgba(0,0,0,0.12);
+    color:var(--text);
+    box-sizing:border-box;
+  }
+  body.light input#txt {
+    background:#fff;
+    color:var(--text);
+    border-color:var(--accent);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  input#txt::placeholder{ color:#888; }
+  input#txt:focus{ outline:none; box-shadow:0 0 12px rgba(0,204,238,0.18); }
 
-    label[for="txt"] { font-size:0.95rem; color:var(--text); margin-bottom:6px; display:block; }
-    #txt {
-      width:100%;
-      padding:12px;
-      font-size:1.05rem;
-      border-radius:8px;
-      border:1px solid var(--container-border);
-      background: transparent;
-      color:var(--text);
-      min-height:140px;
-      resize:vertical;
-      box-sizing:border-box;
-    }
-    #txt:focus { outline:none; box-shadow: 0 6px 18px rgba(0,0,0,0.08); border-color: var(--accent); }
+  .enter{
+    margin-top:12px;
+    width:100%;
+    max-width:300px;
+    padding:12px 18px;
+    border-radius:8px;
+    border:none;
+    background: var(--accent);
+    color: #0d0d0d;
+    font-weight:700;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    transition: background 0.6s ease, color 0.6s ease;
+  }
 
-    .controls {
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:center;
-      width:100%;
-    }
+  #themeToggle{
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index:1200;
+    width:44px; height:44px;
+    border-radius:50%;
+    border:2px solid var(--accent);
+    background: var(--container-bg);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:20px;
+    color:var(--heading);
+    box-shadow: var(--container-shadow);
+  }
 
-    .enter {
-      padding:12px 20px;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
-      background-size:300% 300%;
-      animation: buttonGlow 6s ease infinite;
-      color: var(--bg);
-      font-weight:700;
-      letter-spacing:1px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-      transition: transform 200ms ease;
-    }
-    @keyframes buttonGlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-    .enter:active { transform: translateY(1px) scale(0.995); }
+  /* Theme menu */
+  #themeMenu {
+    position: fixed;
+    top: 60px;
+    right: 12px;
+    background: var(--container-bg);
+    border: 1px solid var(--container-border);
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: var(--container-shadow);
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 1250;
+  }
+  #themeMenu button {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    background: var(--accent);
+    color: #0d0d0d;
+    transition: opacity 0.3s;
+  }
+  #themeMenu button:hover { opacity: 0.85; }
 
-    /* theme picker (brush) */
-    #themeToggle {
-      position: fixed;
-      top: 14px;
-      right: 14px;
-      z-index:1200;
-      width:46px; height:46px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.04);
-      background: rgba(255,255,255,0.02);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      color:var(--heading);
-      backdrop-filter: blur(4px);
-      transition: background 0.4s ease, transform 0.15s ease;
-    }
-    #themeToggle:active { transform: scale(0.98); }
-    #themeToggle svg { width:22px; height:22px; fill: currentColor; }
+  .textbyme {
+    position: fixed;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text);
+  }
 
-    .theme-menu {
-      position: fixed;
-      top: 64px;
-      right: 12px;
-      z-index:1250;
-      padding:8px;
-      border-radius:10px;
-      background: var(--container-bg);
-      border:1px solid var(--container-border);
-      box-shadow: var(--container-shadow);
-      display:none;
-      flex-direction: column;
-      gap:8px;
-      min-width:180px;
-    }
-    .theme-option {
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding:8px;
-      border-radius:8px;
-      cursor:pointer;
-      transition:transform 120ms ease, background 250ms ease;
-      border:1px solid transparent;
-    }
-    .theme-option:hover { transform: translateY(-3px); background: rgba(255,255,255,0.02); }
-    .swatch {
-      width:34px; height:34px; border-radius:8px; flex-shrink:0; border:1px solid rgba(255,255,255,0.06);
-    }
-    .theme-label { color:var(--text); font-weight:600; font-size:0.95rem; }
+  /* Install button */
+  #installBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border: none;
+    border-radius: 28px;
+    color: var(--bg);
+    cursor: pointer;
+    background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
+    background-size: 300% 300%;
+    animation: bgMove 5s ease infinite, pulse 2s infinite, hue 8s linear infinite;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 40px rgba(0,0,0,0.06);
+    z-index: 9999;
+    display:none;
+  }
+  @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+  @keyframes pulse { 0%{transform:translateY(0) scale(1);} 50%{transform:translateY(-6px) scale(1.06);} 100%{transform:translateY(0) scale(1);} }
+  @keyframes hue { from{filter:hue-rotate(0deg);} to{filter:hue-rotate(360deg);} }
 
-    /* install button */
-    #installBtn {
-      position: fixed;
-      bottom: 22px;
-      right: 20px;
-      padding: 14px 26px;
-      border-radius:28px;
-      border:none;
-      cursor:pointer;
-      z-index:1200;
-      font-weight:800;
-      color:var(--bg);
-      background: linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);
-      background-size:300% 300%;
-      animation: bgMove 5s ease infinite, pulse 2s infinite;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-      display:none;
-    }
-    @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-    @keyframes pulse { 0%{transform:translateY(0)} 50%{transform:translateY(-6px)} 100%{transform:translateY(0)} }
-
-    /* speed control */
-    #speedControl { position: fixed; bottom: 92px; right: 18px; z-index:1200; }
-    #speedBtn { width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#000; box-shadow:0 6px 16px rgba(0,0,0,0.18); }
-    #speedMenu { display:none; position:absolute; bottom:54px; right:0; background:var(--container-bg); border:1px solid var(--container-border); border-radius:8px; padding:6px; box-shadow: var(--container-shadow); display:flex; flex-direction:column; gap:6px; }
-    #speedMenu button { background: var(--accent); border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:700; color:#111; }
-
-    /* tooltip */
-    .tooltip { position: fixed; top: 64px; right: 80px; z-index:1300; padding:8px 10px; border-radius:8px; background:var(--container-bg); border:1px solid var(--container-border); color:var(--text); display:none; }
-  </style>
+  /* Speed Control */
+  #speedControl {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+  }
+  #speedBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: #0d0d0d;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  #speedMenu {
+    display:none;
+    position: absolute;
+    bottom: 54px;
+    right: 0;
+    background: var(--container-bg);
+    border: 1px solid var(--container-border);
+    border-radius: 8px;
+    box-shadow: var(--container-shadow);
+    padding: 6px;
+    flex-direction: column;
+    gap: 6px;
+  }
+  #speedMenu button {
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #0d0d0d;
+  }
+</style>
 </head>
-<body class="theme-dark">
-  <!-- animated subtle grid (CSS uses body vars) -->
-  <div aria-hidden="true" style="position:fixed; inset:0; z-index:-2;"></div>
-
-  <!-- brush theme picker -->
-  <button id="themeToggle" aria-label="Open theme picker" title="Theme (brush)">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7.22 14.2l2.58 2.58a1 1 0 0 1 0 1.41l-2.83 2.83a1 1 0 0 1-1.41 0l-1.17-1.17a2 2 0 0 1 0-2.83l2.83-2.83a1 1 0 0 1 1.41 0zM20.71 7.04a3.5 3.5 0 0 0 0-4.95l-1.8-1.8a3.5 3.5 0 0 0-4.95 0L8.9 5.35l6.76 6.76 4.3-5.07z"/>
-    </svg>
-  </button>
-
-  <div id="themeMenu" class="theme-menu" role="menu" aria-hidden="true">
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-dark">
-      <div class="swatch" style="background: linear-gradient(45deg,#00ff55,#00ccee)"></div>
-      <div class="theme-label">Green &amp; Black</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-light">
-      <div class="swatch" style="background: linear-gradient(45deg,#0066ff,#00a6ff)"></div>
-      <div class="theme-label">Blue &amp; White</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-teal">
-      <div class="swatch" style="background: linear-gradient(45deg,#00897b,#ff7043)"></div>
-      <div class="theme-label">Teal &amp; Gray</div>
-    </div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-gold">
-      <div class="swatch" style="background: linear-gradient(45deg,#ffd700,#ffcc33)"></div>
-      <div class="theme-label">Black &amp; Gold</div>
-    </div>
+<body>
+  <button id="themeToggle" aria-label="Choose Theme">🎨</button>
+  <div id="themeMenu">
+    <button data-theme="dark">Green & Black</button>
+    <button data-theme="light">Blue & White</button>
+    <button data-theme="redyellow">Red & Yellow</button>
+    <button data-theme="redwhite">Red & White</button>
   </div>
 
-  <!-- page -->
   <div class="page">
     <div class="content">
       <h1 class="heading">ZeeAi 1.3</h1>
-
-      <div class="container" role="region" aria-label="Text input container">
-        <label for="txt">Enter Text</label>
-        <textarea id="txt" placeholder="Type text to speak..." aria-label="Enter text"></textarea>
-        <div class="controls" style="width:100%; justify-content:space-between; gap:8px;">
-          <div style="display:flex; gap:8px;">
-            <button id="speakBtn" class="enter">Speak</button>
-          </div>
-
-          <!-- speed control -->
-          <div id="speedControl" style="display:flex; align-items:center; gap:8px;">
-            <button id="speedBtn" aria-haspopup="true" aria-expanded="false" title="Playback speed">⏱️</button>
-            <div id="speedMenu" style="display:none;" role="menu" aria-hidden="true">
-              <button data-rate="0.5">0.5x</button>
-              <button data-rate="1">1x</button>
-              <button data-rate="1.5">1.5x</button>
-              <button data-rate="2">2x</button>
-            </div>
-          </div>
-        </div>
+      <div class="container">
+        <input id="txt" placeholder="Enter text" aria-label="Enter text" />
+        <button class="enter" id="speakBtn">Speak</button>
       </div>
-
     </div>
   </div>
 
+  <p class="textbyme">Text To Speech Generator Made By Zeeshan Khan</p>
+
   <button id="installBtn" aria-label="Install ZeeAi PWA">🌈🚀 Install App 🚀🌈</button>
-  <div id="tooltip" class="tooltip" role="status" aria-live="polite">Theme applied</div>
 
-  <script>
-    /* ---------------------------
-       Service Worker & PWA Install
-       --------------------------- */
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').catch(()=>{ /* ignore */ });
-    }
+  <!-- Speed Control -->
+  <div id="speedControl">
+    <button id="speedBtn" aria-label="Change Speed">⏱️</button>
+    <div id="speedMenu">
+      <button data-rate="0.5">0.5x</button>
+      <button data-rate="1">1x</button>
+      <button data-rate="1.5">1.5x</button>
+      <button data-rate="2">2x</button>
+    </div>
+  </div>
 
-    let deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) { alert('Install prompt not available yet.'); return; }
-      deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      console.log('PWA install choice:', choice);
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+}
 
-    /* ---------------------------
-       Theme picker
-       --------------------------- */
-    const themeToggle = document.getElementById('themeToggle');
-    const themeMenu = document.getElementById('themeMenu');
-    const themeOptions = themeMenu.querySelectorAll('.theme-option');
-    const tooltip = document.getElementById('tooltip');
+const speakBtn = document.getElementById('speakBtn');
+const txtInput = document.getElementById('txt');
 
-    // Toggle menu
-    let menuOpen = false;
-    function openMenu(){ themeMenu.style.display = 'flex'; themeMenu.setAttribute('aria-hidden','false'); menuOpen = true; }
-    function closeMenu(){ themeMenu.style.display = 'none'; themeMenu.setAttribute('aria-hidden','true'); menuOpen = false; }
-    themeToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuOpen ? closeMenu() : openMenu();
-    });
-    // close on outside click
-    document.addEventListener('click', (e) => {
-      if (menuOpen && !themeMenu.contains(e.target) && !themeToggle.contains(e.target)) closeMenu();
-    });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+let isSpeaking = false;
+let currentUtterance = null;
+let currentRate = 1;
 
-    // theme apply function (and persistence)
-    function applyTheme(themeName){
-      // clear previous theme-* classes
-      document.body.classList.remove('theme-dark','theme-light','theme-teal','theme-gold');
-      if (!themeName || themeName === 'theme-dark') {
-        document.body.classList.add('theme-dark');
-      } else {
-        document.body.classList.add(themeName);
-      }
-      localStorage.setItem('zeeai-theme', themeName || 'theme-dark');
+function speakHandler(){
+  const inputText = txtInput.value || '';
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    resetSpeakingState();
+    return;
+  }
+  if (!inputText.trim()){
+    alert('Please enter some text!');
+    return;
+  }
 
-      // update meta theme-color for mobile browsers
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) {
-        if (themeName === 'theme-light') meta.setAttribute('content','#0066ff');
-        else if (themeName === 'theme-teal') meta.setAttribute('content','#00897b');
-        else if (themeName === 'theme-gold') meta.setAttribute('content','#ffd700');
-        else meta.setAttribute('content','#00ff55');
-      }
+  currentUtterance = new SpeechSynthesisUtterance(inputText);
+  currentUtterance.rate = currentRate;
+  currentUtterance.onstart = () => {
+    isSpeaking = true;
+    speakBtn.textContent = 'Stop';
+  };
+  currentUtterance.onend = () => { resetSpeakingState(); };
+  currentUtterance.onerror = () => { resetSpeakingState(); };
 
-      // show small tooltip
-      tooltip.style.display = 'block';
-      setTimeout(()=> tooltip.style.display = 'none', 1100);
-    }
+  window.speechSynthesis.speak(currentUtterance);
+}
+function resetSpeakingState(){
+  isSpeaking = false;
+  speakBtn.textContent = 'Speak';
+  currentUtterance = null;
+}
+speakBtn.addEventListener('click', speakHandler);
+txtInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    speakHandler();
+  }
+});
 
-    // click handlers for options
-    themeOptions.forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        const name = opt.dataset.theme;
-        applyTheme(name);
-        closeMenu();
-      });
-      opt.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt.click(); } });
-    });
+/* === PWA Install Button === */
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+});
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) {
+    alert('Install prompt not available yet.');
+    return;
+  }
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  console.log('PWA install choice:', choice);
+  installBtn.style.display = 'none';
+  deferredPrompt = null;
+});
 
-    // load saved theme
-    const saved = localStorage.getItem('zeeai-theme') || 'theme-dark';
-    applyTheme(saved);
+/* === Speed Control === */
+const speedBtn = document.getElementById('speedBtn');
+const speedMenu = document.getElementById('speedMenu');
 
-    /* ---------------------------
-       Speech Synthesis (TTS)
-       --------------------------- */
-    const speakBtn = document.getElementById('speakBtn');
-    const txt = document.getElementById('txt');
-    let currentUtterance = null;
-    let isSpeaking = false;
-    let currentRate = 1;
+speedBtn.addEventListener('click', () => {
+  speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
+});
 
-    function resetSpeaking(){
-      isSpeaking = false;
-      speakBtn.textContent = 'Speak';
-      currentUtterance = null;
-    }
+speedMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentRate = parseFloat(btn.dataset.rate);
+    alert('Speed set to ' + currentRate + 'x');
+    speedMenu.style.display = 'none';
+  });
+});
 
-    function speakHandler(){
-      const text = txt.value || '';
-      if (isSpeaking){
-        window.speechSynthesis.cancel();
-        resetSpeaking();
-        return;
-      }
-      if (!text.trim()){ alert('Please enter some text!'); return; }
+/* === Theme Menu === */
+const themeToggle = document.getElementById("themeToggle");
+const themeMenu = document.getElementById("themeMenu");
 
-      currentUtterance = new SpeechSynthesisUtterance(text);
-      currentUtterance.rate = currentRate;
-      currentUtterance.onstart = () => { isSpeaking = true; speakBtn.textContent = 'Stop'; };
-      currentUtterance.onend = () => { resetSpeaking(); };
-      currentUtterance.onerror = () => { resetSpeaking(); };
-      window.speechSynthesis.speak(currentUtterance);
-    }
-    speakBtn.addEventListener('click', speakHandler);
-    txt.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); speakHandler(); } });
+function setTheme(themeName) {
+  document.body.className = "";
+  if (themeName === "dark") {
+    // default green-black
+  } else {
+    document.body.classList.add(themeName);
+  }
+  localStorage.setItem("theme", themeName);
+}
 
-    /* ---------------------------
-       Speed control
-       --------------------------- */
-    const speedBtn = document.getElementById('speedBtn');
-    const speedMenu = document.getElementById('speedMenu');
+themeToggle.addEventListener("click", () => {
+  themeMenu.style.display = themeMenu.style.display === "flex" ? "none" : "flex";
+});
 
-    speedBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      speedMenu.style.display = (speedMenu.style.display === 'flex') ? 'none' : 'flex';
-      speedMenu.setAttribute('aria-hidden', speedMenu.style.display === 'flex' ? 'false' : 'true');
-    });
-    document.addEventListener('click', (e) => {
-      if (!speedMenu.contains(e.target) && e.target !== speedBtn) speedMenu.style.display = 'none';
-    });
+themeMenu.querySelectorAll("button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const theme = btn.dataset.theme;
+    setTheme(theme);
+    themeMenu.style.display = "none";
+  });
+});
 
-    speedMenu.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentRate = parseFloat(btn.dataset.rate) || 1;
-        alert('Speed set to ' + currentRate + 'x');
-        speedMenu.style.display = 'none';
-      });
-    });
-
-    /* ---------------------------
-       Small safety / niceties
-       --------------------------- */
-    // Prevent accidental selection of the theme button from bubbling when using keyboard
-    themeToggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); themeToggle.click(); }
-    });
-
-    // ensure install button hidden by default until beforeinstallprompt sets it
-    installBtn.style.display = 'none';
-  </script>
+// Load saved theme
+const savedTheme = localStorage.getItem("theme") || "dark";
+setTheme(savedTheme);
+</script>
 </body>
 </html>
