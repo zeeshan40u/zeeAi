@@ -37,36 +37,31 @@
     .enter{padding:12px 20px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);background-size:300% 300%;animation:buttonGlow 6s ease infinite;color:var(--bg);font-weight:700;letter-spacing:1px;box-shadow:0 8px 20px rgba(0,0,0,0.18);transition:transform 200ms ease;}
     @keyframes buttonGlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .enter:active{transform:translateY(1px) scale(0.995);}
+
     /* --- Theme picker --- */
-    #themeToggle{position:fixed;top:14px;right:14px;z-index:1200;width:46px;height:46px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--heading);backdrop-filter:blur(4px);transition: background 0.4s ease, transform 0.15s ease;}
-    #themeToggle:active{transform:scale(0.98);}
-    #themeToggle svg{width:22px;height:22px;fill:currentColor;}
+    #themeToggle{position:fixed;top:14px;right:14px;z-index:1200;width:50px;height:50px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--heading);backdrop-filter:blur(4px);transition: background 0.4s ease, transform 0.15s ease;font-size:28px;}
+    #themeToggle:active{transform:scale(0.96);}
     .theme-menu{position:fixed;top:64px;right:12px;z-index:1250;padding:8px;border-radius:10px;background:var(--container-bg);border:1px solid var(--container-border);box-shadow:var(--container-shadow);display:none;flex-direction:column;gap:8px;min-width:180px;}
     .theme-option{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;cursor:pointer;transition:transform 120ms ease, background 250ms ease;border:1px solid transparent;}
     .theme-option:hover{transform:translateY(-3px);background:rgba(255,255,255,0.02);}
     .swatch{width:34px;height:34px;border-radius:8px;flex-shrink:0;border:1px solid rgba(255,255,255,0.06);}
     .theme-label{color:var(--text);font-weight:600;font-size:0.95rem;}
+
     /* --- Install button --- */
     #installBtn{position:fixed;bottom:22px;right:20px;padding:14px 26px;border-radius:28px;border:none;cursor:pointer;z-index:1200;font-weight:800;color:var(--bg);background:linear-gradient(45deg,var(--accent) 0%,var(--heading) 50%,var(--accent) 100%);background-size:300% 300%;animation:bgMove 5s ease infinite, pulse 2s infinite;box-shadow:0 10px 30px rgba(0,0,0,0.18);display:none;}
     @keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     @keyframes pulse{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+
     /* --- Speed control --- */
     #speedControl{position:fixed;bottom:92px;right:18px;z-index:1200;}
     #speedBtn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#000;box-shadow:0 6px 16px rgba(0,0,0,0.18);}
-    #speedMenu{display:none;position:absolute;bottom:54px;right:0;background:var(--container-bg);border:1px solid var(--container-border);border-radius:8px;padding:6px;box-shadow:var(--container-shadow);display:flex;flex-direction:column;gap:6px;}
+    #speedMenu{display:none; /* hidden by default */ position:absolute;bottom:54px;right:0;background:var(--container-bg);border:1px solid var(--container-border);border-radius:8px;padding:6px;box-shadow:var(--container-shadow);flex-direction:column;gap:6px;}
     #speedMenu button{background:var(--accent);border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;color:#111;}
-    /* --- Tooltip --- */
-    .tooltip{position:fixed;top:64px;right:80px;z-index:1300;padding:8px 10px;border-radius:8px;background:var(--container-bg);border:1px solid var(--container-border);color:var(--text);display:none;}
   </style>
 </head>
 <body class="theme-dark">
-  <div aria-hidden="true" style="position:fixed; inset:0; z-index:-2;"></div>
-
   <!-- Theme picker -->
-  <button id="themeToggle" aria-label="Open theme picker" title="Theme (brush)">
-    <!-- Paint Brush Icon -->
-    🎨
-  </button>
+  <button id="themeToggle" aria-label="Open theme picker" title="Theme (brush)">🎨</button>
   <div id="themeMenu" class="theme-menu" role="menu" aria-hidden="true">
     <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-dark"><div class="swatch" style="background:linear-gradient(45deg,#00ff55,#00ccee)"></div><div class="theme-label">Green &amp; Black</div></div>
     <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-light"><div class="swatch" style="background:linear-gradient(45deg,#0066ff,#00a6ff)"></div><div class="theme-label">Blue &amp; White</div></div>
@@ -78,13 +73,11 @@
   <div class="page">
     <div class="content">
       <h1 class="heading">ZeeAi 1.3</h1>
-      <div class="container" role="region" aria-label="Text input container">
+      <div class="container">
         <label for="txt">Enter Text</label>
         <textarea id="txt" placeholder="Type text to speak..." aria-label="Enter text"></textarea>
-        <div class="controls" style="width:100%; justify-content:space-between; gap:8px;">
-          <div style="display:flex; gap:8px;">
-            <button id="speakBtn" class="enter">Speak</button>
-          </div>
+        <div class="controls">
+          <button id="speakBtn" class="enter">Speak</button>
         </div>
       </div>
     </div>
@@ -102,87 +95,44 @@
   </div>
 
   <button id="installBtn" aria-label="Install ZeeAi PWA">🌈🚀 Install App 🚀🌈</button>
-  <div id="tooltip" class="tooltip" role="status" aria-live="polite">Theme applied</div>
 
   <script>
-    /* PWA Install */
+    /* Service Worker */
     if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-    let deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', e=>{e.preventDefault(); deferredPrompt=e; installBtn.style.display='block';});
-    installBtn.addEventListener('click', async ()=>{if(!deferredPrompt){alert('Install prompt not available yet.'); return;} deferredPrompt.prompt(); deferredPrompt=null; installBtn.style.display='none';});
-/* Theme Picker */
-    const themeToggle=document.getElementById('themeToggle');
-    const themeMenu=document.getElementById('themeMenu');
-    const themeOptions=themeMenu.querySelectorAll('.theme-option');
-    const tooltip=document.getElementById('tooltip');
-    let menuOpen=false;
 
-    function openMenu(){
-      themeMenu.style.display='flex';
-      themeMenu.setAttribute('aria-hidden','false');
-      menuOpen=true;
-    }
-    function closeMenu(){
-      themeMenu.style.display='none';
-      themeMenu.setAttribute('aria-hidden','true');
-      menuOpen=false;
-    }
-    themeToggle.addEventListener('click',e=>{
-      e.stopPropagation();
-      menuOpen?closeMenu():openMenu();
-    });
-    document.addEventListener('click',e=>{
-      if(menuOpen && !themeMenu.contains(e.target) && !themeToggle.contains(e.target)) closeMenu();
-    });
-    document.addEventListener('keydown',e=>{
-      if(e.key==='Escape') closeMenu();
-    });
-
-    function applyTheme(themeName){
-      document.body.classList.remove('theme-dark','theme-light','theme-teal','theme-gold');
-      document.body.classList.add(themeName);
-      localStorage.setItem('zeeai-theme',themeName);
-      tooltip.style.display='block';
-      setTimeout(()=>tooltip.style.display='none',1200);
-    }
-    themeOptions.forEach(opt=>{
-      opt.addEventListener('click',()=>{
-        applyTheme(opt.dataset.theme);
-        closeMenu();
-      });
-    });
-    const savedTheme=localStorage.getItem('zeeai-theme');
-    if(savedTheme) applyTheme(savedTheme);
-
-    /* Speed Control */
-    const speedBtn=document.getElementById('speedBtn');
-    const speedMenu=document.getElementById('speedMenu');
-    let speedOpen=false;
-    speedBtn.addEventListener('click',()=>{
-      speedOpen=!speedOpen;
-      speedMenu.style.display=speedOpen?'flex':'none';
-    });
-    speedMenu.querySelectorAll('button').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const rate=parseFloat(btn.dataset.rate);
-        localStorage.setItem('zeeai-rate',rate);
-        speedMenu.style.display='none';
-        speedOpen=false;
-      });
-    });
-
-    /* Speech Synthesis */
+    /* Speak functionality */
     const speakBtn=document.getElementById('speakBtn');
     const txt=document.getElementById('txt');
-    speakBtn.addEventListener('click',()=>{
-      const text=txt.value.trim();
-      if(!text) return;
-      const utter=new SpeechSynthesisUtterance(text);
-      const savedRate=parseFloat(localStorage.getItem('zeeai-rate')||'1');
-      utter.rate=savedRate;
-      speechSynthesis.speak(utter);
-    });
+    let isSpeaking=false,currentUtterance=null,currentRate=1;
+    function resetSpeaking(){isSpeaking=false;speakBtn.textContent="Speak";currentUtterance=null;}
+    function speakHandler(){
+      const val=txt.value.trim();
+      if(isSpeaking){speechSynthesis.cancel();resetSpeaking();return;}
+      if(!val){alert("Please enter some text!");return;}
+      currentUtterance=new SpeechSynthesisUtterance(val);
+      currentUtterance.rate=currentRate;
+      currentUtterance.onstart=()=>{isSpeaking=true;speakBtn.textContent="Stop";};
+      currentUtterance.onend=resetSpeaking;currentUtterance.onerror=resetSpeaking;
+      speechSynthesis.speak(currentUtterance);
+    }
+    speakBtn.addEventListener('click',speakHandler);
+
+    /* Speed Control */
+    const speedBtn=document.getElementById('speedBtn'),speedMenu=document.getElementById('speedMenu');
+    speedBtn.addEventListener('click',()=>{speedMenu.style.display=speedMenu.style.display==='flex'?'none':'flex';});
+    speedMenu.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{currentRate=parseFloat(btn.dataset.rate);alert('Speed set to '+currentRate+'x');speedMenu.style.display='none';}));
+
+    /* Theme Menu */
+    const themeToggle=document.getElementById('themeToggle'),themeMenu=document.getElementById('themeMenu');
+    function setTheme(t){document.body.className=t;localStorage.setItem("theme",t);}
+    themeToggle.addEventListener("click",()=>{themeMenu.style.display=themeMenu.style.display==="flex"?"none":"flex";});
+    themeMenu.querySelectorAll(".theme-option").forEach(opt=>opt.addEventListener("click",()=>{setTheme(opt.dataset.theme);themeMenu.style.display="none";}));
+    setTheme(localStorage.getItem("theme")||"theme-dark");
+
+    /* PWA Install */
+    let deferredPrompt=null;const installBtn=document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='block';});
+    installBtn.addEventListener('click',async()=>{if(!deferredPrompt){alert('Install prompt not available yet.');return;}deferredPrompt.prompt();deferredPrompt=null;installBtn.style.display='none';});
   </script>
 </body>
 </html>
