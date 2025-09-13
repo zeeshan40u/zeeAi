@@ -12,14 +12,14 @@
     :root{
       --bg-dark:#0d0d0d;--text-dark:#e0e0e0;--heading-dark:#00ff55;--accent-dark:#00ccee;--container-dark:rgba(18,18,18,0.9);--container-border-dark:rgba(0,255,85,0.3);--container-shadow-dark:0 0 25px rgba(0,255,85,0.12);
       --bg-light:#ffffff;--text-light:#111111;--heading-light:#0066ff;--accent-light:#0066ff;--container-light:#ffffff;--container-border-light:rgba(0,102,255,0.12);--container-shadow-light:0 6px 18px rgba(0,0,0,0.06);
-      --bg-teal:#f5f7f9;--text-teal:#111111;--heading-teal:#00897b;--accent-teal:#ff7043;--container-teal:#ffffff;--container-border-teal:rgba(0,137,123,0.22);--container-shadow-teal:0 6px 18px rgba(0,137,123,0.10);
-      --bg-gold:#000000;--text-gold:#eaeaea;--heading-gold:#ffd700;--accent-gold:#ffcc33;--container-gold:#111111;--container-border-gold:rgba(255,215,0,0.22);--container-shadow-gold:0 6px 18px rgba(255,215,0,0.10);
+      --bg-teal:#0f1111;--text-teal:#d7eaea;--heading-teal:#20c997;--accent-teal:#17a2b8;--container-teal:#1c1f1f;--container-border-teal:rgba(23,162,184,0.4);--container-shadow-teal:0 0 20px rgba(23,162,184,0.2);
+      --bg-gold:#000000;--text-gold:#f8f5e1;--heading-gold:#ffd700;--accent-gold:#ffae00;--container-gold:#111111;--container-border-gold:rgba(255,215,0,0.4);--container-shadow-gold:0 0 20px rgba(255,215,0,0.2);
       --bg: var(--bg-dark);--text: var(--text-dark);--heading: var(--heading-dark);--accent: var(--accent-dark);--container-bg: var(--container-dark);--container-border: var(--container-border-dark);--container-shadow: var(--container-shadow-dark);--grid-rgb: 30,255,12;
     }
 
     body.theme-dark{--bg:var(--bg-dark);--text:var(--text-dark);--heading:var(--heading-dark);--accent:var(--accent-dark);--container-bg:var(--container-dark);--container-border:var(--container-border-dark);--container-shadow:var(--container-shadow-dark);--grid-rgb:30,255,12;}
     body.theme-light{--bg:var(--bg-light);--text:var(--text-light);--heading:var(--heading-light);--accent:var(--accent-light);--container-bg:var(--container-light);--container-border:var(--container-border-light);--container-shadow:var(--container-shadow-light);--grid-rgb:0,102,255;}
-    body.theme-teal{--bg:var(--bg-teal);--text:var(--text-teal);--heading:var(--heading-teal);--accent:var(--accent-teal);--container-bg:var(--container-teal);--container-border:var(--container-border-teal);--container-shadow:var(--container-shadow-teal);--grid-rgb:0,137,123;}
+    body.theme-teal{--bg:var(--bg-teal);--text:var(--text-teal);--heading:var(--heading-teal);--accent:var(--accent-teal);--container-bg:var(--container-teal);--container-border:var(--container-border-teal);--container-shadow:var(--container-shadow-teal);--grid-rgb:23,162,184;}
     body.theme-gold{--bg:var(--bg-gold);--text:var(--text-gold);--heading:var(--heading-gold);--accent:var(--accent-gold);--container-bg:var(--container-gold);--container-border:var(--container-border-gold);--container-shadow:var(--container-shadow-gold);--grid-rgb:255,215,0;}
 
     html,body{height:100%;margin:0;padding:0;box-sizing:border-box;font-family:"Consolas","Monaco","Lucida Console",monospace;background: var(--bg);color: var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;transition: background 0.6s ease,color 0.6s ease;}
@@ -64,15 +64,14 @@
 
   <!-- Theme picker -->
   <button id="themeToggle" aria-label="Open theme picker" title="Theme (brush)">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7.22 14.2l2.58 2.58a1 1 0 0 1 0 1.41l-2.83 2.83a1 1 0 0 1-1.41 0l-1.17-1.17a2 2 0 0 1 0-2.83l2.83-2.83a1 1 0 0 1 1.41 0zM20.71 7.04a3.5 3.5 0 0 0 0-4.95l-1.8-1.8a3.5 3.5 0 0 0-4.95 0L8.9 5.35l6.76 6.76 4.3-5.07z"/>
-    </svg>
+    <!-- Paint Brush Icon -->
+    🎨
   </button>
   <div id="themeMenu" class="theme-menu" role="menu" aria-hidden="true">
     <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-dark"><div class="swatch" style="background:linear-gradient(45deg,#00ff55,#00ccee)"></div><div class="theme-label">Green &amp; Black</div></div>
     <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-light"><div class="swatch" style="background:linear-gradient(45deg,#0066ff,#00a6ff)"></div><div class="theme-label">Blue &amp; White</div></div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-teal"><div class="swatch" style="background:linear-gradient(45deg,#00897b,#ff7043)"></div><div class="theme-label">Teal &amp; Gray</div></div>
-    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-gold"><div class="swatch" style="background:linear-gradient(45deg,#ffd700,#ffcc33)"></div><div class="theme-label">Black &amp; Gold</div></div>
+    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-teal"><div class="swatch" style="background:linear-gradient(45deg,#20c997,#17a2b8)"></div><div class="theme-label">Teal &amp; Gray</div></div>
+    <div class="theme-option" role="menuitem" tabindex="0" data-theme="theme-gold"><div class="swatch" style="background:linear-gradient(45deg,#ffd700,#ffae00)"></div><div class="theme-label">Black &amp; Gold</div></div>
   </div>
 
   <!-- Page content -->
@@ -86,17 +85,19 @@
           <div style="display:flex; gap:8px;">
             <button id="speakBtn" class="enter">Speak</button>
           </div>
-          <div id="speedControl" style="display:flex; align-items:center; gap:8px;">
-            <button id="speedBtn" aria-haspopup="true" aria-expanded="false" title="Playback speed">⏱️</button>
-            <div id="speedMenu" style="display:none;" role="menu" aria-hidden="true">
-              <button data-rate="0.5">0.5x</button>
-              <button data-rate="1">1x</button>
-              <button data-rate="1.5">1.5x</button>
-              <button data-rate="2">2x</button>
-            </div>
-          </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Speed Control -->
+  <div id="speedControl">
+    <button id="speedBtn" aria-haspopup="true" aria-expanded="false" title="Playback speed">⏱️</button>
+    <div id="speedMenu" role="menu" aria-hidden="true">
+      <button data-rate="0.5">0.5x</button>
+      <button data-rate="1">1x</button>
+      <button data-rate="1.5">1.5x</button>
+      <button data-rate="2">2x</button>
     </div>
   </div>
 
@@ -110,115 +111,78 @@
     const installBtn = document.getElementById('installBtn');
     window.addEventListener('beforeinstallprompt', e=>{e.preventDefault(); deferredPrompt=e; installBtn.style.display='block';});
     installBtn.addEventListener('click', async ()=>{if(!deferredPrompt){alert('Install prompt not available yet.'); return;} deferredPrompt.prompt(); deferredPrompt=null; installBtn.style.display='none';});
-
-    /* Theme Picker */
+/* Theme Picker */
     const themeToggle=document.getElementById('themeToggle');
     const themeMenu=document.getElementById('themeMenu');
     const themeOptions=themeMenu.querySelectorAll('.theme-option');
     const tooltip=document.getElementById('tooltip');
     let menuOpen=false;
-    function openMenu(){themeMenu.style.display='flex'; themeMenu.setAttribute('aria-hidden','false'); menuOpen=true;}
-    function closeMenu(){themeMenu.style.display='none'; themeMenu.setAttribute('aria-hidden','true'); menuOpen=false;}
-    themeToggle.addEventListener('click',e=>{e.stopPropagation(); menuOpen?closeMenu():openMenu();});
-    document.addEventListener('click',e=>{if(menuOpen&&!themeMenu.contains(e.target)&&!themeToggle.contains(e.target)) closeMenu();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape') closeMenu();});
+
+    function openMenu(){
+      themeMenu.style.display='flex';
+      themeMenu.setAttribute('aria-hidden','false');
+      menuOpen=true;
+    }
+    function closeMenu(){
+      themeMenu.style.display='none';
+      themeMenu.setAttribute('aria-hidden','true');
+      menuOpen=false;
+    }
+    themeToggle.addEventListener('click',e=>{
+      e.stopPropagation();
+      menuOpen?closeMenu():openMenu();
+    });
+    document.addEventListener('click',e=>{
+      if(menuOpen && !themeMenu.contains(e.target) && !themeToggle.contains(e.target)) closeMenu();
+    });
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape') closeMenu();
+    });
+
     function applyTheme(themeName){
       document.body.classList.remove('theme-dark','theme-light','theme-teal','theme-gold');
-      document.body.classList.add(themeName||'theme-dark');
-      localStorage.setItem('zeeai-theme',themeName||'theme-dark');
+      document.body.classList.add(themeName);
+      localStorage.setItem('zeeai-theme',themeName);
       tooltip.style.display='block';
-      setTimeout(()=>tooltip.style.display='none',1100);
+      setTimeout(()=>tooltip.style.display='none',1200);
     }
     themeOptions.forEach(opt=>{
       opt.addEventListener('click',()=>{
         applyTheme(opt.dataset.theme);
         closeMenu();
       });
-      opt.addEventListener('keydown',e=>{
-        if(e.key==='Enter' || e.key===' '){ 
-          e.preventDefault();
-          opt.click();
-        }
-      });
     });
-
-    // Apply saved theme on load
-    applyTheme(localStorage.getItem('zeeai-theme') || 'theme-dark');
-
-    /* Speech Synthesis */
-    const speakBtn = document.getElementById('speakBtn');
-    const txt = document.getElementById('txt');
-    let isSpeaking = false;
-    let currentUtterance = null;
-    let currentRate = 1;
-
-    function resetSpeaking(){
-      isSpeaking = false;
-      speakBtn.textContent = 'Speak';
-      currentUtterance = null;
-    }
-
-    function speakText(){
-      const text = txt.value.trim();
-      if(!text) return alert('Please enter some text!');
-      if(isSpeaking){
-        window.speechSynthesis.cancel();
-        resetSpeaking();
-        return;
-      }
-      currentUtterance = new SpeechSynthesisUtterance(text);
-      currentUtterance.rate = currentRate;
-      currentUtterance.onstart = ()=>{ isSpeaking=true; speakBtn.textContent='Stop'; };
-      currentUtterance.onend = resetSpeaking;
-      currentUtterance.onerror = resetSpeaking;
-      window.speechSynthesis.speak(currentUtterance);
-    }
-
-    speakBtn.addEventListener('click', speakText);
-    txt.addEventListener('keypress', e => {
-      if(e.key==='Enter' && !e.shiftKey){
-        e.preventDefault();
-        speakText();
-      }
-    });
+    const savedTheme=localStorage.getItem('zeeai-theme');
+    if(savedTheme) applyTheme(savedTheme);
 
     /* Speed Control */
-    const speedBtn = document.getElementById('speedBtn');
-    const speedMenu = document.getElementById('speedMenu');
-
-    speedBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      const isVisible = speedMenu.style.display === 'flex';
-      speedMenu.style.display = isVisible ? 'none' : 'flex';
-      speedMenu.setAttribute('aria-hidden', isVisible ? 'true' : 'false');
+    const speedBtn=document.getElementById('speedBtn');
+    const speedMenu=document.getElementById('speedMenu');
+    let speedOpen=false;
+    speedBtn.addEventListener('click',()=>{
+      speedOpen=!speedOpen;
+      speedMenu.style.display=speedOpen?'flex':'none';
     });
-
-    document.addEventListener('click', e => {
-      if(!speedMenu.contains(e.target) && e.target !== speedBtn){
-        speedMenu.style.display='none';
-        speedMenu.setAttribute('aria-hidden','true');
-      }
-    });
-
     speedMenu.querySelectorAll('button').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        currentRate = parseFloat(btn.dataset.rate) || 1;
-        alert('Speed set to '+currentRate+'x');
+      btn.addEventListener('click',()=>{
+        const rate=parseFloat(btn.dataset.rate);
+        localStorage.setItem('zeeai-rate',rate);
         speedMenu.style.display='none';
-        speedMenu.setAttribute('aria-hidden','true');
+        speedOpen=false;
       });
     });
 
-    /* Keyboard accessibility for theme toggle */
-    themeToggle.addEventListener('keydown', e=>{
-      if(e.key==='Enter' || e.key===' '){
-        e.preventDefault();
-        themeToggle.click();
-      }
+    /* Speech Synthesis */
+    const speakBtn=document.getElementById('speakBtn');
+    const txt=document.getElementById('txt');
+    speakBtn.addEventListener('click',()=>{
+      const text=txt.value.trim();
+      if(!text) return;
+      const utter=new SpeechSynthesisUtterance(text);
+      const savedRate=parseFloat(localStorage.getItem('zeeai-rate')||'1');
+      utter.rate=savedRate;
+      speechSynthesis.speak(utter);
     });
-
-    /* Hide install button initially */
-    installBtn.style.display='none';
   </script>
 </body>
 </html>
