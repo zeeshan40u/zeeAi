@@ -39,10 +39,31 @@
     @keyframes buttonGlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .enter:active{transform:translateY(1px) scale(0.995);}
 
-    /* Theme Picker: FIXED BLACK BACKGROUND */
-    #themeToggle{
-      position:fixed;top:14px;right:14px;z-index:1200;width:60px;height:60px;font-size:36px;display:flex;align-items:center;justify-content:center;
-      background:#000000; /* always black */
+  #themeToggle {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 1200;
+    width: 60px;
+    height: 60px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000; /* Stays black */
+    border-radius: 50%; /* Or whatever you want */
+    position: relative; /* Needed for the pseudo-element */
+}
+
+#themeToggle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--container-border); /* This will change with the theme */
+    z-index: -1;
+}
+
       border:none;outline:none;border-radius:12px;cursor:pointer;user-select:none;color:#ffffff;
     }
 
