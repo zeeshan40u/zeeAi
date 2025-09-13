@@ -401,68 +401,151 @@ label[for="txt"] {
   </div>
 
   <script>
-    const themeToggle = document.getElementById('themeToggle');
-    const themeMenu = document.getElementById('themeMenu');
-    const themeOptions = themeMenu.querySelectorAll('.theme-option');
-    const themeColorMeta = document.getElementById('themeColor');
+    /* ------------------------
+   Service worker register
+   ------------------------ */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{/* ignore */});
+}
 
-    const themeMetaColors = {
-      'theme-dark': '#00ff55',
-      'theme-light': '#0066ff',
-      'theme-teal': '#20c997',
-      'theme-gold': '#ffd700'
-    };
+/* ------------------------
+   Theme toggle + persistence
+   ------------------------ */
+const themeToggle = document.getElementById('themeToggle');
+const tooltip = document.getElementById('tooltipText');
+const sunIcon = document.getElementById('sunIcon');
+const moonIcon = document.getElementById('moonIcon');
+const speakBtn = document.getElementById('speakBtn');
+const txtInput = document.getElementById('txt');
 
-    function applyTheme(themeName){
-      document.body.classList.remove('theme-dark','theme-light','theme-teal','theme-gold');
-      document.body.classList.add(themeName);
-      localStorage.setItem('zeeai-theme', themeName);
-      themeColorMeta.setAttribute('content', themeMetaColors[themeName]);
-    }
+// Load saved theme
+if (localStorage.getItem('zee_theme') === 'light') {
+  document.body.classList.add('light');
+}
+updateThemeUI();
 
-    themeToggle.addEventListener('click', e=>{
-      e.stopPropagation();
-      themeMenu.style.display = themeMenu.style.display==='flex' ? 'none':'flex';
-    });
+function updateThemeUI(){
+  const isLight = document.body.classList.contains('light');
+  sunIcon.style.display = isLight ? 'none' : 'block';
+  moonIcon.style.display = isLight ? 'block' : 'none';
+  tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
+  // update mobile theme-color meta
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
+  // update speak button style (colors are via CSS variables)
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  localStorage.setItem('zee_theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  updateThemeUI();
+  showTooltipBrief();
+});
+themeToggle.addEventListener('mouseenter', ()=> tooltip.style.display = 'block');
+themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
 
-    document.addEventListener('click', e=>{
-      if(!themeMenu.contains(e.target) && e.target!==themeToggle){
-        themeMenu.style.display='none';
-      }
-    });
+function showTooltipBrief(){
+  tooltip.style.display = 'block';
+  setTimeout(()=> tooltip.style.display = 'none', 1400);
+}
 
-    themeOptions.forEach(opt=>{
-      opt.addEventListener('click', ()=>{
-        applyTheme(opt.dataset.theme);
-        themeMenu.style.display='none';
-      });
-    });
+/* ------------------------
+   TTS + number-processing + Speak/Stop
+   ------------------------ */
+let isSpeaking = false;
+let currentUtterance = null;
 
-    applyTheme(localStorage.getItem('zeeai-theme') || 'theme-dark');
+const digitWords = ['zero','one','two','three','four','five','six','seven','eight','nine'];
 
-    // Speed Controller Logic
-    const speedBtn = document.getElementById('speedBtn');
-    const speedMenu = document.getElementById('speedMenu');
-    let currentRate = 1;
+function spellDigitsString(numStr){
+  // numStr assumed digits-only
+  return numStr.split('').map(ch => {
+    if (/\d/.test(ch)) return digitWords[parseInt(ch,10)];
+    return ch;
+  }).join(' ');
+}
 
-    speedBtn.addEventListener('click', e=>{
-      e.stopPropagation();
-      speedMenu.style.display = speedMenu.style.display==='flex' ? 'none':'flex';
-    });
+function processTextForSpeech(input){
+  const trimmed = input.trim();
+  if (!trimmed) return '';
 
-    document.addEventListener('click', e=>{
-      if(!speedMenu.contains(e.target) && e.target!==speedBtn){
-        speedMenu.style.display='none';
-      }
-    });
+  const words = trimmed.split(/\s+/);
+  // If the whole input is exactly "1000" -> "one thousand"
+  if (/^1000$/.test(trimmed)) return 'one thousand';
+  // If the whole input is exactly "10000" -> digits spelled
+  if (/^10000$/.test(trimmed)) return spellDigitsString('10000');
 
-    speedMenu.querySelectorAll('button').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        currentRate = parseFloat(btn.dataset.rate);
-        speedMenu.style.display='none';
-        alert('Playback speed set to '+currentRate+'x');
-      });
-    });
+  // If more than 4 words -> replace every numeric run with digit-by-digit
+  if (words.length > 4) {
+    return trimmed.replace(/\d+/g, match => spellDigitsString(match));
+  }
+
+  // Otherwise do inline special-case replacements:
+  // - replace 1000 anywhere with "one thousand"
+  // - replace 10000 anywhere with digit spelling
+  let out = trimmed.replace(/\b1000\b/g, 'one thousand');
+  out = out.replace(/\b10000\b/g, (m)=> spellDigitsString(m));
+  // Keep other numbers as-is
+  return out;
+}
+
+function speakHandler(){
+  const inputText = txtInput.value || '';
+  if (isSpeaking) {
+    // stop
+    window.speechSynthesis.cancel();
+    resetSpeakingState();
+    return;
+  }
+  const processed = processTextForSpeech(inputText);
+  if (!processed.trim()){
+    alert('Please enter some text!');
+    return;
+  }
+
+  // create utterance
+  currentUtterance = new SpeechSynthesisUtterance(processed);
+
+  // events
+  currentUtterance.onstart = () => {
+    isSpeaking = true;
+    speakBtn.textContent = 'Stop';
+    document.getElementById('returnedText')?.classList?.add('visible');
+  };
+  currentUtterance.onend = () => {
+    resetSpeakingState();
+  };
+  currentUtterance.onerror = () => {
+    resetSpeakingState();
+  };
+
+  // show speaking line
+  const returned = document.getElementById('returnedText');
+  if (returned) {
+    returned.textContent = `Speaking: "${processed}"`;
+    returned.classList.add('visible');
+  }
+
+  // speak
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+// Reset UI when stopping
+function resetSpeakingState(){
+  isSpeaking = false;
+  speakBtn.textContent = 'Speak';
+  const returned = document.getElementById('returnedText');
+  if (returned) returned.classList.remove('visible');
+  currentUtterance = null;
+}
+
+speakBtn.addEventListener('click', speakHandler);
+// Enter key triggers speak / stop
+txtInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    speakHandler();
+  }
+});
   </script>
 </body>
 </html>
