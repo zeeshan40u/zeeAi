@@ -389,7 +389,6 @@ label[for="txt"] {
     </div>
   </div>
 
-  <!-- Speed Controller -->
   <div id="speedControl">
     <button id="speedBtn" title="Playback speed">⏱️</button>
     <div id="speedMenu">
@@ -419,44 +418,54 @@ const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
 const speedBtn = document.getElementById('speedBtn');
 const speedMenu = document.getElementById('speedMenu');
+const themeMenu = document.getElementById('themeMenu');
+const themeOptions = themeMenu.querySelectorAll('.theme-option');
+const themeColorMeta = document.getElementById('themeColor');
+
+const themeMetaColors = {
+  'theme-dark': '#00ff55',
+  'theme-light': '#0066ff',
+  'theme-teal': '#20c997',
+  'theme-gold': '#ffd700'
+};
+
 
 // Load saved theme
-if (localStorage.getItem('zee_theme') === 'light') {
-  document.body.classList.add('light');
+function applyTheme(themeName){
+  document.body.classList.remove('theme-dark','theme-light','theme-teal','theme-gold');
+  document.body.classList.add(themeName);
+  localStorage.setItem('zeeai-theme', themeName);
+  themeColorMeta.setAttribute('content', themeMetaColors[themeName]);
 }
-updateThemeUI();
+applyTheme(localStorage.getItem('zeeai-theme') || 'theme-dark');
 
-function updateThemeUI(){
-  const isLight = document.body.classList.contains('light');
-  if (sunIcon) sunIcon.style.display = isLight ? 'none' : 'block';
-  if (moonIcon) moonIcon.style.display = isLight ? 'block' : 'none';
-  if (tooltip) tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
-  // update mobile theme-color meta
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
-  // update speak button style (colors are via CSS variables)
-}
-if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('light');
-        localStorage.setItem('zee_theme', document.body.classList.contains('light') ? 'light' : 'dark');
-        updateThemeUI();
-        if (tooltip) showTooltipBrief();
-    });
-}
-if (themeToggle && tooltip) {
-    themeToggle.addEventListener('mouseenter', ()=> tooltip.style.display = 'block');
-    themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
-}
+// Theme toggle
+themeToggle.addEventListener('click', e=>{
+  e.stopPropagation();
+  themeMenu.style.display = themeMenu.style.display==='flex' ? 'none':'flex';
+});
 
-function showTooltipBrief(){
-  tooltip.style.display = 'block';
-  setTimeout(()=> tooltip.style.display = 'none', 1400);
-}
+document.addEventListener('click', e=>{
+  if(!themeMenu.contains(e.target) && e.target!==themeToggle){
+    themeMenu.style.display='none';
+  }
+});
 
-// Speed Controller Logic
+themeOptions.forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    applyTheme(opt.dataset.theme);
+    themeMenu.style.display='none';
+  });
+});
+
+/* ------------------------
+   TTS + number-processing + Speak/Stop
+   ------------------------ */
+let isSpeaking = false;
+let currentUtterance = null;
 let currentRate = 1;
 
+// Speed Controller Logic
 if (speedBtn) {
     speedBtn.addEventListener('click', e=>{
       e.stopPropagation();
@@ -477,11 +486,6 @@ if (speedMenu) {
       });
     });
 }
-/* ------------------------
-   TTS + number-processing + Speak/Stop
-   ------------------------ */
-let isSpeaking = false;
-let currentUtterance = null;
 
 const digitWords = ['zero','one','two','three','four','five','six','seven','eight','nine'];
 
@@ -533,7 +537,6 @@ function speakHandler(){
 
   // create utterance
   currentUtterance = new SpeechSynthesisUtterance(processed);
-  // ADD THIS LINE
   currentUtterance.rate = currentRate; 
 
   // events
@@ -579,7 +582,6 @@ if (txtInput) {
       }
     });
 }
-
   </script>
 </body>
 </html>
