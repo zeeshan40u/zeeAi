@@ -417,6 +417,8 @@ const sunIcon = document.getElementById('sunIcon');
 const moonIcon = document.getElementById('moonIcon');
 const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
+const speedBtn = document.getElementById('speedBtn');
+const speedMenu = document.getElementById('speedMenu');
 
 // Load saved theme
 if (localStorage.getItem('zee_theme') === 'light') {
@@ -426,28 +428,55 @@ updateThemeUI();
 
 function updateThemeUI(){
   const isLight = document.body.classList.contains('light');
-  sunIcon.style.display = isLight ? 'none' : 'block';
-  moonIcon.style.display = isLight ? 'block' : 'none';
-  tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
+  if (sunIcon) sunIcon.style.display = isLight ? 'none' : 'block';
+  if (moonIcon) moonIcon.style.display = isLight ? 'block' : 'none';
+  if (tooltip) tooltip.textContent = isLight ? 'Toggle to Dark' : 'Toggle to Light';
   // update mobile theme-color meta
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', isLight ? '#0066ff' : '#00ff55');
   // update speak button style (colors are via CSS variables)
 }
-themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('light');
-  localStorage.setItem('zee_theme', document.body.classList.contains('light') ? 'light' : 'dark');
-  updateThemeUI();
-  showTooltipBrief();
-});
-themeToggle.addEventListener('mouseenter', ()=> tooltip.style.display = 'block');
-themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light');
+        localStorage.setItem('zee_theme', document.body.classList.contains('light') ? 'light' : 'dark');
+        updateThemeUI();
+        if (tooltip) showTooltipBrief();
+    });
+}
+if (themeToggle && tooltip) {
+    themeToggle.addEventListener('mouseenter', ()=> tooltip.style.display = 'block');
+    themeToggle.addEventListener('mouseleave', ()=> tooltip.style.display = 'none');
+}
 
 function showTooltipBrief(){
   tooltip.style.display = 'block';
   setTimeout(()=> tooltip.style.display = 'none', 1400);
 }
 
+// Speed Controller Logic
+let currentRate = 1;
+
+if (speedBtn) {
+    speedBtn.addEventListener('click', e=>{
+      e.stopPropagation();
+      if (speedMenu) speedMenu.style.display = speedMenu.style.display==='flex' ? 'none':'flex';
+    });
+}
+document.addEventListener('click', e=>{
+    if(speedMenu && !speedMenu.contains(e.target) && e.target!==speedBtn){
+        speedMenu.style.display='none';
+    }
+});
+
+if (speedMenu) {
+    speedMenu.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentRate = parseFloat(btn.dataset.rate);
+        speedMenu.style.display='none';
+      });
+    });
+}
 /* ------------------------
    TTS + number-processing + Speak/Stop
    ------------------------ */
@@ -504,6 +533,8 @@ function speakHandler(){
 
   // create utterance
   currentUtterance = new SpeechSynthesisUtterance(processed);
+  // ADD THIS LINE
+  currentUtterance.rate = currentRate; 
 
   // events
   currentUtterance.onstart = () => {
@@ -538,14 +569,17 @@ function resetSpeakingState(){
   currentUtterance = null;
 }
 
-speakBtn.addEventListener('click', speakHandler);
+if (speakBtn) speakBtn.addEventListener('click', speakHandler);
 // Enter key triggers speak / stop
-txtInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    speakHandler();
-  }
-});
+if (txtInput) {
+    txtInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        speakHandler();
+      }
+    });
+}
+
   </script>
 </body>
 </html>
