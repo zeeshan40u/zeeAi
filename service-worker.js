@@ -1,10 +1,6 @@
-// 👇 bump this every time you deploy a change so browsers pull a fresh cache
-const CACHE_NAME = "zeeai-cache-v7"; // bump version
-
-// Define the custom offline page URL
+const CACHE_NAME = "zeeai-cache-v6"; // bump version
 const OFFLINE_URL = "/zeeAi/offline.html";
 
-// Put here all files you want cached for offline use
 const urlsToCache = [
   "/zeeAi/",
   "/zeeAi/index.html",
@@ -12,34 +8,27 @@ const urlsToCache = [
   "/zeeAi/zee192.png",
   "/zeeAi/zee512.png",
   "/zeeAi/carData.js",
+  "/zeeAi/service-worker.js",
   OFFLINE_URL
 ];
 
-// Install event — cache resources
+// Install
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
-  self.skipWaiting();
 });
 
-// Activate event — delete old caches
+// Activate
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(cacheNames =>
-      Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      )
+      Promise.all(cacheNames.map(c => (c !== CACHE_NAME ? caches.delete(c) : null)))
     )
   );
-  self.clients.claim();
 });
 
-// Fetch event — online → index.html, offline → offline.html
+// Fetch
 self.addEventListener("fetch", event => {
   if (event.request.mode === "navigate") {
     event.respondWith(
@@ -47,7 +36,7 @@ self.addEventListener("fetch", event => {
     );
   } else {
     event.respondWith(
-      caches.match(event.request).then(response => response || fetch(event.request))
+      caches.match(event.request).then(resp => resp || fetch(event.request))
     );
   }
 });
