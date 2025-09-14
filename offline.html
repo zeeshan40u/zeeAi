@@ -1,110 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Offline Mode - ZeeAi</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #111;
-    color: #eee;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-    overflow: hidden;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Mode - ZeeAi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
 
-  .container {
-    max-width: 400px;
-    padding: 15px 20px;
-    background: #222;
-    border: 2px solid #00ff55;
-    border-radius: 12px;
-  }
+    .container {
+      max-width: 300px;
+      padding: 15px;
+    }
 
-  h1 {
-    color: #00ff55;
-    margin: 10px 0;
-    font-size: 24px;
-  }
+    h1 {
+      color: #00ff55;
+    }
 
-  p {
-    margin: 5px 0 10px 0;
-    font-size: 16px;
-  }
+    button {
+      background-color: #00ff55;
+      color: #111;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
 
-  button {
-    background-color: #00ff55;
-    color: #111;
-    border: none;
-    padding: 8px 18px;
-    font-size: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
+    button:hover {
+      background-color: #00cc44;
+    }
 
-  button:hover {
-    background-color: #00cc44;
-  }
+    /* Game overlay */
+    .game-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 1000;
+    }
 
-  /* Game overlay */
-  .game-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 1000;
-  }
+    canvas {
+      background: #222;
+      border: 2px solid #00ff55;
+      border-radius: 12px;
+    }
 
-  canvas {
-    background: #222;
-    border: 2px solid #00ff55;
-    border-radius: 12px;
-  }
+    .close-btn {
+      margin-top: 20px;
+      background-color: #ff4444;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
 
-  .close-btn {
-    margin-top: 15px;
-    background-color: #ff4444;
-    color: white;
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-  }
+    .score-display {
+      color: #0f0;
+      margin-top: 10px;
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-  .score-display {
-    color: #0f0;
-    margin-top: 8px;
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .game-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #00ff55;
-    color: #111;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 999;
-  }
-</style>
+    .game-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #00ff55;
+      color: #111;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 999;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -122,124 +112,184 @@
     <button class="close-btn" onclick="closeGame()">❌ Close Game</button>
   </div>
 
-  <!-- Include car data -->
-  <script src="carData.js"></script>
-
   <script>
     const overlay = document.getElementById("gameOverlay");
     const canvas = document.getElementById("racing-canvas");
     const ctx = canvas.getContext("2d");
-    const PIXEL_SIZE = 8;
+    const PIXEL_SIZE = 10;
     let player, obstacles, score, highScore, gameOver, obstacleSpeed;
 
+    // ---- Embedded carData.js ----
+    const playerCarDesign = [
+        ['T','T','G','G','G','G','T','T'],
+        ['T','T','G','G','G','G','T','T'],
+        ['T','G','W','W','W','W','G','T'],
+        ['G','W','W','W','W','W','W','G'],
+        ['G','W','W','W','W','W','W','G'],
+        ['G','W','T','T','T','T','W','G'],
+        ['G','W','T','T','T','T','W','G'],
+        ['G','W','G','G','G','G','W','G'],
+        ['G','W','W','W','W','W','W','G'],
+        ['G','G','G','G','G','G','G','G'],
+        ['T','G','T','G','G','T','G','T'],
+        ['G','G','G','G','G','G','G','G'],
+        ['G','G','T','G','G','T','G','G'],
+        ['T','G','T','G','G','T','G','T'],
+        ['G','G','G','G','G','G','G','G'],
+    ];
+
+    const opponentCarDesigns = [
+        [
+            ['T','T','Y','Y','Y','Y','T','T'],
+            ['T','Y','W','Y','Y','W','Y','T'],
+            ['Y','W','Y','Y','Y','Y','W','Y'],
+            ['Y','W','Y','Y','Y','Y','W','Y'],
+            ['Y','Y','Y','Y','Y','Y','Y','Y'],
+            ['Y','Y','Y','Y','Y','Y','Y','Y'],
+            ['Y','W','W','Y','Y','W','W','Y'],
+            ['Y','W','Y','Y','Y','Y','W','Y'],
+            ['T','T','Y','Y','Y','Y','T','T'],
+            ['T','Y','Y','T','T','Y','Y','T'],
+            ['T','Y','Y','T','T','Y','Y','T'],
+            ['T','Y','Y','T','T','Y','Y','T'],
+            ['T','T','T','Y','Y','T','T','T'],
+            ['T','T','Y','Y','Y','Y','T','T'],
+            ['Y','Y','Y','Y','Y','Y','Y','Y'],
+        ],
+        [
+            ['T','T','R','R','R','R','T','T'],
+            ['T','R','W','W','W','W','R','T'],
+            ['R','R','W','R','R','W','R','R'],
+            ['R','W','W','R','R','W','W','R'],
+            ['R','W','R','R','R','R','W','R'],
+            ['R','R','R','R','R','R','R','R'],
+            ['R','R','R','R','R','R','R','R'],
+            ['R','W','R','R','R','R','W','R'],
+            ['R','W','W','W','W','W','W','R'],
+            ['R','W','W','W','W','W','W','R'],
+            ['R','W','T','T','T','T','W','R'],
+            ['R','R','W','W','W','W','R','R'],
+            ['T','R','R','W','W','R','R','T'],
+            ['T','T','T','R','R','T','T','T'],
+            ['T','T','R','T','T','R','T','T'],
+        ]
+    ];
+
+    const colors = {
+        'R': '#FF0000', 'T': '#00000000', 'W': '#FFFFFF', 'B': '#0000FF',
+        'Y': '#FFFF00', 'G': '#00FF00', 'P': '#FF00FF', 'O': '#FFA500',
+        'C': '#00FFFF', 'S': '#808080', 'V': '#8A2BE2'
+    };
+    // ---- end carData.js ----
+
     function drawCar(x, y, design) {
-      for (let row = 0; row < design.length; row++) {
-        for (let col = 0; col < design[row].length; col++) {
-          const colorCode = design[row][col];
-          if (colorCode !== 'T') {
-            ctx.fillStyle = window.colors[colorCode] || "#fff";
-            ctx.fillRect(
-              x + col * PIXEL_SIZE,
-              y + row * PIXEL_SIZE,
-              PIXEL_SIZE,
-              PIXEL_SIZE
-            );
-          }
+        for (let row = 0; row < design.length; row++) {
+            for (let col = 0; col < design[row].length; col++) {
+                const colorKey = design[row][col];
+                if (colorKey !== 'T') {
+                    ctx.fillStyle = colors[colorKey] || '#000';
+                    ctx.fillRect(
+                        x + col * PIXEL_SIZE,
+                        y + row * PIXEL_SIZE,
+                        PIXEL_SIZE,
+                        PIXEL_SIZE
+                    );
+                }
+            }
         }
-      }
     }
 
     function startGame() {
-      player = { x: canvas.width / 2 - 32, y: canvas.height - 160, width: 64, height: 160 };
-      obstacles = [];
-      score = 0;
-      highScore = localStorage.getItem("highScore") || 0;
-      gameOver = false;
-      obstacleSpeed = 2;
-      document.getElementById("score").innerText = `Score: ${score}`;
-      document.getElementById("high-score").innerText = `High Score: ${highScore}`;
-      requestAnimationFrame(updateGame);
+        player = { x: canvas.width / 2 - 40, y: canvas.height - 160, width: 8 * PIXEL_SIZE, height: 15 * PIXEL_SIZE };
+        obstacles = [];
+        score = 0;
+        highScore = localStorage.getItem("highScore") || 0;
+        gameOver = false;
+        obstacleSpeed = 2;
+        document.getElementById("score").innerText = `Score: ${score}`;
+        document.getElementById("high-score").innerText = `High Score: ${highScore}`;
+        requestAnimationFrame(updateGame);
     }
 
     function spawnObstacle() {
-      const randomDesign = window.opponentCarDesigns[Math.floor(Math.random() * window.opponentCarDesigns.length)];
-      const width = randomDesign[0].length * PIXEL_SIZE;
-      const height = randomDesign.length * PIXEL_SIZE;
-      const minX = 10;
-      const maxX = canvas.width - 10 - width;
-      const x = Math.random() * (maxX - minX) + minX;
-
-      const tooClose = obstacles.some(obs =>
-        Math.abs(obs.x - x) < width &&
-        Math.abs(obs.y - (-height)) < height + 50
-      );
-      if (tooClose) return;
-
-      obstacles.push({ x: x, y: -height, width: width, height: height, shape: randomDesign });
+        const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
+        const width = randomDesign[0].length * PIXEL_SIZE;
+        const height = randomDesign.length * PIXEL_SIZE;
+const minX = 10;
+        const maxX = canvas.width - width - 10;
+        const x = Math.random() * (maxX - minX) + minX;
+        obstacles.push({ x: x, y: -height, width: width, height: height, shape: randomDesign });
     }
 
     function updateGame() {
-      if (gameOver) return;
+        if (gameOver) return;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      drawCar(player.x, player.y, window.playerCarDesign);
+        drawCar(player.x, player.y, playerCarDesign);
 
-      obstacles.forEach(obs => {
-        obs.y += obstacleSpeed;
-        drawCar(obs.x, obs.y, obs.shape);
-      });
+        // Update and draw obstacles
+        obstacles.forEach(obs => {
+            obs.y += obstacleSpeed;
+            drawCar(obs.x, obs.y, obs.shape);
+        });
 
-      obstacles = obstacles.filter(obs => obs.y < canvas.height);
+        // Remove off-screen obstacles
+        obstacles = obstacles.filter(obs => obs.y < canvas.height);
 
-      if (Math.random() < 0.02) spawnObstacle();
+        // Spawn new obstacle randomly
+        if (Math.random() < 0.02) spawnObstacle();
 
-      for (let obs of obstacles) {
-        if (
-          player.x < obs.x + obs.width &&
-          player.x + player.width > obs.x &&
-          player.y < obs.y + obs.height &&
-          player.y + player.height > obs.y
-        ) {
-          endGame();
-          return;
+        // Collision detection
+        for (let obs of obstacles) {
+            if (
+                player.x < obs.x + obs.width &&
+                player.x + player.width > obs.x &&
+                player.y < obs.y + obs.height &&
+                player.y + player.height > obs.y
+            ) {
+                endGame();
+                return;
+            }
         }
-      }
 
-      score++;
-      document.getElementById("score").innerText = `Score: ${score}`;
-      obstacleSpeed += 0.001;
+        // Update score & speed
+        score++;
+        document.getElementById("score").innerText = `Score: ${score}`;
+        obstacleSpeed += 0.001; // slowly increase difficulty
 
-      requestAnimationFrame(updateGame);
+        requestAnimationFrame(updateGame);
     }
 
     function endGame() {
-      gameOver = true;
-      ctx.fillStyle = '#0F0';
-      ctx.font = '28px Arial';
-      ctx.fillText("Game Over!", canvas.width / 2 - 80, canvas.height / 2);
-      ctx.fillText(`Score: ${score}`, canvas.width / 2 - 60, canvas.height / 2 + 40);
+        gameOver = true;
+        ctx.fillStyle = '#0F0';
+        ctx.font = '28px Arial';
+        ctx.fillText("Game Over!", canvas.width / 2 - 80, canvas.height / 2);
+        ctx.fillText(`Score: ${score}`, canvas.width / 2 - 60, canvas.height / 2 + 40);
 
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("highScore", highScore);
-      }
-      document.getElementById("high-score").innerText = `High Score: ${highScore}`;
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem("highScore", highScore);
+        }
+        document.getElementById("high-score").innerText = `High Score: ${highScore}`;
     }
 
+    // Player controls
     document.addEventListener("keydown", (e) => {
-      if (gameOver) return;
-      if (e.key === "ArrowLeft" && player.x > 10) player.x -= 20;
-      if (e.key === "ArrowRight" && player.x < canvas.width - player.width - 10) player.x += 20;
+        if (gameOver) return;
+        if (e.key === "ArrowLeft" && player.x > 0) player.x -= 20;
+        if (e.key === "ArrowRight" && player.x < canvas.width - player.width) player.x += 20;
     });
 
+    // Overlay functions
     function openGame() {
-      overlay.style.display = "flex";
-      startGame();
+        overlay.style.display = "flex";
+        startGame();
     }
 
     function closeGame() {
-      overlay.style.display = "none";
+        overlay.style.display = "none";
     }
   </script>
 </body>
