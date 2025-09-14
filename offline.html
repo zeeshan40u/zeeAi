@@ -1,102 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline Racing Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Offline - ZeeAI</title>
   <style>
     body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      text-align: center;
+      background-color: #000;
+      color: #0F0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       margin: 0;
-      background: #0d0d0d;
-      color: white;
-      font-family: Arial, sans-serif;
       overflow: hidden;
     }
 
-    /* Game overlay (fullscreen) */
-    .game-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.9);
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 999;
+    .main-content {
+      animation: fadeIn 1s ease-in-out;
+      z-index: 1;
     }
 
-    canvas {
-      background: #1a1a1a;
-      border: 2px solid #00ff55;
-      border-radius: 10px;
+    h1 {
+      color: #0F0;
+      font-size: 2.2em;
+      text-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+      margin-bottom: 10px;
     }
 
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: red;
-      color: white;
-      padding: 10px 16px;
+    p {
+      font-size: 1em;
+      color: #b0b0b0;
+      margin-bottom: 20px;
+    }
+
+    .reconnect-btn {
+      padding: 12px 24px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #0F0;
+      color: #000;
       border: none;
       border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
     }
 
-    .score {
-      margin-top: 10px;
-      font-size: 18px;
-      color: #00ff55;
+    .reconnect-btn:hover {
+      background-color: #3FFF3F;
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
     }
 
-    /* ✅ Stable game button */
+    /* 🎮 Game button */
     .game-button {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      z-index: 1000;
-      background: #00ff55;
-      color: black;
-      padding: 12px 20px;
-      border-radius: 12px;
-      border: none;
-      font-size: 16px;
-      font-weight: bold;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      background-color: #1a1a1a;
+      border: 2px solid #0F0;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+      font-size: 1.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transition: transform 0.2s ease;
+      z-index: 50;
+    }
+
+    .game-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Overlay */
+    .game-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-overlay-content {
+      background-color: #1a1a1a;
+      border: 2px solid #0F0;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+      padding: 20px;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #0F0;
+      font-size: 2em;
+      cursor: pointer;
+    }
+
+    #racing-canvas {
+      border: 2px solid #0F0;
+      background-color: #0d0d0d;
+      border-radius: 8px;
+    }
+
+    .score-display {
+      color: #0F0;
+      font-size: 1.3em;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <!-- Game Launch Button -->
-  <button class="game-button">🎮 Play Game</button>
+  <!-- Main offline message -->
+  <div class="main-content">
+    <h1>Offline Mode Activated</h1>
+    <p>Please check your internet connection and try again.</p>
+    <button class="reconnect-btn" onclick="window.location.reload()">Reconnect</button>
+  </div>
 
-  <!-- Game Overlay -->
+  <!-- Game button -->
+  <div class="game-button">🎮</div>
+
+  <!-- Game overlay -->
   <div id="game-overlay" class="game-overlay">
-    <button class="close-btn">✖</button>
-    <canvas id="racing-canvas" width="300" height="500"></canvas>
-    <div id="score" class="score">Score: 0</div>
+    <div class="game-overlay-content">
+      <button class="close-btn">✖</button>
+      <canvas id="racing-canvas" width="300" height="400"></canvas>
+      <div id="score" class="score-display">Score: 0</div>
+      <div style="color: #fff; font-size: 0.9em; margin-top: 10px;">
+        Controls: &larr; &rarr; (move), Tap/Swipe (move)
+      </div>
+    </div>
   </div>
 
   <script type="module">
-    import { playerCarDesign, opponentCarDesigns, colors } from '/zeeAi/carData.js';
+    import { playerCarDesign, opponentCarDesigns, colors } from './carData.js';
 
     const canvas = document.getElementById('racing-canvas');
     const ctx = canvas.getContext('2d');
     const PIXEL_SIZE = 4;
 
-    const carWidth = playerCarDesign[0].length * PIXEL_SIZE;
-    const carHeight = playerCarDesign.length * PIXEL_SIZE;
-
-    const car = { 
-      x: canvas.width / 2 - carWidth / 2, 
-      y: canvas.height - carHeight - 10, 
-      width: carWidth, 
-      height: carHeight, 
-      speed: 5, 
-      shape: playerCarDesign 
-    };
-
+    const car = { x: canvas.width / 2 - 10, y: canvas.height - 40, width: 32, height: 64, speed: 5, shape: playerCarDesign };
     let obstacles = [];
     let score = 0;
     let gameOver = true;
@@ -106,12 +173,12 @@
 
     const gameButton = document.querySelector('.game-button');
     const closeBtn = document.querySelector('.close-btn');
-    const overlay = document.getElementById('game-overlay');
-    const scoreDisplay = document.getElementById('score');
 
     function drawPixelArt(ctx, shape, colors, x, y) {
-      for (let r = 0; r < shape.length; r++) {
-        for (let c = 0; c < shape[0].length; c++) {
+      const h = shape.length;
+      const w = shape[0].length;
+      for (let r = 0; r < h; r++) {
+        for (let c = 0; c < w; c++) {
           if (shape[r][c] !== 'T') {
             ctx.fillStyle = colors[shape[r][c]];
             ctx.fillRect(x + c * PIXEL_SIZE, y + r * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
@@ -127,7 +194,9 @@
       const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
       const width = randomDesign[0].length * PIXEL_SIZE;
       const height = randomDesign.length * PIXEL_SIZE;
-      const x = Math.random() * (canvas.width - width - 40) + 20;
+      const minX = 20;
+      const maxX = canvas.width - 20 - width;
+      const x = Math.random() * (maxX - minX) + minX;
       obstacles.push({ x, y: -height, width, height, shape: randomDesign, colors });
     }
 
@@ -160,17 +229,16 @@
 
       drawCar();
       drawObstacles();
-      scoreDisplay.textContent = `Score: ${score}`;
-
+      document.getElementById('score').innerText = `Score: ${score}`;
       requestAnimationFrame(updateGame);
     }
 
     function endGame() {
       gameOver = true;
       ctx.fillStyle = '#0F0';
-      ctx.font = '30px Arial';
-      ctx.fillText(`Game Over!`, canvas.width / 2 - 80, canvas.height / 2);
-      ctx.fillText(`Score: ${score}`, canvas.width / 2 - 60, canvas.height / 2 + 35);
+      ctx.font = '20px Arial';
+      ctx.fillText(`Game Over!`, canvas.width / 2 - 50, canvas.height / 2);
+      ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 30);
     }
 
     function resetGame() {
@@ -182,17 +250,17 @@
       lastTime = 0;
       obstacleSpeed = 2;
       for (let i = 0; i < maxObstacles; i++) spawnObstacle();
-      obstacles.forEach((obs, i) => { obs.y = -(i * 100) - 50; });
+      obstacles.forEach((obs, index) => { obs.y = -(index * 100) - 50; });
     }
 
     function showGame() {
-      overlay.style.display = 'flex';
+      document.getElementById('game-overlay').style.display = 'flex';
       resetGame();
       updateGame();
     }
 
     function hideGame() {
-      overlay.style.display = 'none';
+      document.getElementById('game-overlay').style.display = 'none';
       gameOver = true;
     }
 
@@ -208,9 +276,9 @@
     let touchStartX = 0;
     canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
     canvas.addEventListener('touchmove', e => {
-      const dx = e.touches[0].clientX - touchStartX;
-      car.x += dx * 0.5;
-      touchStartX = e.touches[0].clientX;
+      const touchX = e.touches[0].clientX;
+      car.x += (touchX - touchStartX) * 0.5;
+      touchStartX = touchX;
     });
   </script>
 </body>
