@@ -9,11 +9,14 @@
   <meta name="theme-color" content="#00ff55" id="themeColor">
 
   <style>
+/* ------------------------
+   Splash Screen
+------------------------ */
 #splash-screen {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: #000; /* or white */
+  background: #000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,7 +34,8 @@
   50% { transform: scale(1.1); opacity: 1; }
   100% { transform: scale(1); opacity: 0.8; }
 }
-    /* --- THEME VARIABLES --- */
+
+/* --- THEME VARIABLES --- */
 :root {
   --bg-dark: #0d0d0d;
   --text-dark: #e0e0e0;
@@ -40,6 +44,7 @@
   --container-dark: rgba(18, 18, 18, 0.9);
   --container-border-dark: rgba(0, 255, 85, 0.3);
   --container-shadow-dark: 0 0 25px rgba(0, 255, 85, 0.12);
+
   --bg-light: #ffffff;
   --text-light: #111111;
   --heading-light: #0066ff;
@@ -47,6 +52,7 @@
   --container-light: #ffffff;
   --container-border-light: rgba(0, 102, 255, 0.12);
   --container-shadow-light: 0 6px 18px rgba(0, 0, 0, 0.06);
+
   --bg-teal: #0f1111;
   --text-teal: #d7eaea;
   --heading-teal: #20c997;
@@ -54,6 +60,7 @@
   --container-teal: #1c1f1f;
   --container-border-teal: rgba(23, 162, 184, 0.4);
   --container-shadow-teal: 0 0 20px rgba(23, 162, 184, 0.2);
+
   --bg-gold: #000000;
   --text-gold: #f8f5e1;
   --heading-gold: #ffd700;
@@ -61,6 +68,7 @@
   --container-gold: #111111;
   --container-border-gold: rgba(255, 215, 0, 0.4);
   --container-shadow-gold: 0 0 20px rgba(255, 215, 0, 0.2);
+
   --bg: var(--bg-dark);
   --text: var(--text-dark);
   --heading: var(--heading-dark);
@@ -71,6 +79,7 @@
   --grid-rgb: 30, 255, 12;
 }
 
+/* Theme body classes */
 body.theme-dark {
   --bg: var(--bg-dark);
   --text: var(--text-dark);
@@ -115,6 +124,9 @@ body.theme-gold {
   --grid-rgb: 255, 215, 0;
 }
 
+/* ------------------------
+   Body & general styles
+------------------------ */
 html, body {
   height: 100%;
   margin: 0;
@@ -133,7 +145,8 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: linear-gradient(0deg, transparent 24%, rgba(var(--grid-rgb), 0.05) 25%, rgba(var(--grid-rgb), 0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb), 0.05) 75%, rgba(var(--grid-rgb), 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(var(--grid-rgb), 0.05) 25%, rgba(var(--grid-rgb), 0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb), 0.05) 75%, rgba(var(--grid-rgb), 0.05) 76%, transparent 77%, transparent);
+  background-image: linear-gradient(0deg, transparent 24%, rgba(var(--grid-rgb), 0.05) 25%, rgba(var(--grid-rgb), 0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb), 0.05) 75%, rgba(var(--grid-rgb), 0.05) 76%, transparent 77%, transparent),
+                    linear-gradient(90deg, transparent 24%, rgba(var(--grid-rgb), 0.05) 25%, rgba(var(--grid-rgb), 0.05) 26%, transparent 27%, transparent 74%, rgba(var(--grid-rgb), 0.05) 75%, rgba(var(--grid-rgb), 0.05) 76%, transparent 77%, transparent);
   background-size: 50px 50px;
   opacity: 0.18;
   transition: background-image 0.8s ease, opacity 0.6s ease;
@@ -167,23 +180,17 @@ body::before {
   animation: subtlePulse 2s infinite alternate ease-in-out;
   transition: color 0.6s ease, text-shadow 0.6s ease;
 }
-body {
-  overflow: hidden;
-}
 
 @keyframes subtlePulse {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.01);
-  }
+  from { transform: scale(1); }
+  to { transform: scale(1.01); }
 }
 
 body.theme-dark .heading, body.theme-gold .heading {
   text-shadow: 0 0 6px var(--heading), 0 0 14px rgba(0, 0, 0, 0.06);
 }
 
+/* Container */
 .container {
   width: 95%;
   padding: 18px;
@@ -198,6 +205,7 @@ body.theme-dark .heading, body.theme-gold .heading {
   transition: background 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease;
 }
 
+/* Labels & textarea */
 label[for="txt"] {
   font-size: 0.95rem;
   color: var(--text);
@@ -224,6 +232,7 @@ label[for="txt"] {
   border-color: var(--accent);
 }
 
+/* Controls & buttons */
 .controls {
   display: flex;
   gap: 12px;
@@ -248,15 +257,9 @@ label[for="txt"] {
 }
 
 @keyframes buttonGlow {
-  0% {
-    background-position: 0% 50%
-  }
-  50% {
-    background-position: 100% 50%
-  }
-  100% {
-    background-position: 0% 50%
-  }
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
 }
 
 .enter:active {
@@ -276,12 +279,12 @@ label[for="txt"] {
   align-items: center;
   justify-content: center;
   background: var(--container-bg);
-  border: 1px solid var(--container-border); /* Set the border to a theme variable */
+  border: 1px solid var(--container-border);
   outline: none;
   border-radius: 12px;
   cursor: pointer;
   user-select: none;
-  color: var(--text); /* Use a theme variable for the color */
+  color: var(--text);
   box-shadow: var(--container-shadow);
   transition: background 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease;
 }
@@ -385,27 +388,18 @@ label[for="txt"] {
   outline: none !important;
   box-shadow: none !important;
 }
-
   </style>
 </head>
+
 <body class="theme-dark">
+
 <!-- Splash Screen -->
 <div id="splash-screen">
   <img src="zee512.png" alt="ZeeAI Logo" class="splash-logo">
 </div>
 
-<!-- Your normal app UI goes here -->
+<!-- App container -->
 <div id="app" style="display:none;">
-  <!-- index.html main content -->
-</div>
-  <button id="themeToggle" title="Theme">🎨</button>
-  <div id="themeMenu" class="theme-menu">
-    <div class="theme-option" data-theme="theme-dark"><div class="swatch" style="background:linear-gradient(45deg,#00ff55,#00ccee)"></div><div class="theme-label">Green & Black</div></div>
-    <div class="theme-option" data-theme="theme-light"><div class="swatch" style="background:linear-gradient(45deg,#0066ff,#00a6ff)"></div><div class="theme-label">Blue & White</div></div>
-    <div class="theme-option" data-theme="theme-teal"><div class="swatch" style="background:linear-gradient(45deg,#20c997,#17a2b8)"></div><div class="theme-label">Teal & Gray</div></div>
-    <div class="theme-option" data-theme="theme-gold"><div class="swatch" style="background:linear-gradient(45deg,#ffd700,#ffae00)"></div><div class="theme-label">Black & Gold</div></div>
-  </div>
-
   <div class="page">
     <div class="content">
       <h1 class="heading">ZeeAi 1.3</h1>
@@ -418,32 +412,72 @@ label[for="txt"] {
       </div>
     </div>
   </div>
+</div>
 
-  <div id="speedControl">
-    <button id="speedBtn" title="Playback speed">⏱️</button>
-    <div id="speedMenu">
-      <button data-rate="0.5">0.5x</button>
-      <button data-rate="1">1x</button>
-      <button data-rate="1.5">1.5x</button>
-      <button data-rate="2">2x</button>
-    </div>
+<!-- Theme Toggle -->
+<button id="themeToggle" title="Theme">🎨</button>
+<div id="themeMenu" class="theme-menu">
+  <div class="theme-option" data-theme="theme-dark">
+    <div class="swatch" style="background:linear-gradient(45deg,#00ff55,#00ccee)"></div>
+    <div class="theme-label">Green & Black</div>
   </div>
+  <div class="theme-option" data-theme="theme-light">
+    <div class="swatch" style="background:linear-gradient(45deg,#0066ff,#00a6ff)"></div>
+    <div class="theme-label">Blue & White</div>
+  </div>
+  <div class="theme-option" data-theme="theme-teal">
+    <div class="swatch" style="background:linear-gradient(45deg,#20c997,#17a2b8)"></div>
+    <div class="theme-label">Teal & Gray</div>
+  </div>
+  <div class="theme-option" data-theme="theme-gold">
+    <div class="swatch" style="background:linear-gradient(45deg,#ffd700,#ffae00)"></div>
+    <div class="theme-label">Gold & Black</div>
+  </div>
+</div>
 
-  <script>
-    /* ------------------------
-   Service worker register
+<!-- Speed Controller -->
+<div id="speedControl">
+  <button id="speedBtn">⚡</button>
+  <div id="speedMenu">
+    <button data-speed="0.5">0.5x</button>
+    <button data-speed="1">1x</button>
+    <button data-speed="1.5">1.5x</button>
+    <button data-speed="2">2x</button>
+  </div>
+</div>
+<script>
+/* ------------------------
+   Service Worker register
    ------------------------ */
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js').catch(()=>{/* ignore */});
+  navigator.serviceWorker.register('service-worker.js').catch(()=>{});
 }
+
+/* ------------------------
+   Splash Screen
+   ------------------------ */
+window.addEventListener("load", () => {
+  // If offline from start → redirect to offline.html
+  if (!navigator.onLine) {
+    window.location.href = "offline.html";
+    return;
+  }
+
+  // Else → run splash animation
+  setTimeout(() => {
+    const splash = document.getElementById("splash-screen");
+    splash.style.opacity = "0";
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("app").style.display = "block";
+    }, 600);
+  }, 1200);
+});
 
 /* ------------------------
    Theme toggle + persistence
    ------------------------ */
 const themeToggle = document.getElementById('themeToggle');
-const tooltip = document.getElementById('tooltipText');
-const sunIcon = document.getElementById('sunIcon');
-const moonIcon = document.getElementById('moonIcon');
 const speakBtn = document.getElementById('speakBtn');
 const txtInput = document.getElementById('txt');
 const speedBtn = document.getElementById('speedBtn');
@@ -458,7 +492,6 @@ const themeMetaColors = {
   'theme-teal': '#20c997',
   'theme-gold': '#ffd700'
 };
-
 
 // Load saved theme
 function applyTheme(themeName){
@@ -497,30 +530,29 @@ let currentRate = 1;
 
 // Speed Controller Logic
 if (speedBtn) {
-    speedBtn.addEventListener('click', e=>{
-      e.stopPropagation();
-      if (speedMenu) speedMenu.style.display = speedMenu.style.display==='flex' ? 'none':'flex';
-    });
+  speedBtn.addEventListener('click', e=>{
+    e.stopPropagation();
+    if (speedMenu) speedMenu.style.display = speedMenu.style.display==='flex' ? 'none':'flex';
+  });
 }
 document.addEventListener('click', e=>{
-    if(speedMenu && !speedMenu.contains(e.target) && e.target!==speedBtn){
-        speedMenu.style.display='none';
-    }
+  if(speedMenu && !speedMenu.contains(e.target) && e.target!==speedBtn){
+    speedMenu.style.display='none';
+  }
 });
 
 if (speedMenu) {
-    speedMenu.querySelectorAll('button').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        currentRate = parseFloat(btn.dataset.rate);
-        speedMenu.style.display='none';
-      });
+  speedMenu.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentRate = parseFloat(btn.dataset.rate);
+      speedMenu.style.display='none';
     });
+  });
 }
 
 const digitWords = ['zero','one','two','three','four','five','six','seven','eight','nine'];
 
 function spellDigitsString(numStr){
-  // numStr assumed digits-only
   return numStr.split('').map(ch => {
     if (/\d/.test(ch)) return digitWords[parseInt(ch,10)];
     return ch;
@@ -532,29 +564,21 @@ function processTextForSpeech(input){
   if (!trimmed) return '';
 
   const words = trimmed.split(/\s+/);
-  // If the whole input is exactly "1000" -> "one thousand"
   if (/^1000$/.test(trimmed)) return 'one thousand';
-  // If the whole input is exactly "10000" -> digits spelled
   if (/^10000$/.test(trimmed)) return spellDigitsString('10000');
 
-  // If more than 4 words -> replace every numeric run with digit-by-digit
   if (words.length > 4) {
     return trimmed.replace(/\d+/g, match => spellDigitsString(match));
   }
 
-  // Otherwise do inline special-case replacements:
-  // - replace 1000 anywhere with "one thousand"
-  // - replace 10000 anywhere with digit spelling
   let out = trimmed.replace(/\b1000\b/g, 'one thousand');
   out = out.replace(/\b10000\b/g, (m)=> spellDigitsString(m));
-  // Keep other numbers as-is
   return out;
 }
 
 function speakHandler(){
   const inputText = txtInput.value || '';
   if (isSpeaking) {
-    // stop
     window.speechSynthesis.cancel();
     resetSpeakingState();
     return;
@@ -565,35 +589,26 @@ function speakHandler(){
     return;
   }
 
-  // create utterance
   currentUtterance = new SpeechSynthesisUtterance(processed);
   currentUtterance.rate = currentRate; 
 
-  // events
   currentUtterance.onstart = () => {
     isSpeaking = true;
     speakBtn.textContent = 'Stop';
     document.getElementById('returnedText')?.classList?.add('visible');
   };
-  currentUtterance.onend = () => {
-    resetSpeakingState();
-  };
-  currentUtterance.onerror = () => {
-    resetSpeakingState();
-  };
+  currentUtterance.onend = resetSpeakingState;
+  currentUtterance.onerror = resetSpeakingState;
 
-  // show speaking line
   const returned = document.getElementById('returnedText');
   if (returned) {
     returned.textContent = `Speaking: "${processed}"`;
     returned.classList.add('visible');
   }
 
-  // speak
   window.speechSynthesis.speak(currentUtterance);
 }
 
-// Reset UI when stopping
 function resetSpeakingState(){
   isSpeaking = false;
   speakBtn.textContent = 'Speak';
@@ -603,24 +618,14 @@ function resetSpeakingState(){
 }
 
 if (speakBtn) speakBtn.addEventListener('click', speakHandler);
-// Enter key triggers speak / stop
 if (txtInput) {
-    txtInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        speakHandler();
-      }
-    });
+  txtInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      speakHandler();
+    }
+  });
 }
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    document.getElementById("splash-screen").style.opacity = "0";
-    setTimeout(() => {
-      document.getElementById("splash-screen").style.display = "none";
-      document.getElementById("app").style.display = "block";
-    }, 600); // match fade duration
-  }, 1200); // how long splash is shown
-});
-  </script>
+</script>
 </body>
 </html>
