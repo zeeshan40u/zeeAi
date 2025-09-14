@@ -1,5 +1,5 @@
 // 👇 bump this every time you deploy a change so browsers pull a fresh cache
-const CACHE_NAME = "zeeai-cache-v5";
+const CACHE_NAME = "zeeai-cache-v6"; // bumped version
 
 // Define the custom offline page URL
 const OFFLINE_URL = "/zeeAi/offline.html";
@@ -13,8 +13,7 @@ const urlsToCache = [
   "/zeeAi/zee512.png",
   "/zeeAi/carData.js",
   "/zeeAi/service-worker.js",
-  // 💡 Add the custom offline page to the cache list
-  OFFLINE_URL
+  OFFLINE_URL // 💡 cache the offline page
 ];
 
 // Install event — cache resources
@@ -22,6 +21,7 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
+  self.skipWaiting(); // activate immediately
 });
 
 // Activate event — delete old caches
@@ -37,21 +37,25 @@ self.addEventListener("activate", event => {
       )
     )
   );
+  self.clients.claim(); // take control right away
 });
 
-// Fetch event — respond from cache first, fallback to network, then offline fallback
+// Fetch event — show index.html when online, offline.html when offline
 self.addEventListener("fetch", event => {
-  // We only want to handle navigation requests for HTML pages
   if (event.request.mode === "navigate") {
-    // For navigation requests, try network first
     event.respondWith(
-      fetch(event.request).catch(() => {
-        // If the network fails, serve the cached offline page
-        return caches.match(OFFLINE_URL);
-      })
+      fetch(event.request)
+        .then(response => {
+          // If network is fine, return index.html or requested page
+          return response;
+        })
+        .catch(() => {
+          // If offline, show offline.html
+          return caches.match(OFFLINE_URL);
+        })
     );
   } else {
-    // For other requests, try cache first
+    // For non-navigation requests → try cache first
     event.respondWith(
       caches.match(event.request).then(response => response || fetch(event.request))
     );
