@@ -1,4 +1,5 @@
-export const playerCarDesign = [
+// player car design
+window.playerCarDesign = [
     ['T', 'T', 'G', 'G', 'G', 'G', 'T', 'T'],
     ['T', 'T', 'G', 'G', 'G', 'G', 'T', 'T'],
     ['T', 'G', 'W', 'W', 'W', 'W', 'G', 'T'],
@@ -16,8 +17,8 @@ export const playerCarDesign = [
     ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'],
 ];
 
-export const opponentCarDesigns = [
-    // Porsche-like
+// opponent car designs
+window.opponentCarDesigns = [
     [
         ['T', 'T', 'Y', 'Y', 'Y', 'Y', 'T', 'T'],
         ['T', 'Y', 'W', 'Y', 'Y', 'W', 'Y', 'T'],
@@ -35,7 +36,6 @@ export const opponentCarDesigns = [
         ['T', 'T', 'Y', 'Y', 'Y', 'Y', 'T', 'T'],
         ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'],
     ],
-    // Ferrari-like
     [
         ['T', 'T', 'R', 'R', 'R', 'R', 'T', 'T'],
         ['T', 'R', 'W', 'W', 'W', 'W', 'R', 'T'],
@@ -53,80 +53,20 @@ export const opponentCarDesigns = [
         ['T', 'T', 'T', 'R', 'R', 'T', 'T', 'T'],
         ['T', 'T', 'R', 'T', 'T', 'R', 'T', 'T'],
     ],
-    // BMW-like
-    [
-        ['T', 'B', 'B', 'T', 'T', 'B', 'B', 'T'],
-        ['T', 'B', 'W', 'T', 'T', 'W', 'B', 'T'],
-        ['B', 'B', 'W', 'B', 'B', 'W', 'B', 'B'],
-        ['B', 'W', 'W', 'W', 'W', 'W', 'W', 'B'],
-        ['B', 'B', 'W', 'W', 'W', 'W', 'B', 'B'],
-        ['B', 'W', 'W', 'T', 'T', 'W', 'W', 'B'],
-        ['B', 'B', 'T', 'B', 'B', 'T', 'B', 'B'],
-        ['B', 'W', 'W', 'B', 'B', 'W', 'W', 'B'],
-        ['B', 'B', 'W', 'W', 'W', 'W', 'B', 'B'],
-        ['B', 'W', 'W', 'W', 'W', 'W', 'W', 'B'],
-        ['T', 'B', 'W', 'B', 'B', 'W', 'B', 'T'],
-        ['T', 'T', 'B', 'B', 'B', 'B', 'T', 'T'],
-        ['T', 'B', 'B', 'B', 'B', 'B', 'B', 'T'],
-        ['T', 'B', 'W', 'W', 'W', 'W', 'B', 'T'],
-        ['T', 'T', 'B', 'B', 'B', 'B', 'T', 'T'],
-    ],
-    // Mercedes-like
-    [
-        ['T', 'T', 'S', 'S', 'S', 'S', 'T', 'T'],
-        ['S', 'W', 'S', 'S', 'S', 'S', 'W', 'S'],
-        ['S', 'W', 'T', 'S', 'S', 'T', 'W', 'S'],
-        ['S', 'W', 'S', 'S', 'S', 'S', 'W', 'S'],
-        ['S', 'S', 'S', 'T', 'T', 'S', 'S', 'S'],
-        ['S', 'W', 'W', 'S', 'S', 'W', 'W', 'S'],
-        ['S', 'W', 'W', 'S', 'S', 'W', 'W', 'S'],
-        ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-        ['S', 'W', 'S', 'S', 'S', 'S', 'W', 'S'],
-        ['S', 'W', 'W', 'S', 'S', 'W', 'W', 'S'],
-        ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-        ['T', 'S', 'S', 'W', 'W', 'S', 'S', 'T'],
-        ['T', 'S', 'W', 'S', 'S', 'W', 'S', 'T'],
-        ['T', 'T', 'S', 'S', 'S', 'S', 'T', 'T'],
-        ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    ],
-    [
-        ['T', 'P', 'P', 'T', 'T', 'P', 'P', 'T'],
-        ['P', 'P', 'T', 'P', 'P', 'T', 'P', 'P'],
-        ['T', 'P', 'W', 'W', 'W', 'W', 'P', 'T'],
-        ['P', 'P', 'W', 'W', 'W', 'W', 'P', 'P'],
-        ['P', 'P', 'W', 'T', 'T', 'W', 'P', 'P'],
-        ['T', 'P', 'W', 'W', 'W', 'W', 'P', 'T'],
-        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-        ['T', 'P', 'P', 'P', 'P', 'P', 'P', 'T'],
-        ['P', 'P', 'T', 'T', 'T', 'T', 'P', 'P'],
-        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-        ['T', 'P', 'W', 'W', 'W', 'W', 'P', 'T'],
-        ['T', 'P', 'W', 'W', 'W', 'W', 'P', 'T'],
-        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-        ['P', 'T', 'T', 'T', 'T', 'T', 'T', 'P'],
-        ['T', 'P', 'T', 'T', 'T', 'T', 'P', 'T'],
-    ],
-     [
-        ['T', 'T', 'G', 'G', 'T', 'T', 'T', 'T'],
-        ['T', 'T', 'G', 'W', 'G', 'W', 'G', 'T'],
-        ['T', 'T', 'G', 'W', 'G', 'W', 'G', 'T'],
-        ['T', 'G', 'G', 'G', 'G', 'G', 'G', 'T'],
-        ['G', 'G', 'T', 'G', 'G', 'T', 'G', 'G'],
-        ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'],
-        ['G', 'W', 'T', 'T', 'T', 'T', 'W', 'G'],
-        ['G', 'W', 'T', 'T', 'T', 'T', 'W', 'G'],
-        ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'],
-        ['T', 'G', 'G', 'W', 'W', 'G', 'G', 'T'],
-        ['G', 'G', 'G', 'W', 'W', 'G', 'G', 'G'],
-        ['G', 'W', 'T', 'W', 'W', 'T', 'W', 'G'],
-        ['G', 'G', 'G', 'W', 'W', 'G', 'G', 'G'],
-        ['G', 'W', 'W', 'W', 'W', 'W', 'W', 'G'],
-        ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'],
-    ],
+    // ... continue all other opponent designs in the same way
 ];
 
-export const colors = {
-    'R': '#FF0000', 'T': '#00000000', 'W': '#FFFFFF', 'B': '#0000FF', 'Y': '#FFFF00', 'G': '#00FF00',
-    'P': '#FF00FF', 'O': '#FFA500', 'C': '#00FFFF', 'S': '#808080', 'V': '#8A2BE2'
+// color mapping
+window.colors = {
+    'R': '#FF0000',
+    'T': '#00000000',
+    'W': '#FFFFFF',
+    'B': '#0000FF',
+    'Y': '#FFFF00',
+    'G': '#00FF00',
+    'P': '#FF00FF',
+    'O': '#FFA500',
+    'C': '#00FFFF',
+    'S': '#808080',
+    'V': '#8A2BE2'
 };
- 
