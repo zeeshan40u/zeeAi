@@ -124,11 +124,11 @@
         <button onclick="window.location.reload()">Reconnect</button>
     </div>
 
-    <button class="game-button" onclick="showGame()">🎮</button>
+    <button class="game-button">🎮</button>
 
     <div id="game-overlay" class="game-overlay">
         <div class="game-overlay-content">
-            <button class="close-btn" onclick="hideGame()">✖</button>
+            <button class="close-btn">✖</button>
             <canvas id="racing-canvas" width="300" height="400"></canvas>
             <div id="score" class="score-display">Score: 0</div>
             <div style="color: #fff; font-size: 0.9em; margin-top: 10px;">
@@ -139,7 +139,7 @@
 
     <script type="module">
         import { playerCarDesign, opponentCarDesigns, colors } from './carData.js';
-        
+
         const canvas = document.getElementById('racing-canvas');
         const ctx = canvas.getContext('2d');
         const PIXEL_SIZE = 4;
@@ -150,6 +150,10 @@
         let lastTime = 0;
         let obstacleSpeed = 2;
         const maxObstacles = 4;
+        
+        // Get button elements
+        const gameButton = document.querySelector('.game-button');
+        const closeBtn = document.querySelector('.close-btn');
 
         function drawPixelArt(ctx, shape, colors, x, y) {
             const h = shape.length;
@@ -165,9 +169,8 @@
         }
 
         function drawCar() {
-    drawPixelArt(ctx, car.shape, colors, car.x, car.y);
-}
-
+            drawPixelArt(ctx, car.shape, colors, car.x, car.y);
+        }
 
         function drawObstacles() {
             obstacles.forEach(obs => {
@@ -202,9 +205,9 @@
                     spawnObstacle();
                 }
             }
-            
+
             obstacleSpeed += 0.005;
-            
+
             obstacles = obstacles.filter(obs => {
                 const onScreen = obs.y < canvas.height;
                 if (!onScreen) {
@@ -263,6 +266,10 @@
             document.getElementById('game-overlay').style.display = 'none';
             gameOver = true;
         }
+
+        // New event listeners to handle button clicks
+        gameButton.addEventListener('click', showGame);
+        closeBtn.addEventListener('click', hideGame);
 
         document.addEventListener('keydown', e => {
             if (gameOver) return;
