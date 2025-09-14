@@ -140,171 +140,156 @@
   </div>
 
   <script type="module">
-    import { playerCarDesign, opponentCarDesigns, colors } from '/zeeAi/carData.js';
+  <script type="module">
+  import { playerCarDesign, opponentCarDesigns, colors } from '/zeeAi/carData.js'; 
+  // 👆 absolute path ensures it works whether offline.html is cached at /zeeAi/ or /
 
-    const canvas = document.getElementById('racing-canvas');
-    const ctx = canvas.getContext('2d');
-    const PIXEL_SIZE = 4;
+  const canvas = document.getElementById('racing-canvas');
+  const ctx = canvas.getContext('2d');
+  const PIXEL_SIZE = 4;
 
-    const carWidth = playerCarDesign[0].length * PIXEL_SIZE;
-    const carHeight = playerCarDesign.length * PIXEL_SIZE;
+  const car = { 
+    x: canvas.width / 2 - 10, 
+    y: canvas.height - 40, 
+    width: 32, 
+    height: 64, 
+    speed: 5, 
+    shape: playerCarDesign 
+  };
 
-    const car = {
-      x: canvas.width / 2 - carWidth / 2,
-      y: canvas.height - carHeight - 10,
-      width: carWidth,
-      height: carHeight,
-      speed: 5,
-      shape: playerCarDesign
-    };
+  let obstacles = [];
+  let score = 0;
+  let gameOver = true;
+  let lastTime = 0;
+  let obstacleSpeed = 2;
+  const maxObstacles = 4;
 
-    let obstacles = [];
-    let score = 0;
-    let gameOver = true;
-    let lastTime = 0;
-    let obstacleSpeed = 2;
-    const maxObstacles = 4;
+  // ✅ Safer selectors
+  const gameButton = document.querySelector('.game-button');
+  const closeBtn = document.querySelector('.close-btn');
+  const overlay = document.getElementById('game-overlay');
+  const scoreDisplay = document.getElementById('score');
 
-    const gameButton = document.querySelector('.game-button');
-    const closeBtn = document.querySelector('.close-btn');
-
-    function drawPixelArt(ctx, shape, colors, x, y) {
-      const h = shape.length;
-      const w = shape[0].length;
-      for (let r = 0; r < h; r++) {
-        for (let c = 0; c < w; c++) {
-          if (shape[r][c] !== 'T') {
-            ctx.fillStyle = colors[shape[r][c]];
-            ctx.fillRect(x + c * PIXEL_SIZE, y + r * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-          }
+  function drawPixelArt(ctx, shape, colors, x, y) {
+    for (let r = 0; r < shape.length; r++) {
+      for (let c = 0; c < shape[0].length; c++) {
+        if (shape[r][c] !== 'T') {
+          ctx.fillStyle = colors[shape[r][c]];
+          ctx.fillRect(x + c * PIXEL_SIZE, y + r * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
         }
       }
     }
+  }
 
-    function drawCar() {
-      drawPixelArt(ctx, car.shape, colors, car.x, car.y);
+  function drawCar() {
+    drawPixelArt(ctx, car.shape, colors, car.x, car.y);
+  }
+
+  function drawObstacles() {
+    obstacles.forEach(obs => {
+      drawPixelArt(ctx, obs.shape, obs.colors, obs.x, obs.y);
+    });
+  }
+
+  function spawnObstacle() {
+    const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
+    const width = randomDesign[0].length * PIXEL_SIZE;
+    const height = randomDesign.length * PIXEL_SIZE;
+    const x = Math.random() * (canvas.width - width - 40) + 20;
+    obstacles.push({ x, y: -height, width, height, shape: randomDesign, colors });
+  }
+
+  function updateGame(time = 0) {
+    if (gameOver) return;
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    obstacles.forEach(obs => { obs.y += obstacleSpeed * (deltaTime / 16); });
+
+    if (obstacles.length < maxObstacles && Math.random() > 0.95) {
+      spawnObstacle();
     }
 
-    function drawObstacles() {
-      obstacles.forEach(obs => {
-        drawPixelArt(ctx, obs.shape, obs.colors, obs.x, obs.y);
-      });
-    }
+    obstacleSpeed += 0.005;
 
-    function spawnObstacle() {
-      const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
-      const width = randomDesign[0].length * PIXEL_SIZE;
-      const height = randomDesign.length * PIXEL_SIZE;
-      const minX = 20;
-      const maxX = canvas.width - 20 - width;
-      const x = Math.random() * (maxX - minX) + minX;
-      obstacles.push({ x, y: -height, width, height, shape: randomDesign, colors });
-    }
+    obstacles = obstacles.filter(obs => {
+      const onScreen = obs.y < canvas.height;
+      if (!onScreen) score++;
+      return onScreen;
+    });
 
-    function clampCarPosition() {
-      if (car.x < 0) car.x = 0;
-      if (car.x + car.width > canvas.width) car.x = canvas.width - car.width;
-    }
-
-    function updateGame(time = 0) {
-      if (gameOver) return;
-      const deltaTime = time - lastTime;
-      lastTime = time;
-
-      ctx.fillStyle = '#1a1a1a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      obstacles.forEach(obs => {
-        obs.y += obstacleSpeed * (deltaTime / 16);
-      });
-
-      if (obstacles.length < maxObstacles && Math.random() > 0.95) {
-        spawnObstacle();
-      }
-
-      obstacleSpeed += 0.005;
-
-      obstacles = obstacles.filter(obs => {
-        const onScreen = obs.y < canvas.height;
-        if (!onScreen) score++;
-        return onScreen;
-      });
-
-      obstacles.forEach(obs => {
-        if (
-          car.x < obs.x + obs.width &&
+    obstacles.forEach(obs => {
+      if (car.x < obs.x + car.width &&
           car.x + car.width > obs.x &&
           car.y < obs.y + obs.height &&
-          car.y + car.height > obs.y
-        ) {
-          endGame();
-        }
-      });
-
-      clampCarPosition();
-      drawCar();
-      drawObstacles();
-      document.getElementById('score').innerText = `Score: ${score}`;
-
-      requestAnimationFrame(updateGame);
-    }
-
-    function endGame() {
-      gameOver = true;
-      ctx.fillStyle = '#0F0';
-      ctx.font = '30px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Game Over!', canvas.width / 2, canvas.height / 2);
-      ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 35);
-    }
-
-    function resetGame() {
-      car.x = canvas.width / 2 - car.width / 2;
-      car.y = canvas.height - car.height - 10;
-      obstacles = [];
-      score = 0;
-      gameOver = false;
-      lastTime = 0;
-      obstacleSpeed = 2;
-      for (let i = 0; i < maxObstacles; i++) {
-        spawnObstacle();
-        obstacles[i].y = -(i * 100) - 50;
+          car.y + car.height > obs.y) {
+        endGame();
       }
-    }
-
-    function showGame() {
-      document.getElementById('game-overlay').style.display = 'flex';
-      resetGame();
-      updateGame();
-    }
-
-    function hideGame() {
-      document.getElementById('game-overlay').style.display = 'none';
-      gameOver = true;
-    }
-
-    gameButton.addEventListener('click', showGame);
-    closeBtn.addEventListener('click', hideGame);
-
-    document.addEventListener('keydown', e => {
-      if (gameOver) return;
-      if (e.key === 'ArrowLeft') car.x -= car.speed;
-      else if (e.key === 'ArrowRight') car.x += car.speed;
-      clampCarPosition();
     });
 
-    let touchStartX = 0;
-    canvas.addEventListener('touchstart', e => {
-      touchStartX = e.touches[0].clientX;
-    });
+    drawCar();
+    drawObstacles();
+    scoreDisplay.textContent = `Score: ${score}`;
 
-    canvas.addEventListener('touchmove', e => {
-      const touchX = e.touches[0].clientX;
-      const dx = touchX - touchStartX;
-      car.x += dx * 0.5;
-      touchStartX = touchX;
-      clampCarPosition();
+    requestAnimationFrame(updateGame);
+  }
+
+  function endGame() {
+    gameOver = true;
+    ctx.fillStyle = '#0F0';
+    ctx.font = '30px Arial';
+    ctx.fillText(`Game Over!`, canvas.width / 2 - 80, canvas.height / 2);
+    ctx.fillText(`Score: ${score}`, canvas.width / 2 - 60, canvas.height / 2 + 35);
+  }
+
+  function resetGame() {
+    car.x = canvas.width / 2 - car.width / 2;
+    car.y = canvas.height - car.height - 10;
+    obstacles = [];
+    score = 0;
+    gameOver = false;
+    lastTime = 0;
+    obstacleSpeed = 2;
+    for (let i = 0; i < maxObstacles; i++) spawnObstacle();
+    obstacles.forEach((obs, i) => { obs.y = -(i * 100) - 50; });
+  }
+
+  function showGame() {
+    overlay.style.display = 'flex';
+    resetGame();
+    updateGame();
+  }
+
+  function hideGame() {
+    overlay.style.display = 'none';
+    gameOver = true;
+  }
+
+  // ✅ Make sure button works
+  if (gameButton) {
+    gameButton.addEventListener('click', () => {
+      console.log("🎮 Game button clicked");
+      showGame();
     });
-  </script>
+  }
+  if (closeBtn) closeBtn.addEventListener('click', hideGame);
+
+  document.addEventListener('keydown', e => {
+    if (gameOver) return;
+    if (e.key === 'ArrowLeft') car.x -= car.speed;
+    else if (e.key === 'ArrowRight') car.x += car.speed;
+  });
+
+  let touchStartX = 0;
+  canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  canvas.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - touchStartX;
+    car.x += dx * 0.5;
+    touchStartX = e.touches[0].clientX;
+  });
+</script>
 </body>
 </html>
