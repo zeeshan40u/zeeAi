@@ -133,12 +133,15 @@ let imagesReady = 0;
 });
 
 function startGame(){
+  const scale = 0.5; // scale down to 50% size
+
   player = {
-    x: canvas.width/2 - 30,
-    y: canvas.height - 120,
-    width: 60,
-    height: 100
+    x: canvas.width/2 - (playerCarImg.naturalWidth * scale)/2,
+    y: canvas.height - (playerCarImg.naturalHeight * scale) - 20,
+    width: playerCarImg.naturalWidth * scale,
+    height: playerCarImg.naturalHeight * scale
   };
+
   obstacles = [];
   score = 0;
   highScore = localStorage.getItem("highScore") || 0;
@@ -156,7 +159,9 @@ function startGame(){
 }
 
 function spawnObstacle(){
-  const width = 60, height = 100;
+  const scale = 0.5;
+  const width = opponentCarImg.naturalWidth * scale;
+  const height = opponentCarImg.naturalHeight * scale;
   const x = Math.random() * (canvas.width - width - 10) + 5;
   obstacles.push({x: x, y: -height, width: width, height: height, passed: false});
 }
@@ -183,12 +188,12 @@ function updateGame(){
   // Player
   ctx.drawImage(playerCarImg, player.x, player.y, player.width, player.height);
 
-  // Collision
+  // Collision (ignore padding with margin)
   for(let obs of obstacles){
-    if(player.x < obs.x + obs.width &&
-       player.x + player.width > obs.x &&
-       player.y < obs.y + obs.height &&
-       player.y + player.height > obs.y){
+    if(player.x + 10 < obs.x + obs.width - 10 &&
+       player.x + player.width - 10 > obs.x + 10 &&
+       player.y + 10 < obs.y + obs.height - 10 &&
+       player.y + player.height - 10 > obs.y + 10){
       endGame(); return;
     }
   }
@@ -284,17 +289,6 @@ function removeGameControls(){
   if(leftBtn) leftBtn.remove();
   if(rightBtn) rightBtn.remove();
   if(nitroBtn) nitroBtn.remove();
-}
-
-// --- Missing functions to open/close the game ---
-function openGame(){
-  overlay.style.display = "flex";
-  startGame();
-}
-
-function closeGame(){
-  overlay.style.display = "none";
-  removeGameControls();
 }
 </script>
 </body>
