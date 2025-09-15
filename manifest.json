@@ -1,20 +1,19 @@
 {
-  "name": "ZeeAi 1.2",
+  "name": "ZeeAi",
   "short_name": "ZeeAi",
-  "start_url": "/zeeAi/",
-  "scope": "/zeeAi/",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#0d0d0d",
-  "theme_color": "#00ff55",
+  "background_color": "#111111",   // Match your app background
+  "theme_color": "#111111",        // Match app theme
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/zeeAi/zee192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/zeeAi/zee512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
