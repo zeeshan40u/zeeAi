@@ -285,6 +285,17 @@ function removeGameControls(){
   if(rightBtn) rightBtn.remove();
   if(nitroBtn) nitroBtn.remove();
 }
+
+// --- Missing functions to open/close the game ---
+function openGame(){
+  overlay.style.display = "flex";
+  startGame();
+}
+
+function closeGame(){
+  overlay.style.display = "none";
+  removeGameControls();
+}
 </script>
 </body>
 </html>
