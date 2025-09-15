@@ -24,9 +24,7 @@
       padding: 15px;
     }
 
-    h1 {
-      color: #00ff55;
-    }
+    h1 { color: #00ff55; }
 
     button {
       background-color: #00ff55;
@@ -39,18 +37,13 @@
       margin-top: 15px;
     }
 
-    button:hover {
-      background-color: #00cc44;
-    }
+    button:hover { background-color: #00cc44; }
 
-    /* Game overlay */
     .game-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
       display: none;
       justify-content: center;
       align-items: center;
@@ -116,7 +109,7 @@
     const overlay = document.getElementById("gameOverlay");
     const canvas = document.getElementById("racing-canvas");
     const ctx = canvas.getContext("2d");
-    const PIXEL_SIZE = 10;
+    const PIXEL_SIZE = 8; // Smaller pixels for smaller cars
     let player, obstacles, score, highScore, gameOver, obstacleSpeed;
 
     // ---- Embedded carData.js ----
@@ -145,16 +138,6 @@
             ['Y','W','Y','Y','Y','Y','W','Y'],
             ['Y','W','Y','Y','Y','Y','W','Y'],
             ['Y','Y','Y','Y','Y','Y','Y','Y'],
-            ['Y','Y','Y','Y','Y','Y','Y','Y'],
-            ['Y','W','W','Y','Y','W','W','Y'],
-            ['Y','W','Y','Y','Y','Y','W','Y'],
-            ['T','T','Y','Y','Y','Y','T','T'],
-            ['T','Y','Y','T','T','Y','Y','T'],
-            ['T','Y','Y','T','T','Y','Y','T'],
-            ['T','Y','Y','T','T','Y','Y','T'],
-            ['T','T','T','Y','Y','T','T','T'],
-            ['T','T','Y','Y','Y','Y','T','T'],
-            ['Y','Y','Y','Y','Y','Y','Y','Y'],
         ],
         [
             ['T','T','R','R','R','R','T','T'],
@@ -162,16 +145,6 @@
             ['R','R','W','R','R','W','R','R'],
             ['R','W','W','R','R','W','W','R'],
             ['R','W','R','R','R','R','W','R'],
-            ['R','R','R','R','R','R','R','R'],
-            ['R','R','R','R','R','R','R','R'],
-            ['R','W','R','R','R','R','W','R'],
-            ['R','W','W','W','W','W','W','R'],
-            ['R','W','W','W','W','W','W','R'],
-            ['R','W','T','T','T','T','W','R'],
-            ['R','R','W','W','W','W','R','R'],
-            ['T','R','R','W','W','R','R','T'],
-            ['T','T','T','R','R','T','T','T'],
-            ['T','T','R','T','T','R','T','T'],
         ]
     ];
 
@@ -200,12 +173,12 @@
     }
 
     function startGame() {
-        player = { x: canvas.width / 2 - 40, y: canvas.height - 160, width: 8 * PIXEL_SIZE, height: 15 * PIXEL_SIZE };
+        player = { x: canvas.width / 2 - 32, y: canvas.height - 140, width: 8*PIXEL_SIZE, height: 5*PIXEL_SIZE };
         obstacles = [];
         score = 0;
         highScore = localStorage.getItem("highScore") || 0;
         gameOver = false;
-        obstacleSpeed = 2;
+        obstacleSpeed = 1.5; // slower speed
         document.getElementById("score").innerText = `Score: ${score}`;
         document.getElementById("high-score").innerText = `High Score: ${highScore}`;
         requestAnimationFrame(updateGame);
@@ -215,9 +188,17 @@
         const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
         const width = randomDesign[0].length * PIXEL_SIZE;
         const height = randomDesign.length * PIXEL_SIZE;
-const minX = 10;
+        const minX = 10;
         const maxX = canvas.width - width - 10;
-        const x = Math.random() * (maxX - minX) + minX;
+
+        // Find a free X position (prevent overlap)
+        let x;
+        let tries = 0;
+        do {
+            x = Math.random() * (maxX - minX) + minX;
+            tries++;
+        } while (obstacles.some(obs => Math.abs(obs.x - x) < width + 10 && Math.abs(obs.y - 0) < height + 50) && tries < 10);
+
         obstacles.push({ x: x, y: -height, width: width, height: height, shape: randomDesign });
     }
 
@@ -228,19 +209,15 @@ const minX = 10;
 
         drawCar(player.x, player.y, playerCarDesign);
 
-        // Update and draw obstacles
         obstacles.forEach(obs => {
             obs.y += obstacleSpeed;
             drawCar(obs.x, obs.y, obs.shape);
         });
 
-        // Remove off-screen obstacles
         obstacles = obstacles.filter(obs => obs.y < canvas.height);
 
-        // Spawn new obstacle randomly
-        if (Math.random() < 0.02) spawnObstacle();
+        if (Math.random() < 0.01) spawnObstacle(); // slower spawn
 
-        // Collision detection
         for (let obs of obstacles) {
             if (
                 player.x < obs.x + obs.width &&
@@ -253,10 +230,8 @@ const minX = 10;
             }
         }
 
-        // Update score & speed
         score++;
         document.getElementById("score").innerText = `Score: ${score}`;
-        obstacleSpeed += 0.001; // slowly increase difficulty
 
         requestAnimationFrame(updateGame);
     }
@@ -275,22 +250,14 @@ const minX = 10;
         document.getElementById("high-score").innerText = `High Score: ${highScore}`;
     }
 
-    // Player controls
     document.addEventListener("keydown", (e) => {
         if (gameOver) return;
-        if (e.key === "ArrowLeft" && player.x > 0) player.x -= 20;
-        if (e.key === "ArrowRight" && player.x < canvas.width - player.width) player.x += 20;
+        if (e.key === "ArrowLeft") player.x = Math.max(player.x - 10, 0);
+        if (e.key === "ArrowRight") player.x = Math.min(player.x + 10, canvas.width - player.width);
     });
 
-    // Overlay functions
-    function openGame() {
-        overlay.style.display = "flex";
-        startGame();
-    }
-
-    function closeGame() {
-        overlay.style.display = "none";
-    }
+    function openGame() { overlay.style.display = "flex"; startGame(); }
+    function closeGame() { overlay.style.display = "none"; }
   </script>
 </body>
 </html>
