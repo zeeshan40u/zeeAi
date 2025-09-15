@@ -133,7 +133,7 @@ let imagesReady = 0;
 });
 
 // --- Scale helper ---
-function getScaledSize(img, scale = 0.5) {
+function getScaledSize(img, scale = 0.4) { // reduced scale to 0.4
   return {
     width: img.naturalWidth * scale,
     height: img.naturalHeight * scale
@@ -141,7 +141,7 @@ function getScaledSize(img, scale = 0.5) {
 }
 
 function startGame(){
-  let pSize = getScaledSize(playerCarImg, 0.5); // adjust scale if cars too small/large
+  let pSize = getScaledSize(playerCarImg, 0.4);
   player = {
     x: canvas.width/2 - pSize.width/2,
     y: canvas.height - pSize.height - 20,
@@ -156,7 +156,7 @@ function startGame(){
   playerSpeed = playerBaseSpeed;
   nitroActive = false;
   nitroDuration = 0;
-  nitroCooldown = 0; // fully charged at start
+  nitroCooldown = 0;
 
   document.getElementById("score").innerText = `Score: ${score}`;
   document.getElementById("high-score").innerText = `High Score: ${highScore}`;
@@ -166,7 +166,7 @@ function startGame(){
 }
 
 function spawnObstacle(){
-  let oSize = getScaledSize(opponentCarImg, 0.5);
+  let oSize = getScaledSize(opponentCarImg, 0.4);
   const x = Math.random() * (canvas.width - oSize.width - 10) + 5;
   obstacles.push({
     x: x, y: -oSize.height,
@@ -177,7 +177,7 @@ function spawnObstacle(){
 
 function updateGame(){
   if(gameOver) return;
-  if(imagesReady < 2){ requestAnimationFrame(updateGame); return; } // wait until cars loaded
+  if(imagesReady < 2){ requestAnimationFrame(updateGame); return; }
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -233,7 +233,6 @@ function updateGame(){
 function endGame(){
   gameOver = true;
   removeGameControls();
-  keys = {}; // reset keys
   ctx.fillStyle = '#0F0';
   ctx.font = '20px Arial';
   ctx.fillText("Game Over!", canvas.width/2-50, canvas.height/2);
@@ -252,19 +251,15 @@ document.addEventListener("keyup", e=>{ keys[e.key]=false; });
 // Nitro button update
 function updateNitroButton(){
   if(!nitroBtn) return;
-  let ratio = nitroActive 
-    ? nitroDuration/NITRO_DURATION_FRAMES 
-    : nitroCooldown/NITRO_COOLDOWN_FRAMES;
-
+  let ratio = nitroActive ? nitroDuration/NITRO_DURATION_FRAMES : nitroCooldown/NITRO_COOLDOWN_FRAMES;
   let greenFill = nitroActive 
-    ? `linear-gradient(to top, rgba(0,255,0,0.4) ${ratio*100}%, transparent 0%)`
-    : `linear-gradient(to top, rgba(0,255,0,0.4) ${(1-ratio)*100}%, transparent 0%)`;
+    ? `linear-gradient(to top, rgba(0,255,0,0.7) ${ratio*100}%, transparent 0%)`
+    : `linear-gradient(to top, rgba(0,255,0,0.7) ${(1-ratio)*100}%, transparent 0%)`;
 
   nitroBtn.style.backgroundImage = `${greenFill}, url('NitroAbility_Icon.png')`;
   nitroBtn.style.backgroundSize = "100% 100%, 70% auto";
   nitroBtn.style.backgroundRepeat = "no-repeat";
   nitroBtn.style.backgroundPosition = "center";
-  nitroBtn.style.backgroundBlendMode = "multiply";
 }
 
 // Touch buttons
@@ -305,22 +300,9 @@ function removeGameControls(){
   if(nitroBtn) nitroBtn.remove();
 }
 
-// Overlay controls
-function openGame(){
-  if(imagesReady < 2){
-    setTimeout(openGame, 100); // wait until images load
-    return;
-  }
-  overlay.style.display = "flex";
-  startGame();
-}
-
-function closeGame(){
-  overlay.style.display = "none";
-  removeGameControls();
-  gameOver = true;
-  keys = {}; // reset controls
-}
+// Game open/close functions
+function openGame(){ overlay.style.display="flex"; startGame(); }
+function closeGame(){ overlay.style.display="none"; removeGameControls(); }
 </script>
 </body>
 </html>
