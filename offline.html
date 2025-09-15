@@ -106,156 +106,155 @@
   </div>
 
   <script>
-    const overlay = document.getElementById("gameOverlay");
-    const canvas = document.getElementById("racing-canvas");
-    const ctx = canvas.getContext("2d");
-    const PIXEL_SIZE = 6; // smaller cars
-    let player, obstacles, score, highScore, gameOver, obstacleSpeed, keys = {};
+const overlay = document.getElementById("gameOverlay");
+const canvas = document.getElementById("racing-canvas");
+const ctx = canvas.getContext("2d");
+const PIXEL_SIZE = 5; // smaller, more detailed cars
+let player, obstacles, score, highScore, gameOver, obstacleSpeed, keys = {}, nitroActive = false, nitroTimer = 0;
 
-    // ---- Car designs (simpler, cleaner) ----
-    const playerCarDesign = [
-      ['T','G','G','G','T'],
-      ['G','W','W','W','G'],
-      ['G','W','G','W','G'],
-      ['G','W','W','W','G'],
-      ['T','G','G','G','T']
-    ];
+// ---- Pixelated Car Designs ----
+// Player: Mercedes
+const playerCarDesign = [
+  ['T','T','B','B','B','T','T'],
+  ['T','B','W','W','W','B','T'],
+  ['B','W','G','G','G','W','B'],
+  ['B','W','G','G','G','W','B'],
+  ['T','B','W','W','W','B','T'],
+  ['T','T','B','B','B','T','T']
+];
 
-    const opponentCarDesigns = [
-      [
-        ['T','R','R','R','T'],
-        ['R','W','R','W','R'],
-        ['R','R','R','R','R'],
-        ['R','W','R','W','R'],
-        ['T','R','R','R','T']
-      ],
-      [
-        ['T','Y','Y','Y','T'],
-        ['Y','W','Y','W','Y'],
-        ['Y','Y','Y','Y','Y'],
-        ['Y','W','Y','W','Y'],
-        ['T','Y','Y','Y','T']
-      ]
-    ];
+// Opponent: BMW
+const opponentCarDesign = [
+  ['T','R','R','R','R','R','T'],
+  ['R','W','W','W','W','W','R'],
+  ['R','B','B','B','B','B','R'],
+  ['R','B','B','B','B','B','R'],
+  ['R','W','W','W','W','W','R'],
+  ['T','R','R','R','R','R','T']
+];
 
-    const colors = {
-      'R': '#FF0000', 'T': '#00000000', 'W': '#FFFFFF',
-      'Y': '#FFFF00', 'G': '#00FF00'
-    };
-    // ---- end carData.js ----
+const colors = {
+  'B': '#0000FF', 'R': '#FF0000', 'T':'#00000000', 'W':'#FFFFFF', 'G':'#00FF00'
+};
 
-    function drawCar(x, y, design) {
-      for (let row = 0; row < design.length; row++) {
-        for (let col = 0; col < design[row].length; col++) {
-          const colorKey = design[row][col];
-          if (colorKey !== 'T') {
-            ctx.fillStyle = colors[colorKey] || '#000';
-            ctx.fillRect(
-              x + col * PIXEL_SIZE,
-              y + row * PIXEL_SIZE,
-              PIXEL_SIZE,
-              PIXEL_SIZE
-            );
-          }
-        }
+// ---- Game Functions ----
+function drawCar(x, y, design) {
+  for(let row=0; row<design.length; row++){
+    for(let col=0; col<design[row].length; col++){
+      const color = design[row][col];
+      if(color !== 'T'){
+        ctx.fillStyle = colors[color] || '#000';
+        ctx.fillRect(x + col*PIXEL_SIZE, y + row*PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
       }
     }
+  }
+}
 
-    function startGame() {
-      player = {
-        x: canvas.width / 2 - 15,
-        y: canvas.height - 70,
-        width: playerCarDesign[0].length * PIXEL_SIZE,
-        height: playerCarDesign.length * PIXEL_SIZE
-      };
-      obstacles = [];
-      score = 0;
-      highScore = localStorage.getItem("highScore") || 0;
-      gameOver = false;
-      obstacleSpeed = 1.2;
+function startGame(){
+  player = { x: canvas.width/2 - 17, y: canvas.height - 80, width: playerCarDesign[0].length*PIXEL_SIZE, height: playerCarDesign.length*PIXEL_SIZE };
+  obstacles = [];
+  score = 0;
+  highScore = localStorage.getItem("highScore") || 0;
+  gameOver = false;
+  obstacleSpeed = 2;
+  nitroActive = false;
+  nitroTimer = 0;
+  document.getElementById("score").innerText = `Score: ${score}`;
+  document.getElementById("high-score").innerText = `High Score: ${highScore}`;
+  requestAnimationFrame(updateGame);
+}
+
+function spawnObstacle(){
+  const width = opponentCarDesign[0].length * PIXEL_SIZE;
+  const height = opponentCarDesign.length * PIXEL_SIZE;
+  const minX = 10;
+  const maxX = canvas.width - width - 10;
+  const x = Math.random()*(maxX-minX)+minX;
+  obstacles.push({ x: x, y: -height, width: width, height: height, passed: false });
+}
+
+function updateGame(){
+  if(gameOver) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Move obstacles
+  for(let obs of obstacles){
+    obs.y += obstacleSpeed * (nitroActive ? 2 : 1);
+    drawCar(obs.x, obs.y, opponentCarDesign);
+    if(!obs.passed && obs.y > player.y + player.height){
+      score++; obs.passed = true;
       document.getElementById("score").innerText = `Score: ${score}`;
-      document.getElementById("high-score").innerText = `High Score: ${highScore}`;
-      requestAnimationFrame(updateGame);
     }
+  }
 
-    function spawnObstacle() {
-      const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
-      const width = randomDesign[0].length * PIXEL_SIZE;
-      const height = randomDesign.length * PIXEL_SIZE;
-      const minX = 10;
-      const maxX = canvas.width - width - 10;
+  obstacles = obstacles.filter(o => o.y < canvas.height + 20);
+  if(Math.random()<0.02) spawnObstacle();
 
-      let x;
-      let tries = 0;
-      do {
-        x = Math.random() * (maxX - minX) + minX;
-        tries++;
-      } while (obstacles.some(obs => Math.abs(obs.x - x) < width + 10 && obs.y < 100) && tries < 10);
+  // Player
+  drawCar(player.x, player.y, playerCarDesign);
 
-      obstacles.push({ x: x, y: -height, width: width, height: height, shape: randomDesign });
+  // Collision
+  for(let obs of obstacles){
+    if(player.x < obs.x + obs.width &&
+       player.x + player.width > obs.x &&
+       player.y < obs.y + obs.height &&
+       player.y + player.height > obs.y){
+      endGame(); return;
     }
+  }
 
-    function updateGame() {
-      if (gameOver) return;
+  // Nitro timer
+  if(nitroActive){
+    nitroTimer--;
+    if(nitroTimer <= 0) nitroActive = false;
+  }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Player controls
+  if(keys["ArrowLeft"]) player.x = Math.max(player.x-3,0);
+  if(keys["ArrowRight"]) player.x = Math.min(player.x+3, canvas.width - player.width);
 
-      // Player
-      drawCar(player.x, player.y, playerCarDesign);
+  requestAnimationFrame(updateGame);
+}
 
-      // Obstacles
-      obstacles.forEach(obs => {
-        obs.y += obstacleSpeed;
-        drawCar(obs.x, obs.y, obs.shape);
-      });
-      obstacles = obstacles.filter(obs => obs.y < canvas.height);
+function endGame(){
+  gameOver = true;
+  ctx.fillStyle = '#0F0';
+  ctx.font = '20px Arial';
+  ctx.fillText("Game Over!", canvas.width/2 - 50, canvas.height/2);
+  ctx.fillText(`Score: ${score}`, canvas.width/2 - 40, canvas.height/2 + 30);
+  if(score > highScore){ highScore = score; localStorage.setItem("highScore", highScore); }
+  document.getElementById("high-score").innerText = `High Score: ${highScore}`;
+}
 
-      if (Math.random() < 0.02) spawnObstacle();
+// Controls
+document.addEventListener("keydown", e => { keys[e.key] = true; });
+document.addEventListener("keyup", e => { keys[e.key] = false; });
 
-      // Collision
-      for (let obs of obstacles) {
-        if (
-          player.x < obs.x + obs.width &&
-          player.x + player.width > obs.x &&
-          player.y < obs.y + obs.height &&
-          player.y + player.height > obs.y
-        ) {
-          endGame();
-          return;
-        }
-      }
+// Touch Buttons
+function addGameControls(){
+  const leftBtn = document.createElement("button");
+  leftBtn.innerText = "⬅️";
+  leftBtn.style.cssText = "position:fixed; bottom:10px; left:10px; width:60px; height:60px; font-size:24px; border-radius:50%; z-index:1000;";
+  leftBtn.addEventListener("touchstart",()=>keys["ArrowLeft"]=true);
+  leftBtn.addEventListener("touchend",()=>keys["ArrowLeft"]=false);
+  document.body.appendChild(leftBtn);
 
-      // Score
-      score++;
-      document.getElementById("score").innerText = `Score: ${score}`;
+  const rightBtn = document.createElement("button");
+  rightBtn.innerText = "➡️";
+  rightBtn.style.cssText = "position:fixed; bottom:10px; left:80px; width:60px; height:60px; font-size:24px; border-radius:50%; z-index:1000;";
+  rightBtn.addEventListener("touchstart",()=>keys["ArrowRight"]=true);
+  rightBtn.addEventListener("touchend",()=>keys["ArrowRight"]=false);
+  document.body.appendChild(rightBtn);
 
-      // Smooth movement
-      if (keys["ArrowLeft"]) player.x = Math.max(player.x - 3, 0);
-      if (keys["ArrowRight"]) player.x = Math.min(player.x + 3, canvas.width - player.width);
+  const nitroBtn = document.createElement("button");
+  nitroBtn.innerText = "⚡ Nitro";
+  nitroBtn.style.cssText = "position:fixed; bottom:10px; right:10px; width:100px; height:60px; font-size:18px; border-radius:12px; z-index:1000;";
+  nitroBtn.addEventListener("touchstart",()=>{ nitroActive=true; nitroTimer=360; }); // 6 seconds at 60fps
+  document.body.appendChild(nitroBtn);
+}
 
-      requestAnimationFrame(updateGame);
-    }
-
-    function endGame() {
-      gameOver = true;
-      ctx.fillStyle = '#0F0';
-      ctx.font = '20px Arial';
-      ctx.fillText("Game Over!", canvas.width / 2 - 50, canvas.height / 2);
-      ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 30);
-
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("highScore", highScore);
-      }
-      document.getElementById("high-score").innerText = `High Score: ${highScore}`;
-    }
-
-    // Controls
-    document.addEventListener("keydown", e => { keys[e.key] = true; });
-    document.addEventListener("keyup", e => { keys[e.key] = false; });
-
-    function openGame() { overlay.style.display = "flex"; startGame(); }
-    function closeGame() { overlay.style.display = "none"; }
-  </script>
+function openGame(){ overlay.style.display="flex"; startGame(); addGameControls(); }
+function closeGame(){ overlay.style.display="none"; }
+</script>
 </body>
 </html>
