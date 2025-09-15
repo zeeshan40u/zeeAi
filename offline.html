@@ -113,8 +113,8 @@ let player, obstacles, score, highScore, gameOver;
 let playerBaseSpeed = 4, playerSpeed = 4;
 let nitroActive = false, nitroDuration = 0, nitroCooldown = 0;
 
-const NITRO_DURATION_FRAMES = 180; // 3 sec
-const NITRO_COOLDOWN_FRAMES = 540; // 9 sec
+const NITRO_DURATION_FRAMES = 180; // 3 seconds
+const NITRO_COOLDOWN_FRAMES = 540; // 9 seconds
 
 let keys = {};
 let leftBtn, rightBtn, nitroBtn;
@@ -126,21 +126,24 @@ playerCarImg.src = "Player.png";
 const opponentCarImg = new Image();
 opponentCarImg.src = "opponent.png";
 
+const nitroIcon = new Image();
+nitroIcon.src = "NitroAbility_Icon.png";
+
 let imagesReady = 0;
-[playerCarImg, opponentCarImg].forEach(img => {
+[playerCarImg, opponentCarImg, nitroIcon].forEach(img => {
   img.onload = () => { imagesReady++; };
   img.onerror = () => console.error("❌ Missing image:", img.src);
 });
 
-// --- Scale helper ---
-function getScaledSize(img, scale = 0.4) { // reduced scale to 0.4
+// Scale helper for shorter cars
+function getScaledSize(img, scale = 0.4) {
   return {
     width: img.naturalWidth * scale,
     height: img.naturalHeight * scale
   };
 }
 
-function startGame(){
+function startGame() {
   let pSize = getScaledSize(playerCarImg, 0.4);
   player = {
     x: canvas.width/2 - pSize.width/2,
@@ -165,7 +168,7 @@ function startGame(){
   requestAnimationFrame(updateGame);
 }
 
-function spawnObstacle(){
+function spawnObstacle() {
   let oSize = getScaledSize(opponentCarImg, 0.4);
   const x = Math.random() * (canvas.width - oSize.width - 10) + 5;
   obstacles.push({
@@ -175,69 +178,70 @@ function spawnObstacle(){
   });
 }
 
-function updateGame(){
-  if(gameOver) return;
-  if(imagesReady < 2){ requestAnimationFrame(updateGame); return; }
+function updateGame() {
+  if (gameOver) return;
+  if (imagesReady < 3) { requestAnimationFrame(updateGame); return; } // wait for images
 
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Obstacles
-  for(let obs of obstacles){
+  for (let obs of obstacles) {
     obs.y += 3;
     ctx.drawImage(opponentCarImg, obs.x, obs.y, obs.width, obs.height);
 
-    if(!obs.passed && obs.y > player.y + player.height){
+    if (!obs.passed && obs.y > player.y + player.height) {
       score++; obs.passed = true;
-      document.getElementById("score").innerText=`Score: ${score}`;
+      document.getElementById("score").innerText = `Score: ${score}`;
     }
   }
   obstacles = obstacles.filter(o => o.y < canvas.height + 20);
-  if(Math.random() < 0.02) spawnObstacle();
+  if (Math.random() < 0.02) spawnObstacle();
 
   // Player
   ctx.drawImage(playerCarImg, player.x, player.y, player.width, player.height);
 
   // Collision
-  for(let obs of obstacles){
-    if(player.x < obs.x + obs.width &&
-       player.x + player.width > obs.x &&
-       player.y < obs.y + obs.height &&
-       player.y + player.height > obs.y){
-      endGame(); return;
+  for (let obs of obstacles) {
+    if (player.x < obs.x + obs.width &&
+        player.x + player.width > obs.x &&
+        player.y < obs.y + obs.height &&
+        player.y + player.height > obs.y) {
+      endGame();
+      return;
     }
   }
 
   // Nitro logic
-  if(nitroActive){
+  if (nitroActive) {
     playerSpeed = playerBaseSpeed * 3;
     nitroDuration--;
     updateNitroButton();
-    if(nitroDuration <= 0){
+    if (nitroDuration <= 0) {
       nitroActive = false;
       nitroCooldown = NITRO_COOLDOWN_FRAMES;
       playerSpeed = playerBaseSpeed;
     }
-  } else if(nitroCooldown > 0){
+  } else if (nitroCooldown > 0) {
     nitroCooldown--;
     playerSpeed = playerBaseSpeed;
     updateNitroButton();
   }
 
   // Movement
-  if(keys["ArrowLeft"]) player.x = Math.max(player.x - playerSpeed, 0);
-  if(keys["ArrowRight"]) player.x = Math.min(player.x + playerSpeed, canvas.width - player.width);
+  if (keys["ArrowLeft"]) player.x = Math.max(player.x - playerSpeed, 0);
+  if (keys["ArrowRight"]) player.x = Math.min(player.x + playerSpeed, canvas.width - player.width);
 
   requestAnimationFrame(updateGame);
 }
 
-function endGame(){
+function endGame() {
   gameOver = true;
   removeGameControls();
   ctx.fillStyle = '#0F0';
   ctx.font = '20px Arial';
-  ctx.fillText("Game Over!", canvas.width/2-50, canvas.height/2);
-  ctx.fillText(`Score: ${score}`, canvas.width/2-40, canvas.height/2+30);
-  if(score > highScore){
+  ctx.fillText("Game Over!", canvas.width/2 - 50, canvas.height/2);
+  ctx.fillText(`Score: ${score}`, canvas.width/2 - 40, canvas.height/2 + 30);
+  if (score > highScore) {
     highScore = score;
     localStorage.setItem("highScore", highScore);
   }
@@ -245,46 +249,47 @@ function endGame(){
 }
 
 // Keyboard controls
-document.addEventListener("keydown", e=>{ keys[e.key]=true; });
-document.addEventListener("keyup", e=>{ keys[e.key]=false; });
+document.addEventListener("keydown", e => { keys[e.key] = true; });
+document.addEventListener("keyup", e => { keys[e.key] = false; });
 
 // Nitro button update
-function updateNitroButton(){
-  if(!nitroBtn) return;
-  let ratio = nitroActive ? nitroDuration/NITRO_DURATION_FRAMES : nitroCooldown/NITRO_COOLDOWN_FRAMES;
+function updateNitroButton() {
+  if (!nitroBtn) return;
+  let ratio = nitroActive ? nitroDuration / NITRO_DURATION_FRAMES : nitroCooldown / NITRO_COOLDOWN_FRAMES;
+
   let greenFill = nitroActive 
     ? `linear-gradient(to top, rgba(0,255,0,0.7) ${ratio*100}%, transparent 0%)`
     : `linear-gradient(to top, rgba(0,255,0,0.7) ${(1-ratio)*100}%, transparent 0%)`;
 
   nitroBtn.style.backgroundImage = `${greenFill}, url('NitroAbility_Icon.png')`;
-  nitroBtn.style.backgroundSize = "100% 100%, 70% auto";
+  nitroBtn.style.backgroundSize = "100% 100%, 60% auto"; // icon visible
   nitroBtn.style.backgroundRepeat = "no-repeat";
   nitroBtn.style.backgroundPosition = "center";
 }
 
 // Touch buttons
-function addGameControls(){
+function addGameControls() {
   // Left
   leftBtn = document.createElement("button");
   leftBtn.innerText = "⬅️";
   leftBtn.style.cssText = "position:fixed; bottom:10px; left:10px; width:70px; height:70px; font-size:28px; border-radius:50%; z-index:1000;";
-  leftBtn.addEventListener("touchstart",()=>keys["ArrowLeft"]=true);
-  leftBtn.addEventListener("touchend",()=>keys["ArrowLeft"]=false);
+  leftBtn.addEventListener("touchstart", () => keys["ArrowLeft"] = true);
+  leftBtn.addEventListener("touchend", () => keys["ArrowLeft"] = false);
   document.body.appendChild(leftBtn);
 
   // Right
   rightBtn = document.createElement("button");
   rightBtn.innerText = "➡️";
   rightBtn.style.cssText = "position:fixed; bottom:10px; left:90px; width:70px; height:70px; font-size:28px; border-radius:50%; z-index:1000;";
-  rightBtn.addEventListener("touchstart",()=>keys["ArrowRight"]=true);
-  rightBtn.addEventListener("touchend",()=>keys["ArrowRight"]=false);
+  rightBtn.addEventListener("touchstart", () => keys["ArrowRight"] = true);
+  rightBtn.addEventListener("touchend", () => keys["ArrowRight"] = false);
   document.body.appendChild(rightBtn);
 
   // Nitro
   nitroBtn = document.createElement("button");
   nitroBtn.style.cssText = "position:fixed; bottom:10px; right:10px; width:70px; height:70px; border-radius:50%; background-color:#111; z-index:1000;";
-  nitroBtn.addEventListener("click",()=>{
-    if(!nitroActive && nitroCooldown === 0){
+  nitroBtn.addEventListener("click", () => {
+    if (!nitroActive && nitroCooldown === 0) {
       nitroActive = true;
       nitroDuration = NITRO_DURATION_FRAMES;
       updateNitroButton();
@@ -294,15 +299,15 @@ function addGameControls(){
   updateNitroButton();
 }
 
-function removeGameControls(){
-  if(leftBtn) leftBtn.remove();
-  if(rightBtn) rightBtn.remove();
-  if(nitroBtn) nitroBtn.remove();
+function removeGameControls() {
+  if (leftBtn) leftBtn.remove();
+  if (rightBtn) rightBtn.remove();
+  if (nitroBtn) nitroBtn.remove();
 }
 
-// Game open/close functions
-function openGame(){ overlay.style.display="flex"; startGame(); }
-function closeGame(){ overlay.style.display="none"; removeGameControls(); }
+// Open / Close game overlay
+function openGame() { overlay.style.display = "flex"; startGame(); }
+function closeGame() { overlay.style.display = "none"; removeGameControls(); }
 </script>
 </body>
 </html>
