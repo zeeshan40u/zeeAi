@@ -291,5 +291,17 @@ function removeGameControls(){
   if(nitroBtn) nitroBtn.remove();
 }
 </script>
+<script>
+function openGame(){
+  overlay.style.display = "flex";   // show overlay
+  startGame();                      // start game
+}
+
+function closeGame(){
+  overlay.style.display = "none";   // hide overlay
+  removeGameControls();             // remove buttons
+  gameOver = true;                  // stop loop
+}
+</script>
 </body>
 </html>
