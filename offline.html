@@ -99,7 +99,7 @@
   <button class="game-button" onclick="openGame()">🎮 Play Game</button>
 
   <div class="game-overlay" id="gameOverlay">
-    <canvas id="racing-canvas" width="320" height="600"></canvas>
+    <canvas id="racing-canvas" width="320" height="500"></canvas>
     <div id="score" class="score-display">Score: 0</div>
     <div id="high-score" class="score-display">High Score: 0</div>
     <button class="close-btn" onclick="closeGame()">❌ Close Game</button>
@@ -109,152 +109,150 @@
     const overlay = document.getElementById("gameOverlay");
     const canvas = document.getElementById("racing-canvas");
     const ctx = canvas.getContext("2d");
-    const PIXEL_SIZE = 8; // Smaller pixels for smaller cars
-    let player, obstacles, score, highScore, gameOver, obstacleSpeed;
+    const PIXEL_SIZE = 6; // smaller cars
+    let player, obstacles, score, highScore, gameOver, obstacleSpeed, keys = {};
 
-    // ---- Embedded carData.js ----
+    // ---- Car designs (simpler, cleaner) ----
     const playerCarDesign = [
-        ['T','T','G','G','G','G','T','T'],
-        ['T','T','G','G','G','G','T','T'],
-        ['T','G','W','W','W','W','G','T'],
-        ['G','W','W','W','W','W','W','G'],
-        ['G','W','W','W','W','W','W','G'],
-        ['G','W','T','T','T','T','W','G'],
-        ['G','W','T','T','T','T','W','G'],
-        ['G','W','G','G','G','G','W','G'],
-        ['G','W','W','W','W','W','W','G'],
-        ['G','G','G','G','G','G','G','G'],
-        ['T','G','T','G','G','T','G','T'],
-        ['G','G','G','G','G','G','G','G'],
-        ['G','G','T','G','G','T','G','G'],
-        ['T','G','T','G','G','T','G','T'],
-        ['G','G','G','G','G','G','G','G'],
+      ['T','G','G','G','T'],
+      ['G','W','W','W','G'],
+      ['G','W','G','W','G'],
+      ['G','W','W','W','G'],
+      ['T','G','G','G','T']
     ];
 
     const opponentCarDesigns = [
-        [
-            ['T','T','Y','Y','Y','Y','T','T'],
-            ['T','Y','W','Y','Y','W','Y','T'],
-            ['Y','W','Y','Y','Y','Y','W','Y'],
-            ['Y','W','Y','Y','Y','Y','W','Y'],
-            ['Y','Y','Y','Y','Y','Y','Y','Y'],
-        ],
-        [
-            ['T','T','R','R','R','R','T','T'],
-            ['T','R','W','W','W','W','R','T'],
-            ['R','R','W','R','R','W','R','R'],
-            ['R','W','W','R','R','W','W','R'],
-            ['R','W','R','R','R','R','W','R'],
-        ]
+      [
+        ['T','R','R','R','T'],
+        ['R','W','R','W','R'],
+        ['R','R','R','R','R'],
+        ['R','W','R','W','R'],
+        ['T','R','R','R','T']
+      ],
+      [
+        ['T','Y','Y','Y','T'],
+        ['Y','W','Y','W','Y'],
+        ['Y','Y','Y','Y','Y'],
+        ['Y','W','Y','W','Y'],
+        ['T','Y','Y','Y','T']
+      ]
     ];
 
     const colors = {
-        'R': '#FF0000', 'T': '#00000000', 'W': '#FFFFFF', 'B': '#0000FF',
-        'Y': '#FFFF00', 'G': '#00FF00', 'P': '#FF00FF', 'O': '#FFA500',
-        'C': '#00FFFF', 'S': '#808080', 'V': '#8A2BE2'
+      'R': '#FF0000', 'T': '#00000000', 'W': '#FFFFFF',
+      'Y': '#FFFF00', 'G': '#00FF00'
     };
     // ---- end carData.js ----
 
     function drawCar(x, y, design) {
-        for (let row = 0; row < design.length; row++) {
-            for (let col = 0; col < design[row].length; col++) {
-                const colorKey = design[row][col];
-                if (colorKey !== 'T') {
-                    ctx.fillStyle = colors[colorKey] || '#000';
-                    ctx.fillRect(
-                        x + col * PIXEL_SIZE,
-                        y + row * PIXEL_SIZE,
-                        PIXEL_SIZE,
-                        PIXEL_SIZE
-                    );
-                }
-            }
+      for (let row = 0; row < design.length; row++) {
+        for (let col = 0; col < design[row].length; col++) {
+          const colorKey = design[row][col];
+          if (colorKey !== 'T') {
+            ctx.fillStyle = colors[colorKey] || '#000';
+            ctx.fillRect(
+              x + col * PIXEL_SIZE,
+              y + row * PIXEL_SIZE,
+              PIXEL_SIZE,
+              PIXEL_SIZE
+            );
+          }
         }
+      }
     }
 
     function startGame() {
-        player = { x: canvas.width / 2 - 32, y: canvas.height - 140, width: 8*PIXEL_SIZE, height: 5*PIXEL_SIZE };
-        obstacles = [];
-        score = 0;
-        highScore = localStorage.getItem("highScore") || 0;
-        gameOver = false;
-        obstacleSpeed = 1.5; // slower speed
-        document.getElementById("score").innerText = `Score: ${score}`;
-        document.getElementById("high-score").innerText = `High Score: ${highScore}`;
-        requestAnimationFrame(updateGame);
+      player = {
+        x: canvas.width / 2 - 15,
+        y: canvas.height - 70,
+        width: playerCarDesign[0].length * PIXEL_SIZE,
+        height: playerCarDesign.length * PIXEL_SIZE
+      };
+      obstacles = [];
+      score = 0;
+      highScore = localStorage.getItem("highScore") || 0;
+      gameOver = false;
+      obstacleSpeed = 1.2;
+      document.getElementById("score").innerText = `Score: ${score}`;
+      document.getElementById("high-score").innerText = `High Score: ${highScore}`;
+      requestAnimationFrame(updateGame);
     }
 
     function spawnObstacle() {
-        const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
-        const width = randomDesign[0].length * PIXEL_SIZE;
-        const height = randomDesign.length * PIXEL_SIZE;
-        const minX = 10;
-        const maxX = canvas.width - width - 10;
+      const randomDesign = opponentCarDesigns[Math.floor(Math.random() * opponentCarDesigns.length)];
+      const width = randomDesign[0].length * PIXEL_SIZE;
+      const height = randomDesign.length * PIXEL_SIZE;
+      const minX = 10;
+      const maxX = canvas.width - width - 10;
 
-        // Find a free X position (prevent overlap)
-        let x;
-        let tries = 0;
-        do {
-            x = Math.random() * (maxX - minX) + minX;
-            tries++;
-        } while (obstacles.some(obs => Math.abs(obs.x - x) < width + 10 && Math.abs(obs.y - 0) < height + 50) && tries < 10);
+      let x;
+      let tries = 0;
+      do {
+        x = Math.random() * (maxX - minX) + minX;
+        tries++;
+      } while (obstacles.some(obs => Math.abs(obs.x - x) < width + 10 && obs.y < 100) && tries < 10);
 
-        obstacles.push({ x: x, y: -height, width: width, height: height, shape: randomDesign });
+      obstacles.push({ x: x, y: -height, width: width, height: height, shape: randomDesign });
     }
 
     function updateGame() {
-        if (gameOver) return;
+      if (gameOver) return;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        drawCar(player.x, player.y, playerCarDesign);
+      // Player
+      drawCar(player.x, player.y, playerCarDesign);
 
-        obstacles.forEach(obs => {
-            obs.y += obstacleSpeed;
-            drawCar(obs.x, obs.y, obs.shape);
-        });
+      // Obstacles
+      obstacles.forEach(obs => {
+        obs.y += obstacleSpeed;
+        drawCar(obs.x, obs.y, obs.shape);
+      });
+      obstacles = obstacles.filter(obs => obs.y < canvas.height);
 
-        obstacles = obstacles.filter(obs => obs.y < canvas.height);
+      if (Math.random() < 0.02) spawnObstacle();
 
-        if (Math.random() < 0.01) spawnObstacle(); // slower spawn
-
-        for (let obs of obstacles) {
-            if (
-                player.x < obs.x + obs.width &&
-                player.x + player.width > obs.x &&
-                player.y < obs.y + obs.height &&
-                player.y + player.height > obs.y
-            ) {
-                endGame();
-                return;
-            }
+      // Collision
+      for (let obs of obstacles) {
+        if (
+          player.x < obs.x + obs.width &&
+          player.x + player.width > obs.x &&
+          player.y < obs.y + obs.height &&
+          player.y + player.height > obs.y
+        ) {
+          endGame();
+          return;
         }
+      }
 
-        score++;
-        document.getElementById("score").innerText = `Score: ${score}`;
+      // Score
+      score++;
+      document.getElementById("score").innerText = `Score: ${score}`;
 
-        requestAnimationFrame(updateGame);
+      // Smooth movement
+      if (keys["ArrowLeft"]) player.x = Math.max(player.x - 3, 0);
+      if (keys["ArrowRight"]) player.x = Math.min(player.x + 3, canvas.width - player.width);
+
+      requestAnimationFrame(updateGame);
     }
 
     function endGame() {
-        gameOver = true;
-        ctx.fillStyle = '#0F0';
-        ctx.font = '28px Arial';
-        ctx.fillText("Game Over!", canvas.width / 2 - 80, canvas.height / 2);
-        ctx.fillText(`Score: ${score}`, canvas.width / 2 - 60, canvas.height / 2 + 40);
+      gameOver = true;
+      ctx.fillStyle = '#0F0';
+      ctx.font = '20px Arial';
+      ctx.fillText("Game Over!", canvas.width / 2 - 50, canvas.height / 2);
+      ctx.fillText(`Score: ${score}`, canvas.width / 2 - 40, canvas.height / 2 + 30);
 
-        if (score > highScore) {
-            highScore = score;
-            localStorage.setItem("highScore", highScore);
-        }
-        document.getElementById("high-score").innerText = `High Score: ${highScore}`;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+      }
+      document.getElementById("high-score").innerText = `High Score: ${highScore}`;
     }
 
-    document.addEventListener("keydown", (e) => {
-        if (gameOver) return;
-        if (e.key === "ArrowLeft") player.x = Math.max(player.x - 10, 0);
-        if (e.key === "ArrowRight") player.x = Math.min(player.x + 10, canvas.width - player.width);
-    });
+    // Controls
+    document.addEventListener("keydown", e => { keys[e.key] = true; });
+    document.addEventListener("keyup", e => { keys[e.key] = false; });
 
     function openGame() { overlay.style.display = "flex"; startGame(); }
     function closeGame() { overlay.style.display = "none"; }
