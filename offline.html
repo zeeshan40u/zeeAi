@@ -132,14 +132,21 @@ let imagesReady = 0;
   img.onerror = () => console.error("❌ Missing image:", img.src);
 });
 
-function startGame(){
-  const scale = 0.5; // scale down to 50% size
+// --- Scale helper ---
+function getScaledSize(img, scale = 0.5) {
+  return {
+    width: img.naturalWidth * scale,
+    height: img.naturalHeight * scale
+  };
+}
 
+function startGame(){
+  let pSize = getScaledSize(playerCarImg, 0.5); // 50% size
   player = {
-    x: canvas.width/2 - (playerCarImg.naturalWidth * scale)/2,
-    y: canvas.height - (playerCarImg.naturalHeight * scale) - 20,
-    width: playerCarImg.naturalWidth * scale,
-    height: playerCarImg.naturalHeight * scale
+    x: canvas.width/2 - pSize.width/2,
+    y: canvas.height - pSize.height - 20,
+    width: pSize.width,
+    height: pSize.height
   };
 
   obstacles = [];
@@ -159,11 +166,13 @@ function startGame(){
 }
 
 function spawnObstacle(){
-  const scale = 0.5;
-  const width = opponentCarImg.naturalWidth * scale;
-  const height = opponentCarImg.naturalHeight * scale;
-  const x = Math.random() * (canvas.width - width - 10) + 5;
-  obstacles.push({x: x, y: -height, width: width, height: height, passed: false});
+  let oSize = getScaledSize(opponentCarImg, 0.5);
+  const x = Math.random() * (canvas.width - oSize.width - 10) + 5;
+  obstacles.push({
+    x: x, y: -oSize.height,
+    width: oSize.width, height: oSize.height,
+    passed: false
+  });
 }
 
 function updateGame(){
@@ -188,12 +197,12 @@ function updateGame(){
   // Player
   ctx.drawImage(playerCarImg, player.x, player.y, player.width, player.height);
 
-  // Collision (ignore padding with margin)
+  // Collision
   for(let obs of obstacles){
-    if(player.x + 10 < obs.x + obs.width - 10 &&
-       player.x + player.width - 10 > obs.x + 10 &&
-       player.y + 10 < obs.y + obs.height - 10 &&
-       player.y + player.height - 10 > obs.y + 10){
+    if(player.x < obs.x + obs.width &&
+       player.x + player.width > obs.x &&
+       player.y < obs.y + obs.height &&
+       player.y + player.height > obs.y){
       endGame(); return;
     }
   }
@@ -242,13 +251,16 @@ document.addEventListener("keyup", e=>{ keys[e.key]=false; });
 // Nitro button update
 function updateNitroButton(){
   if(!nitroBtn) return;
-  let ratio = nitroActive ? nitroDuration/NITRO_DURATION_FRAMES : nitroCooldown/NITRO_COOLDOWN_FRAMES;
+  let ratio = nitroActive 
+    ? nitroDuration/NITRO_DURATION_FRAMES 
+    : nitroCooldown/NITRO_COOLDOWN_FRAMES;
+
   let greenFill = nitroActive 
-    ? `linear-gradient(to top, #00FF00 ${ratio*100}%, transparent 0%)`
-    : `linear-gradient(to top, #00FF00 ${(1-ratio)*100}%, transparent 0%)`;
+    ? `linear-gradient(to top, rgba(0,255,0,0.7) ${ratio*100}%, transparent 0%)`
+    : `linear-gradient(to top, rgba(0,255,0,0.7) ${(1-ratio)*100}%, transparent 0%)`;
 
   nitroBtn.style.backgroundImage = `${greenFill}, url('NitroAbility_Icon.png')`;
-  nitroBtn.style.backgroundSize = "100% 100%, contain";
+  nitroBtn.style.backgroundSize = "100% 100%, 70% auto";  // gradient covers full, icon stays visible
   nitroBtn.style.backgroundRepeat = "no-repeat";
   nitroBtn.style.backgroundPosition = "center";
 }
@@ -289,18 +301,6 @@ function removeGameControls(){
   if(leftBtn) leftBtn.remove();
   if(rightBtn) rightBtn.remove();
   if(nitroBtn) nitroBtn.remove();
-}
-</script>
-<script>
-function openGame(){
-  overlay.style.display = "flex";   // show overlay
-  startGame();                      // start game
-}
-
-function closeGame(){
-  overlay.style.display = "none";   // hide overlay
-  removeGameControls();             // remove buttons
-  gameOver = true;                  // stop loop
 }
 </script>
 </body>
