@@ -105,70 +105,34 @@
     <button class="close-btn" onclick="closeGame()">❌ Close Game</button>
   </div>
 
-  <script>
+  <<script>
 const overlay = document.getElementById("gameOverlay");
 const canvas = document.getElementById("racing-canvas");
 const ctx = canvas.getContext("2d");
-const PIXEL_SIZE = 6; // pixel size for cars
+
 let player, obstacles, score, highScore, gameOver, obstacleSpeed, keys = {},
     playerBaseSpeed = 4, playerSpeed = 4,
     nitroActive = false, nitroDuration = 0, nitroCooldown = 0;
 
-const NITRO_DURATION_FRAMES = 180; // 3 seconds
-const NITRO_COOLDOWN_FRAMES = 540; // 9 seconds
+const NITRO_DURATION_FRAMES = 180; // 3s
+const NITRO_COOLDOWN_FRAMES = 540; // 9s
 
 let leftBtn, rightBtn, nitroBtn;
 
-// --- Player Car: Mercedes 12x6 ---
-const playerCarDesign = [
-  ['T','T','L','L','L','L','L','L','T','T','T','T'],
-  ['T','L','W','W','W','W','W','W','L','T','T','T'],
-  ['D','D','G','G','G','G','G','G','D','D','T','T'],
-  ['D','D','G','G','G','G','G','G','D','D','T','T'],
-  ['T','L','W','W','W','W','W','W','L','T','T','T'],
-  ['T','T','D','D','D','D','D','D','T','T','T','T']
-];
+// --- Load Car Sprites ---
+const playerCarImg = new Image();
+playerCarImg.src = "Player.png";
 
-// --- Opponent Car: BMW 12x6 ---
-const opponentCarDesign = [
-  ['T','T','L','L','L','L','L','L','T','T','T','T'],
-  ['T','L','W','W','W','W','W','W','L','T','T','T'],
-  ['D','D','B','B','B','B','B','B','D','D','T','T'],
-  ['D','D','B','B','B','B','B','B','D','D','T','T'],
-  ['T','L','W','W','W','W','W','W','L','T','T','T'],
-  ['T','T','D','D','D','D','D','D','T','T','T','T']
-];
-
-const colors = {
-  'T':'#00000000',  // Transparent
-  'W':'#FFFFFF',    // Top highlight
-  'G':'#00AA00',    // Player body
-  'D':'#007700',    // Darker shading
-  'L':'#00FF00',    // Light top
-  'B':'#0000FF',    // Opponent body
-  'R':'#FF0000'     // Opponent red details
-};
-
-// --- Draw Car Function ---
-function drawCar(x, y, design){
-  for(let row=0; row<design.length; row++){
-    for(let col=0; col<design[row].length; col++){
-      const color = design[row][col];
-      if(color!=='T'){
-        ctx.fillStyle = colors[color] || '#000';
-        ctx.fillRect(x + col*PIXEL_SIZE, y + row*PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-      }
-    }
-  }
-}
+const opponentCarImg = new Image();
+opponentCarImg.src = "Opponent.png";
 
 // --- Game Start ---
 function startGame(){
   player = {
-    x: canvas.width/2 - playerCarDesign[0].length*PIXEL_SIZE/2,
-    y: canvas.height-100,
-    width: playerCarDesign[0].length*PIXEL_SIZE,
-    height: playerCarDesign.length*PIXEL_SIZE
+    x: canvas.width/2 - 25,
+    y: canvas.height-120,
+    width: 50,
+    height: 100
   };
   obstacles = [];
   score = 0;
@@ -186,8 +150,8 @@ function startGame(){
 
 // --- Spawn Opponent ---
 function spawnObstacle(){
-  const width = opponentCarDesign[0].length*PIXEL_SIZE;
-  const height = opponentCarDesign.length*PIXEL_SIZE;
+  const width = 50;
+  const height = 100;
   const x = Math.random() * (canvas.width - width - 10) + 5;
   obstacles.push({x: x, y: -height, width: width, height: height, passed:false});
 }
@@ -200,7 +164,7 @@ function updateGame(){
   // Obstacles
   for(let obs of obstacles){
     obs.y += obstacleSpeed;
-    drawCar(obs.x, obs.y, opponentCarDesign);
+    ctx.drawImage(opponentCarImg, obs.x, obs.y, obs.width, obs.height);
     if(!obs.passed && obs.y > player.y + player.height){
       score++;
       obs.passed = true;
@@ -211,7 +175,7 @@ function updateGame(){
   if(Math.random() < 0.02) spawnObstacle();
 
   // Player
-  drawCar(player.x, player.y, playerCarDesign);
+  ctx.drawImage(playerCarImg, player.x, player.y, player.width, player.height);
 
   // Collision
   for(let obs of obstacles){
@@ -240,7 +204,7 @@ function updateGame(){
     updateNitroButton();
   }
 
-  // Player movement (controllers neutral)
+  // Player movement (controllers are neutral, Nitro affects speed)
   if(keys["ArrowLeft"]) player.x = Math.max(player.x - playerSpeed, 0);
   if(keys["ArrowRight"]) player.x = Math.min(player.x + playerSpeed, canvas.width - player.width);
 
@@ -269,13 +233,21 @@ document.addEventListener("keyup", e=>{ keys[e.key]=false; });
 function updateNitroButton(){
   if(!nitroBtn) return;
   let ratio = nitroActive ? nitroDuration/NITRO_DURATION_FRAMES : nitroCooldown/NITRO_COOLDOWN_FRAMES;
+
   if(nitroActive){
-    nitroBtn.style.background = `linear-gradient(to top, #00FF00 ${ratio*100}%, transparent 0%), url('NitroAbility_icon.png')`;
+    nitroBtn.style.background = `
+      linear-gradient(to top, #00FF00 ${ratio*100}%, transparent 0%),
+      url('NitroAbility_Icon.png')
+    `;
   } else {
-    nitroBtn.style.background = `linear-gradient(to top, #00FF00 ${(1-ratio)*100}%, transparent 0%), url('NitroAbility_icon.png')`;
+    nitroBtn.style.background = `
+      linear-gradient(to top, #00FF00 ${(1-ratio)*100}%, transparent 0%),
+      url('NitroAbility_Icon.png')
+    `;
   }
   nitroBtn.style.backgroundSize = "cover";
   nitroBtn.style.backgroundRepeat = "no-repeat";
+  nitroBtn.style.backgroundPosition = "center";
 }
 
 // --- Touch Controls ---
@@ -305,7 +277,12 @@ function addGameControls(){
   nitroBtn.style.right = "10px";
   nitroBtn.style.border = "none";
   nitroBtn.style.borderRadius = "12px";
+  nitroBtn.style.backgroundColor = "#333";
+  nitroBtn.style.backgroundImage = "url('NitroAbility_Icon.png')";
+  nitroBtn.style.backgroundSize = "cover";
+  nitroBtn.style.backgroundPosition = "center";
   nitroBtn.style.zIndex = "1000";
+
   nitroBtn.addEventListener("touchstart", ()=>{
     if(!nitroActive && nitroCooldown <= 0){
       nitroActive = true;
@@ -313,6 +290,7 @@ function addGameControls(){
       updateNitroButton();
     }
   });
+
   document.body.appendChild(nitroBtn);
   updateNitroButton();
 }
