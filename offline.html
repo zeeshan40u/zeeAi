@@ -141,7 +141,7 @@ function getScaledSize(img, scale = 0.5) {
 }
 
 function startGame(){
-  let pSize = getScaledSize(playerCarImg, 0.5); // 50% size
+  let pSize = getScaledSize(playerCarImg, 0.5); // adjust scale if cars too small/large
   player = {
     x: canvas.width/2 - pSize.width/2,
     y: canvas.height - pSize.height - 20,
@@ -233,6 +233,7 @@ function updateGame(){
 function endGame(){
   gameOver = true;
   removeGameControls();
+  keys = {}; // reset keys
   ctx.fillStyle = '#0F0';
   ctx.font = '20px Arial';
   ctx.fillText("Game Over!", canvas.width/2-50, canvas.height/2);
@@ -256,13 +257,14 @@ function updateNitroButton(){
     : nitroCooldown/NITRO_COOLDOWN_FRAMES;
 
   let greenFill = nitroActive 
-    ? `linear-gradient(to top, rgba(0,255,0,0.7) ${ratio*100}%, transparent 0%)`
-    : `linear-gradient(to top, rgba(0,255,0,0.7) ${(1-ratio)*100}%, transparent 0%)`;
+    ? `linear-gradient(to top, rgba(0,255,0,0.4) ${ratio*100}%, transparent 0%)`
+    : `linear-gradient(to top, rgba(0,255,0,0.4) ${(1-ratio)*100}%, transparent 0%)`;
 
   nitroBtn.style.backgroundImage = `${greenFill}, url('NitroAbility_Icon.png')`;
-  nitroBtn.style.backgroundSize = "100% 100%, 70% auto";  // gradient covers full, icon stays visible
+  nitroBtn.style.backgroundSize = "100% 100%, 70% auto";
   nitroBtn.style.backgroundRepeat = "no-repeat";
   nitroBtn.style.backgroundPosition = "center";
+  nitroBtn.style.backgroundBlendMode = "multiply";
 }
 
 // Touch buttons
@@ -301,6 +303,23 @@ function removeGameControls(){
   if(leftBtn) leftBtn.remove();
   if(rightBtn) rightBtn.remove();
   if(nitroBtn) nitroBtn.remove();
+}
+
+// Overlay controls
+function openGame(){
+  if(imagesReady < 2){
+    setTimeout(openGame, 100); // wait until images load
+    return;
+  }
+  overlay.style.display = "flex";
+  startGame();
+}
+
+function closeGame(){
+  overlay.style.display = "none";
+  removeGameControls();
+  gameOver = true;
+  keys = {}; // reset controls
 }
 </script>
 </body>
