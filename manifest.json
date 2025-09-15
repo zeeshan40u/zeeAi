@@ -1,20 +1,20 @@
 {
   "name": "ZeeAi",
   "short_name": "ZeeAi",
-  "start_url": "/zeeAi/index.html",
-  "scope": "/zeeAi/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#111111",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/zeeAi/zee192.png",
+      "src": "zee192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/zeeAi/zee512.png",
+      "src": "zee512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
