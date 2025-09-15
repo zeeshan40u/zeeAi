@@ -1,14 +1,14 @@
 const CACHE_NAME = "zeeai-cache-v6"; // bump version
-const OFFLINE_URL = "/zeeAi/offline.html";
+const OFFLINE_URL = "./offline.html";
 
 const urlsToCache = [
-  "/zeeAi/",
-  "/zeeAi/index.html",
-  "/zeeAi/manifest.json",
-  "/zeeAi/zee192.png",
-  "/zeeAi/zee512.png",
-  "/zeeAi/carData.js",
-  "/zeeAi/service-worker.js",
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./zee192.png",
+  "./zee512.png",
+  "./carData.js",
+  "./service-worker.js",
   OFFLINE_URL
 ];
 
