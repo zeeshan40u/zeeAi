@@ -110,64 +110,77 @@ const canvas = document.getElementById("racing-canvas");
 const ctx = canvas.getContext("2d");
 
 let player, obstacles, score, highScore, gameOver;
-let playerBaseSpeed = 4, playerSpeed = 4;
+let playerSpeed = 4; 
+let baseGameSpeed = 3; 
+let gameSpeed = baseGameSpeed;
 let nitroActive = false, nitroDuration = 0, nitroCooldown = 0;
 
-const NITRO_DURATION_FRAMES = 180; // 3 sec
-const NITRO_COOLDOWN_FRAMES = 540; // 9 sec
+const NITRO_DURATION_FRAMES = 300; 
+const NITRO_COOLDOWN_FRAMES = 900; 
 
 let keys = {};
 let leftBtn, rightBtn, nitroBtn;
 
-// ---- Pixel cars ----
-const PIXEL_SIZE = 4;
-
-// Player car: Mercedes (shorter, compact)
+// Pixel Cars
 const playerCarDesign = [
-  ['T','T','B','B','B','B','T','T'],
-  ['T','B','W','W','W','W','B','T'],
-  ['B','G','G','G','G','G','G','B'],
-  ['B','G','G','G','G','G','G','B'],
-  ['T','B','W','W','W','W','B','T']
+  ['T','T','D','D','D','D','T','T'],
+  ['T','D','L','L','L','L','D','T'],
+  ['D','L','G','G','G','G','L','D'],
+  ['D','L','G','G','G','G','L','D'],
+  ['T','D','L','L','L','L','D','T']
 ];
-
-// Opponent car: BMW (shorter, compact)
 const opponentCarDesign = [
-  ['T','R','R','R','R','R','T','T'],
-  ['R','W','W','W','W','W','R','T'],
-  ['R','B','B','B','B','B','B','R'],
-  ['R','B','B','B','B','B','B','R'],
-  ['T','R','R','R','R','R','T','T']
+  ['T','T','R','R','R','R','T','T'],
+  ['T','R','O','O','O','O','R','T'],
+  ['R','O','B','B','B','B','O','R'],
+  ['R','O','B','B','B','B','O','R'],
+  ['T','R','O','O','O','O','R','T']
 ];
-
-const colors = {'B':'#0000FF','R':'#FF0000','T':'#00000000','W':'#FFFFFF','G':'#00FF00'};
+const colors = {
+  'T':'#00000000', 'D':'#444444', 'L':'#CCCCCC', 'G':'#00FF00',
+  'R':'#FF0000','O':'#FFAA00','B':'#0000FF'
+};
 
 // Draw pixel car
-function drawCar(x, y, design){
+function drawCar(x, y, design, scale = 6){
   for(let row=0; row<design.length; row++){
     for(let col=0; col<design[row].length; col++){
       const color = design[row][col];
       if(color !== 'T'){
         ctx.fillStyle = colors[color] || '#000';
-        ctx.fillRect(x + col*PIXEL_SIZE, y + row*PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+        ctx.fillRect(x + col*scale, y + row*scale, scale, scale);
       }
     }
   }
 }
 
+// Open / Close Game
+function openGame() {
+  overlay.style.display = "flex";
+  startGame();
+}
+
+function closeGame() {
+  overlay.style.display = "none";
+  gameOver = true;
+  removeGameControls();
+}
+
+// Start Game
 function startGame(){
+  const scale = 6;
   player = {
-    x: canvas.width/2 - (playerCarDesign[0].length*PIXEL_SIZE)/2,
-    y: canvas.height - playerCarDesign.length*PIXEL_SIZE - 20,
-    width: playerCarDesign[0].length*PIXEL_SIZE,
-    height: playerCarDesign.length*PIXEL_SIZE
+    x: canvas.width/2 - (playerCarDesign[0].length * scale)/2,
+    y: canvas.height - playerCarDesign.length * scale - 10,
+    width: playerCarDesign[0].length * scale,
+    height: playerCarDesign.length * scale
   };
 
   obstacles = [];
   score = 0;
-  highScore = localStorage.getItem("highScore") || 0;
+  highScore = parseInt(localStorage.getItem("highScore")) || 0; // load high score
   gameOver = false;
-  playerSpeed = playerBaseSpeed;
+  gameSpeed = baseGameSpeed;
   nitroActive = false;
   nitroDuration = 0;
   nitroCooldown = 0;
@@ -179,13 +192,16 @@ function startGame(){
   requestAnimationFrame(updateGame);
 }
 
+// Spawn Opponent Car
 function spawnObstacle(){
-  const width = opponentCarDesign[0].length*PIXEL_SIZE;
-  const height = opponentCarDesign.length*PIXEL_SIZE;
+  const scale = 6;
+  const width = opponentCarDesign[0].length * scale;
+  const height = opponentCarDesign.length * scale;
   const x = Math.random() * (canvas.width - width - 10) + 5;
-  obstacles.push({x: x, y: -height, width: width, height: height, passed:false});
+  obstacles.push({x, y: -height, width, height, passed: false});
 }
 
+// Update Game Loop
 function updateGame(){
   if(gameOver) return;
 
@@ -193,14 +209,19 @@ function updateGame(){
 
   // Obstacles
   for(let obs of obstacles){
-    obs.y += 3;
+    obs.y += gameSpeed;
     drawCar(obs.x, obs.y, opponentCarDesign);
 
     if(!obs.passed && obs.y > player.y + player.height){
       score++; obs.passed = true;
-      document.getElementById("score").innerText=`Score: ${score}`;
+      document.getElementById("score").innerText = `Score: ${score}`;
+
+      if(score >= 30 && (score - 30) % 5 === 0){
+        baseGameSpeed += 0.5;
+      }
     }
   }
+
   obstacles = obstacles.filter(o => o.y < canvas.height + 20);
   if(Math.random() < 0.02) spawnObstacle();
 
@@ -217,29 +238,30 @@ function updateGame(){
     }
   }
 
-  // Nitro logic
+  // Nitro forward speed
   if(nitroActive){
-    playerSpeed = playerBaseSpeed * 3;
+    gameSpeed = baseGameSpeed * 1.8;
     nitroDuration--;
     updateNitroButton();
     if(nitroDuration <= 0){
       nitroActive = false;
       nitroCooldown = NITRO_COOLDOWN_FRAMES;
-      playerSpeed = playerBaseSpeed;
+      gameSpeed = baseGameSpeed;
     }
   } else if(nitroCooldown > 0){
     nitroCooldown--;
-    playerSpeed = playerBaseSpeed;
+    gameSpeed = baseGameSpeed;
     updateNitroButton();
   }
 
-  // Movement
+  // Horizontal movement
   if(keys["ArrowLeft"]) player.x = Math.max(player.x - playerSpeed, 0);
   if(keys["ArrowRight"]) player.x = Math.min(player.x + playerSpeed, canvas.width - player.width);
 
   requestAnimationFrame(updateGame);
 }
 
+// End Game
 function endGame(){
   gameOver = true;
   removeGameControls();
@@ -247,6 +269,8 @@ function endGame(){
   ctx.font = '20px Arial';
   ctx.fillText("Game Over!", canvas.width/2-50, canvas.height/2);
   ctx.fillText(`Score: ${score}`, canvas.width/2-40, canvas.height/2+30);
+
+  // Update high score
   if(score > highScore){
     highScore = score;
     localStorage.setItem("highScore", highScore);
@@ -254,27 +278,21 @@ function endGame(){
   document.getElementById("high-score").innerText = `High Score: ${highScore}`;
 }
 
-// Keyboard controls
-document.addEventListener("keydown", e=>{ keys[e.key]=true; });
-document.addEventListener("keyup", e=>{ keys[e.key]=false; });
-
-// Nitro button update
+// Nitro Button Update (Cylinder Fill)
 function updateNitroButton(){
   if(!nitroBtn) return;
-  let ratio = nitroActive ? nitroDuration/NITRO_DURATION_FRAMES : nitroCooldown/NITRO_COOLDOWN_FRAMES;
-  let greenFill = nitroActive
-    ? `linear-gradient(to top, rgba(0,255,0,0.7) ${ratio*100}%, transparent 0%)`
-    : `linear-gradient(to top, rgba(0,255,0,0.7) ${(1-ratio)*100}%, transparent 0%)`;
-
-  nitroBtn.style.backgroundImage = `${greenFill}, url('NitroAbility_Icon.png')`;
+  const ratio = nitroActive ? nitroDuration/NITRO_DURATION_FRAMES : nitroCooldown/NITRO_COOLDOWN_FRAMES;
+  const fill = nitroActive
+    ? `linear-gradient(to top, rgba(0,255,0,0.7) ${ratio*100}%, rgba(0,255,0,0.2) 0%)`
+    : `linear-gradient(to top, rgba(0,255,0,0.7) ${(1-ratio)*100}%, rgba(0,255,0,0.2) 0%)`;
+  nitroBtn.style.backgroundImage = `${fill}, url('NitroAbility_Icon.png')`;
   nitroBtn.style.backgroundSize = "100% 100%, 70% auto";
   nitroBtn.style.backgroundRepeat = "no-repeat";
   nitroBtn.style.backgroundPosition = "center";
 }
 
-// Touch buttons
+// Touch Buttons
 function addGameControls(){
-  // Left
   leftBtn = document.createElement("button");
   leftBtn.innerText = "⬅️";
   leftBtn.style.cssText = "position:fixed; bottom:10px; left:10px; width:70px; height:70px; font-size:28px; border-radius:50%; z-index:1000;";
@@ -282,7 +300,6 @@ function addGameControls(){
   leftBtn.addEventListener("touchend",()=>keys["ArrowLeft"]=false);
   document.body.appendChild(leftBtn);
 
-  // Right
   rightBtn = document.createElement("button");
   rightBtn.innerText = "➡️";
   rightBtn.style.cssText = "position:fixed; bottom:10px; left:90px; width:70px; height:70px; font-size:28px; border-radius:50%; z-index:1000;";
@@ -290,7 +307,6 @@ function addGameControls(){
   rightBtn.addEventListener("touchend",()=>keys["ArrowRight"]=false);
   document.body.appendChild(rightBtn);
 
-  // Nitro
   nitroBtn = document.createElement("button");
   nitroBtn.style.cssText = "position:fixed; bottom:10px; right:10px; width:70px; height:70px; border-radius:50%; background-color:#111; z-index:1000;";
   nitroBtn.addEventListener("click",()=>{
@@ -310,9 +326,9 @@ function removeGameControls(){
   if(nitroBtn) nitroBtn.remove();
 }
 
-// Open/close game
-function openGame(){ overlay.style.display = "flex"; startGame(); }
-function closeGame(){ overlay.style.display = "none"; removeGameControls(); }
-</script>
+// Keyboard
+document.addEventListener("keydown", e => { keys[e.key] = true; });
+document.addEventListener("keyup", e => { keys[e.key] = false; });
+  </script>
 </body>
 </html>
