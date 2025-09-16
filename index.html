@@ -10,6 +10,18 @@
 
   <style>
 /* ------------------------
+   Global fixes
+------------------------ */
+* {
+  -webkit-tap-highlight-color: transparent; /* removes blue tap highlight */
+  user-select: none; /* disable text selection */
+}
+
+input, textarea {
+  user-select: text; /* allow typing/copying in inputs */
+}
+
+/* ------------------------
    Splash Screen
 ------------------------ */
 #splash-screen {
