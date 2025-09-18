@@ -10,6 +10,24 @@
 
   <style>
 /* ------------------------
+   Body & general styles
+------------------------ */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Consolas", "Monaco", "Lucida Console", monospace;
+  background: var(--bg);
+  color: var(--text);
+  /* The original CSS had 'overflow-x: hidden;' */
+  /* CHANGE: Set both overflow and overflow-y to hidden */
+  overflow: hidden; /* This prevents both horizontal and vertical scrolling */
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.6s ease, color 0.6s ease;
+}
+
+/* ------------------------
    Global fixes
 ------------------------ */
 * {
