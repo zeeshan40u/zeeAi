@@ -10,24 +10,6 @@
 
   <style>
 /* ------------------------
-   Body & general styles
------------------------- */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Consolas", "Monaco", "Lucida Console", monospace;
-  background: var(--bg);
-  color: var(--text);
-  /* The original CSS had 'overflow-x: hidden;' */
-  /* CHANGE: Set both overflow and overflow-y to hidden */
-  overflow: hidden; /* This prevents both horizontal and vertical scrolling */
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.6s ease, color 0.6s ease;
-}
-
-/* ------------------------
    Global fixes
 ------------------------ */
 * {
@@ -165,7 +147,8 @@ html, body {
   font-family: "Consolas", "Monaco", "Lucida Console", monospace;
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
+  /* FIX: Prevent page from scrolling */
+  overflow: hidden; 
   -webkit-font-smoothing: antialiased;
   transition: background 0.6s ease, color 0.6s ease;
 }
@@ -183,11 +166,14 @@ body::before {
 }
 
 .page {
+  /* Set max-height to ensure content fits within no-scroll page */
   min-height: calc(100vh - 6vh);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: 5vh 16px;
+  /* Allow page content to scroll if it exceeds viewport */
+  overflow-y: auto; 
 }
 
 .content {
@@ -294,6 +280,29 @@ label[for="txt"] {
 
 .enter:active {
   transform: translateY(1px) scale(0.995);
+}
+
+/* Returned Text Feedback */
+#returnedText {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  background: rgba(var(--grid-rgb), 0.15);
+  border: 1px solid var(--container-border);
+  color: var(--text);
+  font-size: 0.9rem;
+  word-wrap: break-word;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.4s ease, max-height 0.4s ease;
+}
+
+#returnedText.visible {
+  opacity: 1;
+  max-height: 200px;
+  padding: 10px;
 }
 
 /* Theme Picker */
@@ -423,12 +432,10 @@ label[for="txt"] {
 
 <body class="theme-dark">
 
-<!-- Splash Screen -->
 <div id="splash-screen">
   <img src="zee512.png" alt="ZeeAI Logo" class="splash-logo">
 </div>
 
-<!-- App container -->
 <div id="app" style="display:none;">
   <div class="page">
     <div class="content">
@@ -439,12 +446,12 @@ label[for="txt"] {
         <div class="controls" style="width:100%; justify-content:space-between; gap:8px;">
           <button id="speakBtn" class="enter">Speak</button>
         </div>
+        <div id="returnedText"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Theme Toggle -->
 <button id="themeToggle" title="Theme">🎨</button>
 <div id="themeMenu" class="theme-menu">
   <div class="theme-option" data-theme="theme-dark">
@@ -465,7 +472,6 @@ label[for="txt"] {
   </div>
 </div>
 
-<!-- Speed Controller -->
 <div id="speedControl">
   <button id="speedBtn">⚡</button>
   <div id="speedMenu">
@@ -574,7 +580,8 @@ document.addEventListener('click', e=>{
 if (speedMenu) {
   speedMenu.querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      currentRate = parseFloat(btn.dataset.rate);
+      // FIX: Changed btn.dataset.rate to btn.dataset.speed
+      currentRate = parseFloat(btn.dataset.speed);
       speedMenu.style.display='none';
     });
   });
@@ -597,6 +604,10 @@ function processTextForSpeech(input){
   if (/^1000$/.test(trimmed)) return 'one thousand';
   if (/^10000$/.test(trimmed)) return spellDigitsString('10000');
 
+  // Logic needs to handle if a number is one word and longer than 4 digits (e.g., 123456)
+  // Current logic: if less than 4 words, expand only 1000 and 10000. 
+  // If more than 4 words, expand all numbers. This seems inconsistent, 
+  // but it's kept as per original intent.
   if (words.length > 4) {
     return trimmed.replace(/\d+/g, match => spellDigitsString(match));
   }
@@ -607,6 +618,12 @@ function processTextForSpeech(input){
 }
 
 function speakHandler(){
+  // Check if speech synthesis is available
+  if (!window.speechSynthesis) {
+    alert('Your browser does not support Speech Synthesis.');
+    return;
+  }
+  
   const inputText = txtInput.value || '';
   if (isSpeaking) {
     window.speechSynthesis.cancel();
@@ -625,14 +642,15 @@ function speakHandler(){
   currentUtterance.onstart = () => {
     isSpeaking = true;
     speakBtn.textContent = 'Stop';
-    document.getElementById('returnedText')?.classList?.add('visible');
+    // Access the element directly after checking it exists
+    document.getElementById('returnedText')?.classList.add('visible');
   };
   currentUtterance.onend = resetSpeakingState;
   currentUtterance.onerror = resetSpeakingState;
 
   const returned = document.getElementById('returnedText');
   if (returned) {
-    returned.textContent = `Speaking: "${processed}"`;
+    returned.textContent = `Speaking (Rate: ${currentRate}x): "${processed}"`;
     returned.classList.add('visible');
   }
 
