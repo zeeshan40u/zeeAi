@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zeeshan40u.github.io/zeeAi/sitemap.xml
